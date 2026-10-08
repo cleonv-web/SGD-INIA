@@ -14,8 +14,74 @@ La prueba mínima es registrar un PDF en Mesa de Partes, derivarlo a la unidad u
 
 1. En SQL Server ejecutar `bd/Consultar-Estructura-SQLServer.sql` para obtener columnas, índices y relaciones. No consulta trabajadores.
 2. Ejecutar `bd/Revisar-Area-SQLServer.sql` con `@Oficina=NULL`. Elegir el código del área, reemplazar NULL por ese número y ejecutar el archivo completo. `@SoloEstado1=1` filtra estado 1; confirmar que representa activo en el sistema origen.
-3. Ejecutar `bd/Exportar-Area-SQLServer.sql` con el mismo código. Guardar sus cinco resultados como CSV UTF-8 con encabezados, dentro de `datos`, que está excluido de Git. No incluye contraseñas, hashes, firmas ni fotografías.
-4. Preparar `area.json` y `usuarios-verificados.csv` con los usuarios que efectivamente autorizas. El formato del utilitario es normalizado; no acepta directamente los cinco CSV originales. No divide apellidos ni inventa DNI o permisos automáticamente.
+3. En el resultado de **personal candidato** revisar `iCodTrabajador`, nombres, documento y `cUsuario`. Confirmar vínculo laboral vigente y participación en el piloto con el responsable del área. Excluir cesados, cuentas genéricas, duplicados y personas sin autorización. Estado 1 por sí solo no demuestra que alguien siga laborando. La consulta de `Tra_M_Perfil` devuelve perfiles, no el listado de personas.
+4. Abrir `bd/Exportar-Area-SQLServer.sql`, elegir el mismo `@Oficina` y completar la lista `@Aprobados` con los `iCodTrabajador` autorizados. Descomentar la línea INSERT y sustituir los IDs del ejemplo; no usar códigos de perfil. Una lista vacía bloquea la exportación. Si un ID no existe, no pertenece al área o está fuera del filtro de estado, el script se detiene antes de entregar resultados. Ejecutar el archivo completo; `@Personal` existe sólo durante esa ejecución. Ninguna consulta modifica el origen.
+
+Ejemplo ficticio de la línea a completar (101 y 102 **no son IDs confirmados**):
+
+```sql
+INSERT INTO @Aprobados(iCodTrabajador) VALUES (101),(102);
+```
+
+5. Crear `datos/exportacion-uti`. Ejecutar la exportación con resultados en cuadrícula. Ejecutar una consulta sólo muestra resultados; todavía no crea los CSV. Guardar cada cuadrícula por separado con clic derecho, **Guardar resultados como**, tipo CSV, incluyendo los encabezados. En las opciones de resultados a cuadrícula de SSMS activar la inclusión de encabezados al copiar o guardar; abrir una ventana nueva si el cambio no se refleja. Comprobar que la primera línea contiene nombres de columnas.
+
+| Resultado | Archivo en datos/exportacion-uti |
+|---|---|
+| 1 Ubicaciones | ubicaciones.csv |
+| 2 Oficinas | oficinas.csv |
+| 3 Personas aprobadas | trabajadores.csv |
+| 4 Perfiles utilizados | perfiles.csv |
+| 5 Asignaciones del área | asignaciones.csv |
+
+Conservar los cinco archivos originales y no publicarlos en Git. Se admiten también nombres con sufijo `-CODIGO`, pero sólo un archivo por cada categoría. No exportar contraseñas, hashes, firmas ni fotografías. Referencia: [exportación de resultados en SSMS](https://learn.microsoft.com/en-us/ssms/quickstarts/work-with-query-results).
+
+6. Desde la raíz del paquete ejecutar el preparador. Convierte los cinco CSV a un borrador normalizado, sin consultar bases. Admite coma, punto y coma o tabulador; UTF-8, UTF-16 con BOM y Windows-1252. No sobrescribe una revisión anterior.
+
+Windows:
+
+```powershell
+.\Preparar-Carga.bat
+```
+
+Linux:
+
+```bash
+bash Preparar-Carga.sh
+```
+
+Usa `datos/exportacion-uti` como origen y crea `datos/carga-uti-preparada`. Para otra área o una nueva preparación, indicar carpetas distintas:
+
+```powershell
+.\Preparar-Carga.bat --origen datos\exportacion-otra --carpeta datos\carga-otra-preparada
+```
+
+```bash
+bash Preparar-Carga.sh --origen datos/exportacion-otra --carpeta datos/carga-otra-preparada
+```
+
+7. Abrir `LEEME.txt` y `pendientes.csv` dentro de la carpeta preparada. Editar allí `usuarios-verificados.csv` y `area.json` con VS Code. Los apellidos completos se conservan en `apellido_paterno`: separarlos y confirmarlos personalmente. Cargo y perfil quedan pendientes; no se traducen ni conceden permisos del sistema anterior automáticamente.
+
+Los códigos propuestos de área, sede y empleado proceden de los IDs del origen rellenados con ceros. No se comprobaron contra PostgreSQL; aprobar su equivalencia o corregirlos después de revisar personalmente el catálogo del destino. Los permisos y tipos documentales de la plantilla siguen siendo propuestas. El padre 00000 sigue siendo provisional.
+
+8. **Eliminar del CSV la fila completa** de cualquier persona no autorizada, cesada o cuenta genérica. No eliminarla de SQL Server. Confirmar identidad, DNI real, apellidos, cargo y perfil de quienes permanecen. Marcar `verificado=SI` sólo después de verificar. Una fila con NO bloquea toda la carga; no se omite automáticamente. Completar también el área y marcar `aprobado=SI` e indicar `verificado_por` al terminar su revisión.
+
+9. Consultar los permisos locales y validar la preparación, todavía sin aplicar:
+
+```powershell
+.\Cargar-Area.bat --catalogos
+.\Cargar-Area.bat --carpeta datos\carga-uti-preparada
+```
+
+```bash
+bash Cargar-Area.sh --catalogos
+bash Cargar-Area.sh --carpeta datos/carga-uti-preparada
+```
+
+El resultado offline genera el plan para tu revisión, no carga usuarios. La aplicación real se explica en la siguiente sección.
+
+### Alternativa manual con plantillas vacías
+
+Si no utilizas el preparador, puedes crear los dos archivos de ejemplo y completarlos personalmente. No hace falta ejecutar estos comandos cuando ya preparaste los cinco CSV.
 
 Windows, terminal PowerShell en `C:\SGD\SGD-INIA-INSTALL_PG`:
 
@@ -43,7 +109,7 @@ El CSV tiene estos encabezados exactos, separados por coma:
 origen_id,codigo_empleado,usuario,nombres,apellido_paterno,apellido_materno,dni,email,cargo_codigo,cargo_nombre,perfil,verificado
 ```
 
-Cada fila representa una persona autorizada para esa área. `origen_id` es su ID de SQL Server; `codigo_empleado` es su código definitivo de cinco dígitos en SGD. Mantener el mismo código y usuario si la persona participa en otra área. `perfil` identifica una definición de `area.json`; `verificado` debe ser SI en todas las filas. Retirar del CSV los usuarios pendientes. DNI debe contener ocho dígitos válidos en formato; la herramienta no verifica identidad ante RENIEC. Confirmar identidad y estado personalmente.
+Cada fila representa una persona autorizada para esa área. `origen_id` es su ID de SQL Server; `codigo_empleado` es su código definitivo de cinco dígitos en SGD. Mantener el mismo código y usuario si la persona participa en otra área. `perfil` identifica una definición de `area.json`; `verificado` debe ser SI en todas las filas. Retirar del CSV los usuarios pendientes, cesados y cuentas genéricas. DNI debe contener ocho dígitos válidos en formato; la herramienta no verifica identidad ante RENIEC. Confirmar identidad y vínculo laboral personalmente.
 
 No concatenar o recortar apellidos para forzar límites: paterno y materno admiten 40 caracteres cada uno; nombres 80, usuario 20 y correo 50. CSV UTF-8 con encabezados; si un valor contiene coma, encerrarlo entre comillas dobles conforme al formato CSV. No añadir columnas de contraseña o hash.
 
@@ -54,11 +120,11 @@ Los perfiles de plantilla son una propuesta de permisos que debes revisar, no la
 Primero revisar sin tocar ninguna base:
 
 ```powershell
-.\Cargar-Area.bat --carpeta datos\carga-uti
+.\Cargar-Area.bat --carpeta datos\carga-uti-preparada
 ```
 
 ```bash
-bash Cargar-Area.sh --carpeta datos/carga-uti
+bash Cargar-Area.sh --carpeta datos/carga-uti-preparada
 ```
 
 La herramienta valida los archivos y genera `revision.json` y `plan.sql` en una carpeta privada dentro de `datos`. El plan offline no comprueba colisiones ni referencias actuales del destino; esas comprobaciones se realizan en la transacción al aplicar. No ejecutar el plan SQL manualmente: contiene un marcador de cifrado pendiente.
@@ -80,11 +146,11 @@ bash SGD.sh base
 En servidores separados coordinar también la parada de la aplicación remota. Después de la operación arrancar la aplicación con `SGD.bat iniciar` o `bash SGD.sh iniciar`.
 
 ```powershell
-.\Cargar-Area.bat --carpeta datos\carga-uti --aplicar --confirmar CARGAR:51001
+.\Cargar-Area.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar CARGAR:51001
 ```
 
 ```bash
-bash Cargar-Area.sh --carpeta datos/carga-uti --aplicar --confirmar CARGAR:51001
+bash Cargar-Area.sh --carpeta datos/carga-uti-preparada --aplicar --confirmar CARGAR:51001
 ```
 
 La operación exige credenciales existentes de esta instalación y la librería Java compilada; si falta la librería, ejecutar primero `SGD.bat compilar` o `bash SGD.sh compilar`. No instala Docker ni descarga dependencias de ejecución. Funciona con los runtimes x64 incluidos; otros procesadores o sistemas requieren su paquete compatible.

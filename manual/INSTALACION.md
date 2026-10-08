@@ -147,4 +147,4 @@ La instalación en un Windows Server físico diferente todavía requiere ejecuta
 
 ## 10. Carga y retiro por área
 
-Procedimiento, formatos, comandos Windows/Linux y propuesta de piloto en manual/CARGA-POR-AREA.md; también en las secciones 10 y 11 del Word. Cargar-Area exige usuarios verificados; Limpiar-BD retira sólo un área rastreada, conservando catálogos e historia. Su preparación no ejecutó operaciones contra las bases.
+Procedimiento, formatos, comandos Windows/Linux y propuesta de piloto en manual/CARGA-POR-AREA.md; también en las secciones 10 a 12 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Cargar-Area exige usuarios verificados; Limpiar-BD retira sólo un área rastreada, conservando catálogos e historia. Su preparación no ejecutó operaciones contra las bases.

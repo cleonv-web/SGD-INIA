@@ -1,6 +1,6 @@
 # SGD INIA · PostgreSQL portable
 
-Leer manual/Manual-Instalacion-SGD-INIA-PG.docx. Para otro equipo, extraer SGD-INIA-INSTALL_PG-PORTABLE.zip y ejecutar **Instalar-SGD.bat** en Windows/Windows Server o **bash Instalar-SGD.sh** en Linux x64. **No requiere Docker en los destinos.**
+Leer manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Para otro equipo, extraer SGD-INIA-INSTALL_PG-PORTABLE.zip y ejecutar **Instalar-SGD.bat** en Windows/Windows Server o **bash Instalar-SGD.sh** en Linux x64. **No requiere Docker en los destinos.**
 
 PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, código fuente y WAR están incluidos. Windows x64 y Linux x64 con glibc >=2.31; Linux necesita Bash, tar y bibliotecas de fuentes/JDK indicadas en el manual. Usar una cuenta normal en Linux. No instalar la base activa en OneDrive ni en una carpeta sincronizada.
 
@@ -54,4 +54,4 @@ Referencias: [binarios PostgreSQL Windows](https://www.enterprisedb.com/download
 
 ## Carga de datos por área
 
-Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD.bat y Limpiar-BD.sh retiran exclusivamente un área rastreada por el utilitario, conservando catálogos y objetos compartidos. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 y 11 del Word. No se ha probado todavía una carga o retirada real con estos utilitarios.
+Exportar-Area-SQLServer.sql exige una lista de iCodTrabajador aprobados por el operador; estado 1 no demuestra vínculo laboral vigente. Preparar-Carga.bat y Preparar-Carga.sh convierten sus cinco CSV a un borrador pendiente de revisión, sin consultar bases. Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD.bat y Limpiar-BD.sh retiran exclusivamente un área rastreada por el utilitario, conservando catálogos y objetos compartidos. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 a 12 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. No se ha probado todavía una carga o retirada real con estos utilitarios.
