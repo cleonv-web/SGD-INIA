@@ -61,17 +61,35 @@ Para otra instancia en el mismo equipo elegir cuatro puertos diferentes. Tambié
 El dominio payara/payara5/glassfish/domains/sgd ya contiene la configuración JDBC. Los scripts adaptan rutas y puertos al destino y usan una variable de entorno para la clave JDBC. payara/payara-5.2022.5-backup.zip conserva el servidor original. Los scripts no cambian JAVA_HOME ni PATH globales.
 
 ## 5. Compilar y modificar desde Visual Studio Code
-Abrir la raíz del paquete y editar fuentes. Las tareas de VS Code permiten compilar, desplegar y verificar. No editar target ni aplicaciones desplegadas: la compilación las reemplaza.
+Abrir la raíz del paquete y editar fuentes. Compilar genera los WAR en binarios; no actualiza la aplicación que está ejecutando Payara. Desplegar reemplaza las aplicaciones por esos WAR y verificar comprueba sus accesos. Conservar la base y los documentos; no repetir la instalación inicial para publicar cambios de código.
+
+Para realizar el proceso completo en Windows, ejecutar desde PowerShell o hacer doble clic en Actualizar-SGD.bat:
+```powershell
+cd C:\SGD\SGD-INIA-INSTALL_PG
+.\Actualizar-SGD.bat
+```
+En Linux:
+```bash
+cd /opt/sgd/SGD-INIA-INSTALL_PG
+bash Actualizar-SGD.sh
+```
+El lanzador compila, inicia PostgreSQL y Payara si corresponde, despliega y verifica, en ese orden. Se detiene si un paso falla; revisar el mensaje y logs/ULTIMO-ERROR.txt antes de continuar. En VS Code también está disponible la tarea «SGD: actualizar y verificar cambios».
+
+Si se prefiere ejecutar cada paso manualmente, esperar a que termine correctamente antes de pasar al siguiente:
 ```powershell
 .\SGD.bat compilar
+.\SGD.bat iniciar
 .\SGD.bat desplegar
 .\SGD.bat verificar
 ```
 ```bash
 bash SGD.sh compilar
+bash SGD.sh iniciar
 bash SGD.sh desplegar
 bash SGD.sh verificar
 ```
+Si ya se compiló correctamente y la pantalla sigue igual, no es necesario recompilar: ejecutar iniciar, desplegar y verificar. Abrir http://127.0.0.1:8085/sisdoc/login.do y recargar con Ctrl+F5 después del despliegue. Una imagen o un JavaScript anterior puede permanecer en la caché del navegador. Si persiste, revisar los logs de despliegue y confirmar que se está usando la URL y el puerto de esta instalación.
+
 Se ejecuta clean install -DskipTests en modo offline con el JDK y Maven incluidos. Se generan ocho WAR: SGD, consulta, verificador, MPD, notificador, dos integraciones y recursos. El principal incluye autentica y libreria. logs/compilacion.json registra hashes de fuentes y WAR; el despliegue rechaza un WAR alterado. Las pruebas unitarias heredadas se omiten; las pruebas descritas aquí verifican instalación y acceso.
 
 Solo wstradoc carece de fuentes y utiliza el WAR suministrado. srvccuo, srvciopidetramite, srvcsunat y wsoapIopCliente son dependencias JAR suministradas sin fuentes. No se utiliza un WAR antiguo para ocultar un error de compilación de las aplicaciones disponibles. Notificador e integraciones se compilan, pero no se activan hasta configurar los servicios institucionales.
@@ -126,3 +144,7 @@ El ZIP limpio se extrajo en otra ruta Windows con espacios, se recompilaron ocho
 La verificación automática cubre instalación y acceso inicial. Antes de cargar información real completar la aceptación documental: registrar un PDF desde mesa_demo, buscarlo, derivarlo al área técnica, recibirlo con area_demo y comprobar seguimiento y archivos en datos/documentos. Estos pasos del ciclo completo no están declarados como aprobados por las pruebas de acceso.
 
 La instalación en un Windows Server físico diferente todavía requiere ejecutar este procedimiento y verificar sus resultados allí. Java 8 y Payara 5 conservan la compatibilidad Java EE de SGD 4.7; no representan una migración Jakarta. Firma digital, PIDE, correo y HTTPS institucional requieren configuración y aceptación propias. Después del laboratorio sustituir ficticios por información institucional mediante una carga controlada.
+
+## 10. Carga y retiro por área
+
+Procedimiento, formatos, comandos Windows/Linux y propuesta de piloto en manual/CARGA-POR-AREA.md; también en las secciones 10 y 11 del Word. Cargar-Area exige usuarios verificados; Limpiar-BD retira sólo un área rastreada, conservando catálogos e historia. Su preparación no ejecutó operaciones contra las bases.

@@ -1846,3 +1846,79 @@ animation:efectoOcultar 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 {
   /*color:#0067B0 !important;*/
 }
+/* INIA branding: preserve the proportions of the supplied institutional logo. */
+.sgd-login-logo {
+    display: block;
+    width: 250px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto 12px;
+}
+.sgd-login-photo-cell img {
+    max-width: 100%;
+    height: auto;
+}
+#dlglogin_principal {
+    width: 820px;
+    max-width: calc(100% - 32px);
+    margin: 0;
+    transform: translate(-50%, -50%);
+}
+#headPanel_top.sgd-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    height: auto;
+    min-height: 82px;
+    padding: 8px 16px;
+    overflow: visible;
+    background-image: none;
+}
+.sgd-header-logo {
+    flex: 0 0 auto;
+}
+.sgd-header-logo img {
+    display: block;
+    width: 220px;
+    max-width: 100%;
+    height: auto;
+}
+.sgd-header #titulo_interno {
+    flex: 1 1 280px;
+    font-size: 24px;
+    line-height: 28px;
+}
+.sgd-header #txt_nav {
+    flex: 1 1 260px;
+}
+.sgd-header-exit {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+.sgd-header #main_links {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+@media (max-width: 700px) {
+    #dlglogin_principal {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: calc(100% - 24px);
+        max-width: none;
+        margin: 24px auto;
+        transform: none;
+    }
+    .sgd-login-layout > tbody > tr > td {
+        display: block;
+        width: 100%;
+    }
+    .sgd-login-photo-cell img {
+        width: 320px;
+        margin: 12px auto;
+    }
+    #dlglogin .input { width: 100%; }
+    #dlglogin #titulo_servicios { font-size: 26px; line-height: 28px; }
+}

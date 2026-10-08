@@ -379,6 +379,12 @@ def verificar():
             if path.endswith('login.do') and b'coUsuario' not in body:raise RuntimeError('SGD no devolvió el login esperado')
             if not path.endswith('.ico'):
                 page=body.decode('utf-8',errors='replace');assets=[]
+                if path.endswith('login.do'):
+                    script_refs=re.findall(r'<script[^>]*src="([^"]+)"',page)
+                    jquery_pos=next((i for i,ref in enumerate(script_refs) if '/jquery-3.10.1.min.js' in ref),None)
+                    default_pos=next((i for i,ref in enumerate(script_refs) if '/js/default.js' in ref),None)
+                    if jquery_pos is None or default_pos is None or jquery_pos >= default_pos:
+                        raise RuntimeError('Login: default.js debe cargarse después de jQuery.')
                 for ref in sorted(set(re.findall(r'''(?:src|href)\s*=\s*["']([^"']+)''',page))):
                     if ref.startswith(('#','data:','javascript:','mailto:','http:','https:')):continue
                     asset=urllib.parse.urljoin(r.url,ref)
@@ -394,14 +400,16 @@ def verificar():
     auth=[]
     url='http://127.0.0.1:'+str(C['puerto_http'])+'/sisdoc/login.do'
     for user,password in credentials()['usuarios'].items():
-        opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
-        opener.open(url,timeout=45).close()
-        form=urllib.parse.urlencode({'coUsuario':encode(user),'dePassword':encode(password),'inAccesoLocal':'1','contIntentos':'0','captcha':''}).encode()
-        with opener.open(url,data=form,timeout=45) as r:html=r.read().decode('utf-8',errors='replace')
-        if 'id="loginForm"' in html or 'id="divBandejaEntrada"' not in html or '<strong>Salir</strong>' not in html:
-            (LOG/'login-fallido.html').write_text(html,encoding='utf-8')
-            raise RuntimeError('No se confirmó login de '+user+'. Revisar logs/login-fallido.html y server.log')
-        auth.append({'usuario':user,'autenticacion':True})
+        variants=list(dict.fromkeys([user,user.upper()]))
+        for submitted_user in variants:
+            opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+            opener.open(url,timeout=45).close()
+            form=urllib.parse.urlencode({'coUsuario':encode(submitted_user),'dePassword':encode(password),'inAccesoLocal':'1','contIntentos':'0','captcha':''}).encode()
+            with opener.open(url,data=form,timeout=45) as r:html=r.read().decode('utf-8',errors='replace')
+            if 'id="loginForm"' in html or 'id="divBandejaEntrada"' not in html or '<strong>Salir</strong>' not in html:
+                (LOG/'login-fallido.html').write_text(html,encoding='utf-8')
+                raise RuntimeError('No se confirmó login de '+submitted_user+'. Revisar logs/login-fallido.html y server.log')
+        auth.append({'usuario':user,'autenticacion':True,'variantes_verificadas':variants})
     key=base64.b64encode(secrets.token_bytes(16)).decode()
     with socket.create_connection(('127.0.0.1',C['puerto_http']),timeout=20) as s:
         s.sendall((f'GET /wstradoc/chat/987654321/BROWSER HTTP/1.1\r\nHost: localhost:{C["puerto_http"]}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n').encode())

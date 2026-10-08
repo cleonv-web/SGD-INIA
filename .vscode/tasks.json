@@ -2,24 +2,68 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "SGD: actualizar y verificar cambios",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/Actualizar-SGD.sh"
+      ],
+      "windows": {
+        "command": "${workspaceFolder}/Actualizar-SGD.bat",
+        "args": []
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "SGD: compilar fuentes",
       "type": "shell",
-      "command": "bash", "args": ["${workspaceFolder}/SGD.sh", "compilar"],
-      "windows": {"command": "${workspaceFolder}/SGD.bat", "args": ["compilar"]},
-      "problemMatcher": [], "group": {"kind": "build", "isDefault": true}
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/SGD.sh",
+        "compilar"
+      ],
+      "windows": {
+        "command": "${workspaceFolder}/SGD.bat",
+        "args": [
+          "compilar"
+        ]
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     },
     {
       "label": "SGD: desplegar cambios",
       "type": "shell",
-      "command": "bash", "args": ["${workspaceFolder}/SGD.sh", "desplegar"],
-      "windows": {"command": "${workspaceFolder}/SGD.bat", "args": ["desplegar"]},
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/SGD.sh",
+        "desplegar"
+      ],
+      "windows": {
+        "command": "${workspaceFolder}/SGD.bat",
+        "args": [
+          "desplegar"
+        ]
+      },
       "problemMatcher": []
     },
     {
       "label": "SGD: verificar",
       "type": "shell",
-      "command": "bash", "args": ["${workspaceFolder}/SGD.sh", "verificar"],
-      "windows": {"command": "${workspaceFolder}/SGD.bat", "args": ["verificar"]},
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/SGD.sh",
+        "verificar"
+      ],
+      "windows": {
+        "command": "${workspaceFolder}/SGD.bat",
+        "args": [
+          "verificar"
+        ]
+      },
       "problemMatcher": []
     }
   ]

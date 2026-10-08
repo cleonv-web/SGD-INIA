@@ -1,0 +1,35 @@
+{
+  "codigo": "51001",
+  "nombre": "UTI - PILOTO (REEMPLAZAR POR NOMBRE APROBADO)",
+  "sigla": "UTI",
+  "nombre_corto": "UTI",
+  "padre": "00000",
+  "nivel": 2,
+  "mesa_partes": false,
+  "titular_empleado": "52001",
+  "aprobado": "NO",
+  "verificado_por": "REEMPLAZAR POR RESPONSABLE DE REVISION",
+  "sede": {
+    "codigo": "101",
+    "nombre": "SEDE PILOTO INIA (REEMPLAZAR)",
+    "direccion": "REEMPLAZAR POR DIRECCION VERIFICADA"
+  },
+  "tipos_documento": ["001", "003"],
+  "perfiles": {
+    "USUARIO_AREA": {
+      "administrador": false,
+      "firma": false,
+      "opciones": ["M02", "M0201", "M020101", "M020102", "M03", "M0301", "M030101", "M030102"]
+    },
+    "SOPORTE_UTI": {
+      "administrador": true,
+      "firma": false,
+      "opciones": ["M01", "M0113", "M0119", "M0123", "M0132", "M0134"]
+    },
+    "MESA_PARTES": {
+      "administrador": false,
+      "firma": false,
+      "opciones": ["M02", "M0203", "M020301", "M020302", "M03", "M0304", "M030401", "M030402"]
+    }
+  }
+}

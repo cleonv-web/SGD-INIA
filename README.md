@@ -11,6 +11,7 @@ PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, 
 | Instalar y probar | Instalar-SGD.bat | bash Instalar-SGD.sh |
 | Arrancar | Iniciar-SGD.bat | bash Iniciar-SGD.sh |
 | Detener | Detener-SGD.bat | bash Detener-SGD.sh |
+| Actualizar cambios y verificar | Actualizar-SGD.bat | bash Actualizar-SGD.sh |
 | Compilar | SGD.bat compilar | bash SGD.sh compilar |
 | Desplegar | SGD.bat desplegar | bash SGD.sh desplegar |
 | Verificar | SGD.bat verificar | bash SGD.sh verificar |
@@ -18,6 +19,8 @@ PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, 
 | Empaquetar sin datos ni claves | SGD.bat empaquetar | bash SGD.sh empaquetar |
 
 PowerShell: powershell -NoProfile -ExecutionPolicy Bypass -File .\SGD.ps1 todo. Los lanzadores BAT de instalación, inicio y parada esperan una tecla al terminar. Después de reiniciar el equipo arrancar con Iniciar-SGD.
+
+Después de modificar fuentes, ejecutar Actualizar-SGD.bat (Windows) o bash Actualizar-SGD.sh (Linux). Compilar por sí solo genera los WAR; también es necesario desplegar para ver los cambios. Al terminar, abrir el SGD y recargar con Ctrl+F5.
 
 Editar configuracion.json antes de instalar. URL inicial: http://127.0.0.1:8085/sisdoc/login.do. Usuarios ficticios: admin, mesa_demo, area_demo y jefe_demo. Claves por instalación en datos/ACCESOS-LABORATORIO.txt. Puertos: BD 55432, HTTP 8085, HTTPS 8185, administración 4855; auxiliares Payara HTTP+1000 hasta HTTP+1004.
 
@@ -48,3 +51,7 @@ El ZIP limpio no contiene la base ni claves de esta PC. Para trasladar datos usa
 Windows nativo y Debian 12 nativo: ocho compilaciones, base nueva, JDBC, cuatro páginas, 69 recursos, cuatro logins y WebSocket verificados. La firma, PIDE, correo y ciclo documental completo requieren aceptación institucional; integraciones quedan inactivas inicialmente. Docker solo se utilizó en el laboratorio de esta PC.
 
 Referencias: [binarios PostgreSQL Windows](https://www.enterprisedb.com/download-postgresql-binaries), [fuente PostgreSQL 17.11](https://ftp.postgresql.org/pub/source/v17.11/), [initdb](https://www.postgresql.org/docs/17/app-initdb.html), [pg_ctl](https://www.postgresql.org/docs/17/app-pg-ctl.html), [pg_dump](https://www.postgresql.org/docs/17/app-pgdump.html).
+
+## Carga de datos por área
+
+Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD.bat y Limpiar-BD.sh retiran exclusivamente un área rastreada por el utilitario, conservando catálogos y objetos compartidos. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 y 11 del Word. No se ha probado todavía una carga o retirada real con estos utilitarios.

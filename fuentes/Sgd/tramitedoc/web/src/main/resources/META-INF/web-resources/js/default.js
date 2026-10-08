@@ -117,9 +117,6 @@ function setFirstElement(oForm) {
                 } catch (e) {
                 }
             }
-            jQuery(oField).bind('paste', function(e) {
-                return false;
-            });
         }
         //break;
     }
@@ -609,10 +606,7 @@ function navegador() {
 function showDown(evt) {
     evt = (evt) ? evt : ((event) ? event : null);
     if (evt) {
-        if (evt.ctrlKey && (evt.keyCode == 86 || evt.keyCode == 118)) {
-            cancelKey(evt);
-        }
-        else if (evt.keyCode == 8) {
+        if (evt.keyCode == 8) {
 
             var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
             if (node != null && node.type != "text" && node.type != "password" && node.type != "textarea") {

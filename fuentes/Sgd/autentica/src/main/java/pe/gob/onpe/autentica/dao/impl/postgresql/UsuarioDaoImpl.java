@@ -36,16 +36,18 @@ public class UsuarioDaoImpl implements UsuarioDao {
         
         StringBuffer sql = new StringBuffer();
         sql.append("select \n" +
-                    "cemp_codemp, \n" +
+                    "cod_user co_usuario, cemp_codemp, \n" +
                     "cclave de_Password, TO_DATE(TO_CHAR(DFE_MOD_CLAVE,'YYYY-MM-DD'),'YYYY-MM-DD') FE_MOD_CLAVE, coalesce(ES_USUARIO,'N') ES_ACTIVO, TO_DATE(TO_CHAR(CURRENT_TIMESTAMP,'YYYY-MM-DD'),'YYYY-MM-DD') FE_ACTUAL,\n" +                
                     "DFEC_MOD D_FEC_MOD, CURRENT_TIMESTAMP FULL_FECHA_ACTUAL, coalesce(NU_INTENTO,0) + 1 NRO_INTENTO,IN_AD as inAD \n" +
                     "from IDOSGD.seg_usuarios1 \n" +
-                    "where cod_user = ?");
+                    "where lower(cod_user) = lower(trim(?))");
         
         DatosUsuario datosUsuario =null;
                 
         try {
             datosUsuario= this.jdbcTemplate.queryForObject(sql.toString(), BeanPropertyRowMapper.newInstance(DatosUsuario.class), usuario.getCoUsuario());
+            // Preserve the stored identifier for permissions, audit and lockout updates.
+            usuario.setCoUsuario(datosUsuario.getCoUsuario());
             usuario.setCempCodemp(datosUsuario.getCempCodemp());
             usuario.setInAD(datosUsuario.getInAD());
             String esUsuario=datosUsuario.getEsActivo();
@@ -287,9 +289,9 @@ public class UsuarioDaoImpl implements UsuarioDao {
     @Override
 	public DatosUsuario getDepUsuario(String coUsuario){
         StringBuffer sql = new StringBuffer();
-        sql.append("select B.CEMP_CODEMP, C.CO_DEPENDENCIA CO_DEP, C.DE_DEPENDENCIA DE_DEP,A.IN_AD as inAD \n" +
+        sql.append("select A.COD_USER CO_USUARIO, B.CEMP_CODEMP, C.CO_DEPENDENCIA CO_DEP, C.DE_DEPENDENCIA DE_DEP,A.IN_AD as inAD \n" +
                     "from IDOSGD.SEG_USUARIOS1 A, IDOSGD.RHTM_PER_EMPLEADOS B, IDOSGD.RHTM_DEPENDENCIA C\n" +
-                    "WHERE A.COD_USER = ? \n" +
+                    "WHERE lower(A.COD_USER) = lower(trim(?)) \n" +
                     "AND A.CEMP_CODEMP = B.CEMP_CODEMP\n" +
                     "AND B.CEMP_EST_EMP ='1' \n" +
                     "AND B.CO_DEPENDENCIA = C.CO_DEPENDENCIA ");

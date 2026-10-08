@@ -29,7 +29,7 @@
     <c:set var="versionJRE" value="${versionJRE}" scope="request"/>
 
     <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/menu.css"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/default.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/default.css?v=inia-logo-1" />
     <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/pagination.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/ui.dynatree.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/bootstrap.css" />
@@ -99,7 +99,7 @@
     <script src="${resourceURL}/js/jquery.blockUI.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
     <script src="${resourceURL}/js/datePickerSelector.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
     <script src="${resourceURL}/js/bigTextBox.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
-    <script src="${resourceURL}/js/default.js" type="text/javascript"><!-- required for FF3 and Opera --></script>   
+    <script src="${resourceURL}/js/default.js?v=inia-logo-1" type="text/javascript"><!-- required for FF3 and Opera --></script>   
     
    <script src="${resourceURL}/Codemaleon/ns.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 

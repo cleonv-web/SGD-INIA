@@ -1,0 +1,14 @@
+{
+  "fecha": "2026-10-08",
+  "pruebas_offline": 10,
+  "sintaxis_postgresql_y_plpgsql": true,
+  "comparacion_columnas_y_claves_con_modelo_local": true,
+  "cifrado_java_incluido_windows": true,
+  "lanzadores_windows_revision_y_rutas_con_espacios": true,
+  "lanzadores_linux_sintaxis_bash": true,
+  "ejecucion_linux_real": false,
+  "carga_real_postgresql": false,
+  "retiro_real_postgresql": false,
+  "consultas_registros_sqlserver_durante_preparacion": false,
+  "word_paginas_revisadas": 11
+}

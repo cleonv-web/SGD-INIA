@@ -18,17 +18,17 @@
 
     <!--<spring:eval expression="@applicationProps['static_resource_server']" var="staticResourceURL" scope="request"/>-->
     <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/menu.css"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/default.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/default.css?v=inia-logo-1" />
     <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/themes/custom-theme/skin.css" />    
 
     <script type="text/javascript">var resourceURL="${resourceURL}"; var versionJRE = "${versionJRE}" ;var staticResourcesURL="${staticResourcesURL}"</script>
     
-    <script src="${resourceURL}/js/default.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
     <script src="${resourceURL}/js/jquery-3.10.1.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
     <script src="${resourceURL}/js/jquery-ui-3.10.3.custom.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
     <script src="${resourceURL}/js/jquery.blockUI.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
     <script src="${resourceURL}/js/jquery.browser.js" type="text/javascript"><!-- required for FF3 and Opera --></script>    
+    <script src="${resourceURL}/js/default.js?v=inia-logo-1" type="text/javascript"><!-- required for FF3 and Opera --></script>
     <!--
     <script src="${resourceURL}/js/appletManager2.js" type="text/javascript"> required for FF3 and Opera </script>
     <script src="${resourceURL}/js/verificaReq.js" type="text/javascript"> required for FF3 and Opera </script>

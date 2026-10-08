@@ -1,0 +1,2 @@
+origen_id,codigo_empleado,usuario,nombres,apellido_paterno,apellido_materno,dni,email,cargo_codigo,cargo_nombre,perfil,verificado
+1,52001,usuario.piloto,NOMBRE_VERIFICADO,APELLIDO_PATERNO,APELLIDO_MATERNO,,correo@ejemplo.invalid,1001,CARGO_VERIFICADO,USUARIO_AREA,NO

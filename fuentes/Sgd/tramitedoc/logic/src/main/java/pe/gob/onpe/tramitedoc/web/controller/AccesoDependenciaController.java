@@ -81,6 +81,10 @@ public class AccesoDependenciaController {
         String pcoUsuario = ServletUtility.getInstancia().loadRequestParameter(request, "pcoUsuario");
         String pcoEmp = ServletUtility.getInstancia().loadRequestParameter(request, "pcoEmp");
 
+        DatosUsuario depUsuario = usuarioService.getDepUsuario(pcoUsuario);
+        if (depUsuario != null) {
+            pcoUsuario = depUsuario.getCoUsuario();
+        }
         List<UsuarioDepAcceso> listDep = usuarioConfigService.getListDepAccesos(pcoEmp, pcoUsuario);
 
         model.addAttribute("listaDependenciaAcceso", listDep);

@@ -41,16 +41,17 @@
                 });</script>
             <input id="hinAD" name="hinAD" type="hidden"  value="0"/>
             <div id="dlglogin_principal">
-                <table width="100%" border="0" cellspacing="0" align="center" >
+                <table class="sgd-login-layout" width="100%" border="0" cellspacing="0" align="center" >
                    
                     <tr>
-                        <td width="45%" align="center">
-                            <img src="${staticResourcesURL}/images/inicio_login.jpg" width="352" height="280"/>
+                        <td class="sgd-login-photo-cell" width="45%" align="center">
+                            <img src="${staticResourcesURL}/images/inicio_login_inia.png" width="352" height="280" alt="Sede del Instituto Nacional de Innovación Agraria"/>
                         </td>
                         <td width="55%" valign="top" >
                             <div>
                                 <div id="rightPane" style="padding:10px 10px;">
                                     <div id="loginMaster">
+                                        <img class="sgd-login-logo" src="${staticResourcesURL}/images/logo-inia.png" width="250" height="75" alt="INIA Instituto Nacional de Innovación Agraria"/>
                                         <spring:nestedPath path="usuario">
                                              
                                             <form name="loginForm" action="login.do" method="POST" id="loginForm" autocomplete="off"  onsubmit="return loginSessionValidate();" >
