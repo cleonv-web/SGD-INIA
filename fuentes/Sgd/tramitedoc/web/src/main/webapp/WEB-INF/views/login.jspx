@@ -1,0 +1,193 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags">
+    <jsp:directive.page contentType="text/html;charset=ISO-8859-1"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <spring:eval expression="@applicationProps['resources.version']" var="resourceVersion"/>
+    <spring:eval expression="@applicationProps['staticResourcesUrl']" var="staticImage"/>
+    <c:set var="resourceURL" value="resources-${resourceVersion}" scope="request"/>
+    <c:set var="staticResourcesURL" value="${staticImage}" scope="request"/>
+	<spring:eval expression="@applicationProps['web_socket_server']" var="wSocketServer" scope="request"/>    
+
+    <tiles:insertTemplate template="/WEB-INF/templates/default.jspx" flush="true">
+        <tiles:putAttribute name="title" value=":Login"/>
+        <tiles:putAttribute name="body">
+            <script languaje="javascript">
+                jQuery(document).ready(function() {
+                    _ws_url_server_req='${wSocketServer}';
+                    jQuery('#coUsuario').change(function() {
+                        fn_updDependenciaUsuario();
+                    });
+                    fn_password();
+                    verificarClaveFuerte('${usuario.inClave}');                    
+                    pushFocusEvent();
+                    navegador();
+                    
+                 
+                    if(parseInt(${contIntentos})>parseInt(${intentoSinCaptcha}) || ${usuario.inAccesoLocal}=='0' )
+                    {
+                        $('#divCaptcha').show();
+                        $('#divCaptcha').attr("required","true");
+                        
+                    }
+                    else
+                    {
+                        $('#divCaptcha').hide();
+                         $('#divCaptcha').attr("required");
+                        
+                    }
+//                    submitLogin();
+                    jQuery(document).ajaxStop(jQuery.unblockUI);
+
+                });</script>
+            <input id="hinAD" name="hinAD" type="hidden"  value="0"/>
+            <div id="dlglogin_principal">
+                <table width="100%" border="0" cellspacing="0" align="center" >
+                   
+                    <tr>
+                        <td width="45%" align="center">
+                            <img src="${staticResourcesURL}/images/inicio_login.jpg" width="352" height="280"/>
+                        </td>
+                        <td width="55%" valign="top" >
+                            <div>
+                                <div id="rightPane" style="padding:10px 10px;">
+                                    <div id="loginMaster">
+                                        <spring:nestedPath path="usuario">
+                                             
+                                            <form name="loginForm" action="login.do" method="POST" id="loginForm" autocomplete="off"  onsubmit="return loginSessionValidate();" >
+                                                
+                                                <input type="hidden" id="Antiforgerytokens" name="Antiforgerytokens" style="display: none;"/>
+                                                <div id="dlglogin">
+                                                    <table class="padded-table10" width="100%" border="0" cellspacing="0">
+                                                         <tr>
+                                                            <td colspan="2" align="center" id="titulo_servicios">Sistema de Gestión Documental</td>
+                                                           </tr>
+                                                           <tr></tr>
+                                                           <tr>
+                                                            <td width="30%" align="left" id="subti_noti">Usuario</td>
+                                                            <td width="70%" align="left">
+                                                                <spring:bind path="coUsuario">
+                                                                    <input type="text"
+                                                                           maxlength="20"
+                                                                           name="${status.expression}"
+                                                                           value="${status.value}"
+                                                                           title ="Ingrese Usuario"
+                                                                           id = "coUsuario"
+                                                                           class="input ui-corner-all"
+                                                                           onkeypress="return filtrarTeclado(event, false, public_letras);"
+                                                                           required="true" 
+                                                                           tabindex="1"/>
+                                                                    <input class="input ui-corner-all" id="coUsuariolabel" style="display: none;"/>
+                                                                </spring:bind>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="left" id="subti_noti">Contraseña</td>
+                                                            <td align="left" >
+                                                                <spring:bind path="dePassword">
+                                                                  <!--  <input type="password"
+                                                                           maxlength="20"
+                                                                           name="${status.expression}"
+                                                                           value="${status.value}"                                                                           
+                                                                           id = "dePass"
+                                                                           class="input ui-corner-all"
+                                                                           onkeypress="return filtrarTeclado(event, false, null, '', '', login);"
+                                                                           required="true"
+                                                                           data-toggle="tooltip" data-trigger="manual" data-title="Bloque mayúscula activado"
+                                                                           tabindex="2"/>-->
+                                                                  <input type="password"
+                                                                           maxlength="30"
+                                                                           name="${status.expression}"
+                                                                           value="${status.value}"                                                                           
+                                                                           id = "dePass"
+                                                                           class="input ui-corner-all"                                                                           
+                                                                           required="true"
+                                                                           data-toggle="tooltip" data-trigger="manual" data-title="Bloque mayúscula activado"
+                                                                           tabindex="2"/>
+                                                                </spring:bind>
+                                                            </td>
+                                                        </tr>
+                                                      <tr display="none" id="divCaptcha">
+                                                            <td align="left" ></td>
+                                                            <td align="left" style="float:left;" >
+                                                                <div class="input-group" >
+                                                                <img id="captcha_id" name="imgCaptcha" src="captcha" 
+                                                                     style="float:left; border:1px solid #AAA; border-radius: 6px 0px 0px 0px; vertical-align:"/>
+                                                                <button class="btn btn-default btn-xs-bus" style="height:52px; float:left;" type="button" title ="Cambiar Codigo" onclick="document.getElementById('captcha_id').src = 'captcha?' + Math.random();  return false"><span class="glyphicon glyphicon-refresh"><jsp:text/></span></button>
+                                                                
+                                                             </div>
+                                                        <spring:bind path="captcha">
+                                                           <input type="text"
+                                                                           maxlength="10"
+                                                                           title ="Ingrese el texto de la imagen"
+                                                                           id = "captcha"
+                                                                           name = "captcha"
+                                                                            style=" width:230px; height:25px; float:left; border:1px solid #AAA; border-radius: 0px 0px 0px 0px; vertical-align: "
+                                                                           tabindex="3"/>
+                                                          
+                                                        </spring:bind>
+                                                         </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="left" id="subti_noti">Dependencia</td>
+                                                            <td align="left" >
+                                                                <spring:bind path="cempCodemp">
+                                                                    <input type="hidden"
+                                                                           name="${status.expression}"
+                                                                           value="${status.value}"
+                                                                           id = "cempCodemp"/>
+                                                                </spring:bind>
+                                                                <spring:bind path="coDep">
+                                                                    <input type="hidden"
+                                                                           name="${status.expression}"
+                                                                           value="${status.value}"
+                                                                           id = "coDep"/>
+                                                                </spring:bind>
+                                                                <div class="input-group">
+                                                                    <spring:bind path="deDep">
+                                                                        <input style="float:left;" type="text" class="input16 form-control" id="deDependencia" readonly="true" name="${status.expression}" value="${status.value}" />
+                                                                        <button style="float:left; height:33px;"  class="btn btn-default btn-xs-bus" type="button" title ="Cambiar Dependencia" onclick="fn_cambiaDependenciaLogin();"><span class="glyphicon glyphicon-refresh"><jsp:text/></span></button>                                                                        
+                                                                    </spring:bind>
+                                                                    
+                                                                </div> 
+
+                                                            </td>
+                                                        </tr>    
+                                                        <tr></tr>
+                                                        <tr>
+                                                            <td align="left"></td>
+                                                            <td align="left">
+                                                                <button type="submit" class="btn btn-default btn-lg" tabindex="3" style="width: 80%;">
+                                                                    <span class="glyphicon glyphicon-log-in"><jsp:text/></span> Ingresar</button>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <jsp:include page="messages.jspx"/>
+                                                </div>
+                                            </form>
+                                        </spring:nestedPath>
+
+                                    </div>
+                                    </div>
+                                </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <ul class="navbar-login">    
+                                <!--<li><a href="#" onclick="fn_mostrar_req_so();"><span class="glyphicon glyphicon-wrench"><jsp:text/></span> Requisitos del Sistema</a></li>-->
+                                <li><a id="idTradocDesktop_req_so" href="javascript:void(0);" onclick="return fn_mostrar_req_so(this); return false;" target="_self"><span class="glyphicon glyphicon-wrench"><jsp:text/></span> Requisitos de Sistema</a></li>
+                                <!--<li><a href="${urlManual}" target="_blank" onclick="fn_mostrar_manual();"><span class="glyphicon glyphicon-question-sign"><jsp:text/></span> Manual de Ayuda</a></li>-->
+                                <li><a href="${urlManual}" target="_blank" ><span class="glyphicon glyphicon-question-sign"><jsp:text/></span> Manual de Ayuda</a></li>
+                                <li><a href="#" onclick="fn_cambiaPwd();" ><span class="glyphicon glyphicon-lock"><jsp:text/></span> Cambiar Contraseña</a></li>
+                                <li><a href="${urlVideoTutorial}" target="_blank"><span class="glyphicon glyphicon-play-circle"><jsp:text/></span> Video Tutorial</a></li>
+                            </ul> 
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="loadding" class="box" style="display: none"><div class="image"><img align='absmiddle' src='${resourceURL}/images/loading.gif'/><jsp:text/></div><div class="line1">PROCESANDO</div><div class="line2">Ejecutando petición, por favor espere</div></div>
+
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+</jsp:root>

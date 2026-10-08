@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+>
+    <h:head>
+        <link href="#{request.contextPath}/util/css/estilos.css"
+              rel="stylesheet" type="text/css"/>
+        <style>
+            body {
+                font: 62.5% "Trebuchet MS", sans-serif;
+                margin: 50px;
+            }
+
+            .ui-layout-pane {
+                border: 0;
+                margin: 0;
+            }
+        </style>
+
+    </h:head>
+
+    <ui:composition template="/templates/principal.xhtml">
+        <ui:define name="content">
+            <h:form id="frmBusquedaEmisionExterna">
+                <p:growl id="msgs" showDetail="true"/>
+
+                <p:panel id="pnlEmisionExterna"
+                         header="Despacho - #{cEmisionExterna.cflgest.equals('P')?'Pendientes':cEmisionExterna.cflgest.equals('E')?'Enviados':cEmisionExterna.cflgest.equals('R')?'Recepsionados':cEmisionExterna.cflgest.equals('O')?'Observados':'Subsanados'}">
+                    <div class="ui-fluid">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-10">
+                                <div class="ui-g"></div>
+
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                        <p:outputLabel value="Desde"/>
+                                        <p:calendar id="idFecDesde"
+                                                    value="#{cEmisionExterna.dfecdesde}" showOn="button"
+                                                    pattern="dd-MM-yyyy"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                        <p:outputLabel value="Hasta"/>
+                                        <p:calendar id="idFecHasta"
+                                                    value="#{cEmisionExterna.dfechasta}" showOn="button"
+                                                    pattern="dd-MM-yyyy"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                        <p:commandButton id="btnBuscar" value="Buscar"
+                                                         actionListener="#{cEmisionExterna.bsqDocumentoDespacho()}"
+                                                         ajax="false" icon="ui-icon-search"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+
+                <p:dataTable id="tdEmisionExterna" var="emisionExterna"
+                             reflow="true" value="#{cEmisionExterna.lstConsultaDocumento}"
+                             rows="10" paginator="true" style="margin-bottom:20px"
+                             emptyMessage="No se encontraron datos para mostrar"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}">
+                    <f:facet name="{Exporters}">
+                        <h:commandLink>
+                            <p:graphicImage value="/util/images/icon/excel.png" width="24"
+                                            style="float:right"/>
+                            <p:dataExporter type="xls" target="tdEmisionExterna"
+                                            fileName="emision"/>
+                        </h:commandLink>
+                    </f:facet>
+                    <p:column headerText="NUM. DOCUMENTO" filterBy="#{emisionExterna.vnumdoc}"
+                              footerText="contiene"
+                              filterMatchMode="contains"
+                              sortBy="#{emisionExterna.vnumdoc}">
+                        <p:commandLink id="ajax" update=":frmDetalleEmiExterna"
+                                       action="#{cEmisionExterna.detalleEmisionExterna()}">
+                            <h:outputText value="#{emisionExterna.vnumdoc}"/>
+                            <f:setPropertyActionListener
+                                    target="#{cEmisionExterna.consultaDocumento}"
+                                    value="#{emisionExterna}"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column filterBy="#{emisionExterna.vuniorgrem}"
+                              headerText="UNI. ORG. EMISORA" footerText="contiene"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{emisionExterna.vuniorgrem}"/>
+                    </p:column>
+                    <p:column filterBy="#{emisionExterna.vrucentrec}"
+                              headerText="RUC ENT. RECEPTORTA" footerText="contiene"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{emisionExterna.vrucentrec}"/>
+                    </p:column>
+                    <p:column filterBy="#{emisionExterna.vnomentrec}"
+                              sortBy="#{emisionExterna.vnomentrec}"
+                              headerText="NOM. ENT. RECEPTORA" footerText="contiene"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{emisionExterna.vnomentrec}"/>
+                    </p:column>
+                    <p:column headerText="UNI. ORG. RECEPTORA"
+                              filterBy="#{emisionExterna.vuniorgdst}">
+                        <h:outputText value="#{emisionExterna.vuniorgdst}"/>
+                    </p:column>
+                    <p:column headerText="TIP. DOCUMENTO"
+                              sortBy="#{emisionExterna.ccodtipdoc}">
+                        <h:outputText
+                                value="#{emisionExterna.ccodtipdoc.equals('01')?'OFICIO':'CARTA'}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="FEC. REGISTRO"/>
+                        </f:facet>
+                        <h:outputText value="#{emisionExterna.dfecreg}"/>
+                    </p:column>
+                    <!-- <p:column rendered="#{cEmisionExterna.cflgest eq 'E' || cEmisionExterna.cflgest eq 'R' || cEmisionExterna.cflgest eq 'O'  || cEmisionExterna.cflgest eq 'S'}" filterBy="#{emisionExterna.vcuo}" headerText="CUO"  footerText="contiene" filterMatchMode="contains" >
+                          <h:outputText value="#{emisionExterna.vcuo}" />
+                    </p:column>   -->
+                    <p:column filterBy="#{emisionExterna.vcuo}"
+                              sortBy="#{emisionExterna.vcuo}" headerText="CUO"
+                              footerText="contiene" filterMatchMode="contains">
+                        <h:outputText
+                                value="#{emisionExterna.vcuo == null?'-------------------':emisionExterna.vcuo}"/>
+                    </p:column>
+                    <p:column rendered="#{cEmisionExterna.cflgest eq 'S'}"
+                              filterBy="#{emisionExterna.vcuoref}" headerText="CUO REF."
+                              footerText="contiene" filterMatchMode="contains">
+                        <h:outputText value="#{emisionExterna.vcuoref}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="ESTADO"/>
+                        </f:facet>
+                        <h:outputText
+                                value="#{emisionExterna.cflgest.equals('P')?'PENDIENTE':emisionExterna.cflgest.equals('E')?'ENVIADO':emisionExterna.cflgest.equals('R')?'RECEPCIONADO':emisionExterna.cflgest.equals('O')?'OBSERVADO':'SUBSANADO'}"/>
+                    </p:column>
+                    <p:column rendered="#{cEmisionExterna.cflgest eq 'P'}" width="10%"
+                              exportable="false">
+                        <f:facet name="header">
+                            <h:outputText value="ENVIO"/>
+                        </f:facet>
+                        <p:commandButton icon="ui-icon-transfer-e-w"
+                                         action="#{cEmisionExterna.formEnvioDocumento()}"
+                                         rendered="#{emisionExterna.cflgest eq 'P' and emisionExterna.cflgenv eq 'N'}"
+                                         update=":frmEnvioEmiExterna">
+                            <f:setPropertyActionListener
+                                    target="#{cEmisionExterna.consultaDocumento}"
+                                    value="#{emisionExterna}"/>
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-refresh"
+                                         action="#{cEmisionExterna.formEnvioDocumento()}"
+                                         rendered="#{emisionExterna.cflgest eq 'P' and emisionExterna.cflgenv eq 'E'}"
+                                         update=":frmEnvioEmiExterna frmBusquedaEmisionExterna:msgs frmBusquedaEmisionExterna:tdEmisionExterna"
+                                         style="background:#DF6348;border:#DF6348;">
+                            <f:setPropertyActionListener
+                                    target="#{cEmisionExterna.consultaDocumento}"
+                                    value="#{emisionExterna}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                    <p:column rendered="#{cEmisionExterna.cflgest eq 'E'}" width="10%"
+                              exportable="false">
+                        <f:facet name="header">
+                            <h:outputText value="ACTUALIZAR CARGO"/>
+                        </f:facet>
+                        <p:commandButton icon="ui-icon-transfer-e-w"
+                                         action="#{cEmisionExterna.actualizarCargoDespacho()}"
+                                         update="frmBusquedaEmisionExterna:msgs,frmBusquedaEmisionExterna:tdEmisionExterna">
+                            <f:setPropertyActionListener
+                                    target="#{cEmisionExterna.consultaDocumento}"
+                                    value="#{emisionExterna}"/>
+                        </p:commandButton>
+
+                    </p:column>
+
+                </p:dataTable>
+
+            </h:form>
+
+
+            <ui:include src="env_emisionExterna.xhtml"/>
+            <ui:include src="det_emisionExterna.xhtml"/>
+            <ui:include src="pdf_documentoPrincipal.xhtml"/>
+            <ui:include src="pdf_cargoFirmado.xhtml"/>
+
+
+        </ui:define>
+    </ui:composition>
+
+
+</f:view>

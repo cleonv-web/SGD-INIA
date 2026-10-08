@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+        http://www.springframework.org/schema/task  
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd"
+       default-autowire="byName">
+
+    <context:component-scan base-package="pe.gob.onpe.sgdtask"/>
+   <context:component-scan base-package="pe.gob.onpe.sgdtaskconv.dao.impl.postgresql" /> 
+    
+    <mvc:annotation-driven/>
+    <!--  Carga el archivo de configuración para el acceso a la base de datos y para el programador de tareas -->
+    <context:property-placeholder location="/WEB-INF/config/jdbc.properties,/WEB-INF/config/task.properties"/>  
+    
+    <bean id="applicationProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations" >
+            <list>
+                <!--catalina.base
+                crear la carpeta sgdproperties en:
+                GLASSFISH=(catalina.base) glassfish\glassfish\domains\domain1\
+                TOMACT=(catalina.base) apache-tomcat-7.0.42\
+                WEBLOGIC=(DOMAIN_HOME)-->
+                <value>file:///${catalina.base}/sgdproperties/application_not.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="mailProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations" >
+            <list>
+                <value>file:///${catalina.base}/sgdproperties/mail_not.properties</value>
+            </list>
+        </property>
+    </bean>    
+    <task:annotation-driven />    
+</beans>

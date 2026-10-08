@@ -1,0 +1,50 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" 
+          xmlns:c="http://java.sun.com/jsp/jstl/core" 
+          xmlns:jsp="http://java.sun.com/JSP/Page" 
+          xmlns:spring="http://www.springframework.org/tags" 
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <!--jsp:directive.page contentType="text/html;charset=ISO-8859-1"/-->
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">
+        jQuery(document).ready(
+            function() {
+                fu_eventoTablaAnexos();
+            }
+        );
+    </script> 
+    <title>
+        <spring:message code="application_name"/>:Inicio<tiles:insertAttribute name="title" ignore="true" />
+    </title>
+    <div class="alterTable ui-datatable-fixed">
+        <fieldset>
+        <legend> Documentos Anexos</legend>
+        <table id="myTableFixed" style="width:100%">
+            <thead>
+                <tr class="ui-state-default">
+                    <th class="styleBorderHeader">Nombre de anexo</th>
+                    <th class="styleBorderHeader percent20">Descargar</th>
+                </tr>
+            </thead>				
+            <tbody>
+                <c:forEach var="anexo" items="${listaAnexos}">
+                    <tr class="gradeA" >
+                        <td>${anexo.deDet}</td>
+                        <td class="percent20">
+                            <form:form name="anexoForm" action="/verifica/anexo" method="POST" id="anexoForm">
+                                <input type="hidden" id="custId" name="anexoNuAnn" value="${anexo.nuAnn}"/>
+                                <input type="hidden" id="custId" name="anexoNuEmi" value="${anexo.nuEmi}"/>
+                                <input type="hidden" id="custId" name="anexoNuAne" value="${anexo.nuAne}"/>
+                                <button title ="Descargar" class="btn btn-default btn-xs" value="" type="submit">
+                                    <span class="glyphicon glyphicon-download-alt"/>
+                                </button>
+                            </form:form>
+                        </td>
+                    </tr>
+                </c:forEach>
+                  
+            </tbody>			
+        </table>
+        </fieldset>
+    </div>
+</jsp:root>	

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+        xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+        version="2.2">
+    <navigation-rule>
+    <from-view-id></from-view-id>
+    <navigation-case>
+        <from-outcome>bienvenida</from-outcome>
+        <to-view-id>/pages/modulos/bienvenida/bienvenida.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>login</from-outcome>
+        <to-view-id>/login.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>emisionExterna</from-outcome>
+        <to-view-id>/pages/modulos/emisionExterna/bsq_emisionExterna.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>recepcionExterna</from-outcome>
+        <to-view-id>/pages/modulos/recepcionExterna/bsq_recepcionExterna.xhtml</to-view-id>
+    </navigation-case>
+
+    <navigation-case>
+        <from-outcome>reporteXBandejas</from-outcome>
+        <to-view-id>/pages/modulos/reportes/rptDespachoRecepcion.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>reporteXBandejasXMes</from-outcome>
+        <to-view-id>/pages/modulos/reportes/rptDespachoRecepcionXMes.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>reporteXBandejasXFecha</from-outcome>
+        <to-view-id>/pages/modulos/reportes/rptDespachoRecepcionXFecha.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>cargomasivo</from-outcome>
+        <to-view-id>/pages/modulos/emisionExterna/cargo_despacho_masivo.xhtml</to-view-id>
+    </navigation-case>
+    </navigation-rule>
+</faces-config>

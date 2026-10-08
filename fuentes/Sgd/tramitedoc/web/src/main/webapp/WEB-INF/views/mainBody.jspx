@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:jsp="http://java.sun.com/JSP/Page">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+
+    <!--<div id="applicationPanel" dojotype="dijit.layout.ContentPane" region="center" widgetid="applicationPanel" role="group">-->
+    <div id="applicationPanel_22">
+        <jsp:directive.include file="bienvenida.jspx"/>
+    </div>
+</jsp:root>
+
+
+

@@ -1,0 +1,225 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <jsp:scriptlet><![CDATA[response.setHeader("Cache-Control", "max-age=43200");]]></jsp:scriptlet>
+    <script languaje="javascript">jQuery(document).ready(function() {fn_iniSeguiDocSalida();
+                //fn_construyeTablaVencimientoDetalle();
+                fn_construyeTablaVencimientoDetalleCuadrados();
+                fnVerLeyendaVencimiento();    
+    });</script>  	
+    <div class="ui-panel ui-corner-all" id="divRecDocumentoMp" style="min-width: 1500px">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>SEGUIMIENTO DE ESTADOS DE DOCUMENTOS DE SALIDA</span>
+        </div>
+        <div class="ui-panel-body">
+            <input id="txtFechaActual" name="txtFechaActual" type="hidden" value="${fechaActual}"/>
+            <input id="txtAnnioActual" name="txtAnnioActual" type="hidden" value="${annioActual}"/>
+            <fieldset>
+                <div class="btn-group btn-group-lg">
+                   <button title ="Detalle Documento" class="btn btn-primary btn-lg" onclick="fn_detDocExtSeguiRec();" type="button">
+                       <span class="glyphicon glyphicon-edit"><jsp:text/></span> Detalle</button>
+                   <button title ="Ver Documento" class="btn btn-primary btn-lg" onclick="fn_verDocumentoExtLsSegui();" type="button">
+                       <span class="glyphicon glyphicon-list-alt"><jsp:text/></span> Ver Documento</button>
+                   <button title ="Ver Documento Anexos - Referencias" class="btn btn-primary btn-lg" onclick="fn_verAnexoDocExtLsSegui();" type="button">
+                       <span class="glyphicon glyphicon-paperclip"><jsp:text/></span> Ver Anexos</button>
+                   <button title ="Seguimiento de Documentos" class="btn btn-primary btn-lg" onclick="fn_verSegumientoDocExtLsSegui();" type="button">
+                       <span class="glyphicon glyphicon-transfer"><jsp:text/></span> Seguimiento</button>
+                   <div class="btn-group btn-group-lg">
+                       <button title ="Exportar Consulta EXCEL" class="btn btn-primary" onclick="fu_generarReporteDocExtSeguiRecXLS();" type="button">
+                        <span class="glyphicon glyphicon-export"><jsp:text/></span> Exportar</button>
+                       <button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown">
+                           <span class="caret"></span>&amp;nbsp;
+                           <span class="sr-only">Toggle Dropdown</span>
+                       </button>
+                       <ul id="ullsAbrirDocumento" class="dropdown-menu" role="menu">
+                           <li><a href="#" onclick="fu_generarReporteDocExtSeguiRecPDF();" title ="Exportar Consulta PDF">Exportar PDF</a></li>
+                           <li><a href="#" onclick="fu_generarReporteDocExtSeguiRecXLS();" title ="Exportar Consulta Excel">Exportar Excel</a></li>
+                       </ul>
+                   </div>                        
+                           <button title ="Salir Seguimiento de Estados de Documentos Externos Recepcionados" class="btn btn-primary btn-lg" onclick="cerrarPantallaMP();" type="button">
+                       <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                </div>                    
+
+            </fieldset>
+            <form:form modelAttribute="buscarDocExtRecSeguiEstado">
+            <form:hidden path="tipoBusqueda"/>        
+            <form:hidden path="esFiltroFecha"/>  
+            <form:hidden path="feEmiIni"/>  
+            <form:hidden path="feEmiFin"/>  
+            <table width="100%" >
+                <tr valign="top">
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Búsqueda</legend>
+                            <table width="100%">
+                                <tr>
+                                   <td>Nro Emision:</td>
+                                   <td>
+                                       <!--rbn 25/09/2015 Se extiende el maxlength de 6 a 10, ya que el campo NU_COR_EMI de la tabla TDTV_REMITOS es un number(10) -->
+                                       <form:input path="nuCorEmi" maxlength="10" style="width: 60px;" onkeypress="return fu_onKeyPressFiltrarTecladoNumero(event, false, public_enteros)"/>
+                                   </td>
+                                   <td>Nro Documento:</td>
+                                   <td>
+                                       <form:input path="nuDoc" style="width: 60px;" maxlength="50"/>
+                                   </td>
+                                   <td>Expediente:</td>
+                                   <td>
+                                       <form:input path="nuExpediente" style="width: 80px;" maxlength="20"/>
+                                   </td>
+                                   <td align="right">
+                                        <button title ="Buscar documentos" class="btn btn-default btn-sm" onclick="pre_changeTipoBusqRecepDocExtSegui('1');" type="button">
+                                            <span class="glyphicon glyphicon-search"><jsp:text/></span> Buscar</button>
+                                        <button title ="Limpiar datos de b&#250;squeda" class="btn btn-default btn-sm" onclick="fu_cleanDocExtSegui('1');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                   </td>  
+                               </tr>
+                               <tr>
+                                   <td>Asunto:</td>
+                                   <td colspan="5">
+                                       <form:input path="deAsu" style="width: 360px;" onkeypress="return fu_onKeyPressFiltrarTecladoCadena(event, false, public_letras)" maxlength="100"/>
+                                   </td>
+                                   <td align="right">
+                                       <form:checkbox path="esIncluyeFiltro"/><strong>Incluir Filtro</strong>
+                                   </td>                                      
+                               </tr>
+                            </table>
+                        </fieldset>                        
+                    </td>
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Filtro</legend>
+                            <table width="100%">
+                                <tr>
+                                    <td colspan="2">
+                                        <form:hidden path="nuAnn"/>  
+					<div id="fechaFiltro" class="cajaFechas">
+                                            <div class="cajaIcono"><span class="glyphicon glyphicon-calendar fa fa-calendar"><jsp:text/></span></div>
+                                            <div name="labelDate" class="cajaEtiqueta" style="text-align: center;width: 210px;"><jsp:text/></div>
+                                            <div class="cajaTriangulo"><b class="caret"><jsp:text/></b></div>
+                                        </div>
+                                    </td>
+                                    <td>Estado:</td>
+                                    <td>
+                                        <form:select path="coEsDocEmi" style="width:180px">
+                                            <form:options items="${deEstadosList}" itemValue="coEst" itemLabel="deEst"/>
+                                        </form:select>
+                                    </td>
+                                   <td align="right">
+                                       <button title ="Filtrar documentos" class="btn btn-default btn-sm" onclick="pre_changeTipoBusqRecepDocExtSegui('0');" type="button">
+                                            <span class="glyphicon glyphicon-filter"><jsp:text/></span> Filtrar</button>
+                                        <button title ="Limpiar datos de Filtro" class="btn btn-default btn-sm" onclick="fu_cleanDocExtSegui('0');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                   </td>  
+                                </tr>
+                                <tr>    
+                                    <td>Vencimiento:</td>
+                                    <td>
+                                        <form:select path="coEstVen" style="width:156px;" >
+                                            <form:options items="${deVencimientoList}" itemValue="coEst" itemLabel="deEst" />
+                                        </form:select>
+                                        <button id="btnShowLeyendaVen" type="button" class="btn btn-primary btn-sm" style="margin-left: 4px;background-color:#5CB85C; border-color:#4CAE4C;">Leyenda</button>
+                                    </td>   
+                                    <td>Tipo Doc:</td>
+                                    <td>
+                                        <form:select path="coTipDocAdm" style="width:180px">
+                                            <form:options items="${deTipoDocumentoList}" itemValue="coTipDoc" itemLabel="deTipDoc" />
+                                        </form:select>
+                                    </td>
+                                    <td align="right">
+                                        <a href="#" title="M&#225;s datos de Filtro" onclick="mostrarOcultarDivBusqFiltro('1');" class="btn-actdiv">
+                                            <span id="spanDivFiltro" class="glyphicon glyphicon-collapse-down"><jsp:text/></span>
+                                        </a>
+                                    </td>    
+                                </tr>
+                            </table>
+                            <div id="divConfigFiltro" style="display:none;">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="100px">Remitente:</td>
+                                        <input type="hidden" id="auxCoDepEmi" name="auxCoDepEmi"/>
+                                        <form:input path="coDepEmi" type="hidden"/>
+                                        <input type="hidden" id="auxDeDepEmi" name="auxDeDepEmi"/>
+                                        <td>
+                                            <div class="input-group">
+                                              <form:input path="deDepEmi" class="form-control" size="50" readonly="true"/>
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaDependenciaRemiteDocExtSegui();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>
+                                    <tr>                                    
+                                        <td>Elaborado por:</td>
+                                        <td>
+                                            <form:input path="coEmpRes" type="hidden"/>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtElaboradoPor" name="txtElaboradoPor" size="50" readonly="true" value=" [TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaElaboradoPorSeguiDocExtRec();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Destino:</td>
+                                        <td colspan="3">
+                                            <form:input path="coDepDes" type="hidden"/>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="txtDepDestino" name="txtDepDestino" size="50" readonly="true" value=" [TODOS]" />
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaDestinatarioDocExtSegui();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                                </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>                                    
+                                    <tr>
+                                        <td>Emisor:</td>
+                                        <td>
+                                            <form:select path="tiEmi" style="width:180px">
+                                                <form:options items="${deTipoRemiList}" itemValue="coDestinatario" itemLabel="deDestinatario"/>
+                                            </form:select>
+                                        </td>                                        
+                                    </tr>
+                                    <tr>                                    
+                                        <td>Tipo Expediente:</td>
+                                        <td>
+                                            <form:select path="coProceso" style="width:180px">
+                                                <form:option value="" selected="selected">.:TODOS:.</form:option>
+                                                <form:options items="${lstTupaExp}" itemValue="coTupa" itemLabel="deTupa"/>
+                                            </form:select>
+                                        </td>
+                                    </tr>                                            
+                                </table>
+                            </div>
+                        </fieldset>                        
+                    </td>
+                </tr>
+            </table>
+            </form:form>
+            <fieldset>
+                <legend>Detalle</legend>   
+                <div id="divTblConsulDocumentoExterno">
+                    <jsp:directive.include file="tblDocsSalida.jspx"/>
+                </div>                
+            </fieldset>
+        </div>
+    </div>
+    <div id="divDocumExternoConsul" style="display:none;">&amp;nbsp;</div>                                    
+    <!-- redondo -->
+    <div class="seleccionaFecha openCachito" style="display:none;">
+        <div class="selectContent">
+            <table id="tablaDetVencimientoCirculos">
+            </table>
+            <div style="width: 160px;">
+                <button id="DPAceptar" type="button" class="btn btn-sm btn-success" style="margin-right: 5px;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    <!--Cuadrado-->
+    <div id="divLeyendaVen" class="seleccionaFecha openCachito" style="display:none;">
+        <div class="selectContent">
+            <table id="tablaDetVencimientoCuadrados">
+            </table>
+        </div>
+    </div>    
+</jsp:root>	

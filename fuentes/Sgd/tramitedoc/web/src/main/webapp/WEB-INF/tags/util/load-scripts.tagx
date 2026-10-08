@@ -1,0 +1,50 @@
+<jsp:root xmlns:c="http://java.sun.com/jsp/jstl/core" 
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+          xmlns:jsp="http://java.sun.com/JSP/Page" 
+          xmlns:spring="http://www.springframework.org/tags" 
+          version="2.0">
+    <jsp:output omit-xml-declaration="yes" />
+
+    <spring:eval expression="@applicationProps['application.version']" var="applicationVersion" scope="request"/>
+    <spring:eval expression="@applicationProps['resources.version']" var="resourceVersion"/>
+    <spring:eval expression="@applicationProps['localCacheObjects.version']" var="localObjectsVersion"/>
+    <spring:eval expression="@applicationProps['version_jre']" var="versionJRE" scope="request"/>
+    
+    <spring:eval expression="@applicationProps['staticResourcesUrl']" var="staticResourcesUrl1"/>
+
+    <c:set var="resourceURL" value="resources-${resourceVersion}" scope="request"/>
+    <c:set var="staticResourcesURL" value="${staticResourcesUrl1}" scope="request"/>
+    <c:set var="versionJRE" value="${versionJRE}" scope="request"/>
+
+    <!--<spring:eval expression="@applicationProps['static_resource_server']" var="staticResourceURL" scope="request"/>-->
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/menu.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/default.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/themes/custom-theme/skin.css" />    
+
+    <script type="text/javascript">var resourceURL="${resourceURL}"; var versionJRE = "${versionJRE}" ;var staticResourcesURL="${staticResourcesURL}"</script>
+    
+    <script src="${resourceURL}/js/default.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+    <script src="${resourceURL}/js/jquery-3.10.1.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+    <script src="${resourceURL}/js/jquery-ui-3.10.3.custom.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+    <script src="${resourceURL}/js/jquery.blockUI.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+    <script src="${resourceURL}/js/jquery.browser.js" type="text/javascript"><!-- required for FF3 and Opera --></script>    
+    <!--
+    <script src="${resourceURL}/js/appletManager2.js" type="text/javascript"> required for FF3 and Opera </script>
+    <script src="${resourceURL}/js/verificaReq.js" type="text/javascript"> required for FF3 and Opera </script>
+    -->
+    <script src="${resourceURL}/js/crypto-js.js" type="text/javascript"><!-- required for FF3 and Opera --></script> 
+    <script type="text/javascript">var pRutaContexto = "${ctx}";var pAppVersion="${applicationVersion}";</script>
+    <script type="text/javascript"><![CDATA[function loadJs(varUrl){var js = document.createElement('script');js.src = varUrl;var head = document.getElementsByTagName('head')[0];head.appendChild(js);}]]></script>
+    <script type="text/javascript"><![CDATA[function loadCss(varUrl){var h = document.getElementsByTagName('head')[0];var link = document.createElement('link');link.href = varUrl;link.type = 'text/css';link.rel = 'stylesheet';h.appendChild(link);}]]></script>
+
+    <script type="text/javascript">
+    	jQuery(document).ready(function(){
+            loadJs("${resourceURL}/js/util.js");
+            loadJs("${resourceURL}/js/overLib.js");
+            loadJs("${resourceURL}/js/bootstrap.min.js");
+            //loadJs("${resourceURL}/js/deployJava2.js");
+            loadJs("${resourceURL}/js/bootbox.min.js");            
+        });
+    </script>
+</jsp:root>

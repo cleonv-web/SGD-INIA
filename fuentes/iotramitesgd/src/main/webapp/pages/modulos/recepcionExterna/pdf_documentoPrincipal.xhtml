@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <style>
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+    </style>
+</h:head>
+<body>
+
+<p:dialog widgetVar="recepcionExternaDocumentoPrincipalDialogWidget" id="recepcionExternaDocumentoPrincipalDialogId"
+          height="600" width="900" header="Doc. Principal"
+          closable="true" draggable="true" resizable="true" appendTo="@(body)">
+    <h:form id="frmRecExternaDocumentoPrincipal" enctype="multipart/form-data">
+        <p:media value="#{cVariableSession.documentoPrincipal!=null? cVariableSession.documentoPrincipal:ruta.perfil}"
+                 width="100%" height="580px" player="pdf">
+        </p:media>
+    </h:form>
+
+</p:dialog>
+</body>
+</html>

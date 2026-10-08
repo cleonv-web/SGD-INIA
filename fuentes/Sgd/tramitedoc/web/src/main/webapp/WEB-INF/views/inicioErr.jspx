@@ -1,0 +1,40 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+
+    <tiles:insertTemplate template="/WEB-INF/templates/default.jspx" flush="true">
+        <tiles:putAttribute name="title" value="Inicio"/>
+        <tiles:putAttribute name="body">
+            <div id="dlglogin">
+                <spring:nestedPath path="usuario">
+                    <form name="f" action="inicioErr.do" method="POST" id="loginForm">
+                        <div class="ui-panel ui-corner-all">
+                            <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+                                <span>Error en Acceso al Sistema</span>
+                            </div>
+                            <div class="ui-panel-body">
+                                <table cellspacing="2" cellpadding="0" width="100%">
+                                    <tr>
+                                        <td colspan="2">
+                                            <div class="actions">
+                                                <input type="button"
+                                                       value="Regresar"
+                                                       size="10"
+                                                       onclick="login()"
+                                                       tabindex="3"
+                                                       class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <jsp:include page="messages.jspx"/>
+                        </div>
+                    </form>
+                </spring:nestedPath>
+            </div>
+
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+</jsp:root>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TDR11" pageWidth="601" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="539" leftMargin="34" rightMargin="28" topMargin="28" bottomMargin="28" isFloatColumnFooter="true" uuid="d06da3dc-b19f-4675-b0de-3f6cac86f812">
+	<property name="ireport.zoom" value="1.610510000000069"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_NU_ANN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NU_EMI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_SISTEMA" class="java.lang.String">
+		<defaultValueExpression><![CDATA["SISTEMA DE GESTIÓN DOCUMENTAL"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_AREA_US" class="java.lang.String">
+		<parameterDescription><![CDATA["OTI/PCM"]]></parameterDescription>
+		<defaultValueExpression><![CDATA["OTI/PCM"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NU_DOC" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LOGO_DIR" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUB_REPORT_DIR1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUB_REPORT_DIR2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="datosSubRep1" class="java.util.List">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="datosSubRep2" class="java.util.List">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="formatoSiglas" class="java.lang.String"/>
+	<field name="deDepEmi" class="java.lang.String"/>
+	<field name="coDepEmi" class="java.lang.String"/>
+	<field name="coTipDocAdm" class="java.lang.String"/>
+	<field name="deTipDocAdm" class="java.lang.String"/>
+	<field name="nuAnn" class="java.lang.String"/>
+	<field name="deDocSig" class="java.lang.String"/>
+	<field name="nuDiaAte" class="java.lang.String"/>
+	<field name="deAsu" class="java.lang.String"/>
+	<field name="nuExpediente" class="java.lang.String"/>
+	<field name="fecha" class="java.lang.String"/>
+	<field name="nuDoc" class="java.lang.String"/>
+	<field name="deEmpEmi" class="java.lang.String"/>
+	<field name="cargoEmpEmi" class="java.lang.String"/>
+	<field name="siglaInstitucion" class="java.lang.String"/>
+	<group name="dependencia_emi">
+		<groupExpression><![CDATA[$F{coDepEmi}]]></groupExpression>
+		<groupHeader>
+			<band height="35">
+				<staticText>
+					<reportElement x="38" y="0" width="53" height="17" uuid="c5e9c375-1325-4b38-b1b7-74546fc9829f"/>
+					<textElement>
+						<font fontName="SansSerif"/>
+					</textElement>
+					<text><![CDATA[ASUNTO:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="91" y="0" width="335" height="35" forecolor="#000000" uuid="e1b974c8-13f2-4755-9432-21cb69fd8b04"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="8" pdfEncoding="Cp1252"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{deAsu}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="428" y="0" width="106" height="17" forecolor="#000000" uuid="7f4d312f-b6f7-460a-98fa-ddd29ca6715c">
+						<printWhenExpression><![CDATA[new Boolean($F{coTipDocAdm}.equals("232"))]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Atender en "+$F{nuDiaAte}+" días"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="dependecia_emi1">
+		<groupExpression><![CDATA[$F{coDepEmi}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<subreport runToBottom="false">
+					<reportElement mode="Transparent" x="91" y="1" width="448" height="21" isPrintWhenDetailOverflows="true" uuid="0f7cf3a3-67a8-4c47-8961-7c48f3017ba8"/>
+					<subreportParameter name="P_NU_ANN">
+						<subreportParameterExpression><![CDATA[$P{P_NU_ANN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NU_EMI">
+						<subreportParameterExpression><![CDATA[$P{P_NU_EMI}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{datosSubRep1})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUB_REPORT_DIR1}+"/TDR11_SUB1.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement x="15" y="0" width="76" height="17" uuid="b8b71743-f20c-435d-869f-51a0f0cf317a"/>
+					<textElement>
+						<font fontName="SansSerif"/>
+					</textElement>
+					<text><![CDATA[REFERENCIA :]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="dependencia_emi2" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{coDepEmi}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<frame>
+					<reportElement positionType="Float" x="0" y="0" width="540" height="20" uuid="e554b326-9ed1-40a0-b136-45d85a535d61"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="0" width="212" height="20" uuid="28a48415-b5f2-4dee-b308-1c04e0f1ea2c"/>
+						<box>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="SansSerif" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[DEPENDENCIA DESTINO]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="210" y="0" width="71" height="20" uuid="28cd1473-5fd2-4311-b1cd-471f0cf45aa4"/>
+						<box>
+							<topPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="SansSerif" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[TRAMITE]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="280" y="0" width="72" height="20" uuid="b54295ff-6fb8-4d2b-b369-a186f51311cd"/>
+						<box>
+							<topPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="0.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="SansSerif" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[PRIORIDAD]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="351" y="0" width="188" height="20" uuid="d89c4970-1e25-41ba-a5d4-6cf30ebf236d"/>
+						<box>
+							<pen lineWidth="0.0"/>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="0.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="SansSerif" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[INDICACIONES]]></text>
+					</staticText>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="dependencia_emi3">
+		<groupExpression><![CDATA[$F{coDepEmi}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<frame>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="540" height="20" uuid="0b2f054a-0930-42be-8549-77ed6e3ce331"/>
+					<box bottomPadding="0">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<subreport runToBottom="true">
+						<reportElement mode="Transparent" x="0" y="0" width="539" height="20" uuid="b82241b0-9b85-4cdb-b985-c111b1113f49"/>
+						<subreportParameter name="P_NU_ANN">
+							<subreportParameterExpression><![CDATA[$P{P_NU_ANN}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="P_NU_EMI">
+							<subreportParameterExpression><![CDATA[$P{P_NU_EMI}]]></subreportParameterExpression>
+						</subreportParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{datosSubRep2})]]></dataSourceExpression>
+						<subreportExpression><![CDATA[$P{SUB_REPORT_DIR2}+"/TDR11_SUB2.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="113">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="25" y="75" width="382" height="17" forecolor="#000000" uuid="f094e446-a9cb-4b4d-97b1-3c405a6c02be"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{formatoSiglas}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="42" width="539" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="32eb6bd3-4e85-4b1d-9ffc-55a30733f15d"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deDepEmi}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="15" y="96" width="76" height="17" uuid="b76a6321-6355-4be8-aaea-5c2997322e5e"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[EXPEDIENTE :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="91" y="96" width="203" height="17" forecolor="#000000" uuid="b65d8e44-588e-4515-8ab9-114ffbea8cda"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nuExpediente}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="407" y="73" width="127" height="38" uuid="0fbd88ad-8244-418f-99f7-2233573ecf05"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="407" y="88" width="127" height="1" uuid="62b73160-b040-4625-85cc-03d45bb7a2cd"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="407" y="73" width="127" height="16" uuid="d025b724-f2f5-483c-ae45-04e4916b1bd3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="407" y="92" width="127" height="17" forecolor="#000000" uuid="43560c9a-2d21-47cf-88d2-c13626f6d730"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA}.equals("0")?$F{fecha}:$P{P_FECHA}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true">
+				<reportElement x="0" y="0" width="122" height="40" uuid="57085ce3-398e-4190-acb3-d26415396e11"/>
+				<imageExpression><![CDATA[$P{P_LOGO_DIR}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<pageFooter>
+		<band height="107">
+			<line>
+				<reportElement x="0" y="90" width="539" height="1" uuid="cea3e9b3-d2b5-4663-87a1-bbbe46b4cd33"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="0" y="90" width="179" height="17" uuid="ec9dbe6c-bb0a-4380-9998-b063ec9183d0"/>
+				<textElement markup="none">
+					<font fontName="SansSerif" size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{siglaInstitucion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="90" width="329" height="17" isPrintWhenDetailOverflows="true" uuid="d25688bd-2ea6-420d-893a-0877afc42027"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="SansSerif" size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SISTEMA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="210" y="21" width="329" height="17" uuid="e8f0dde0-8b48-4fc5-9c84-77535692bfe8"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cargoEmpEmi}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="5" width="329" height="17" uuid="e3f97046-75c7-4f63-bc69-7930bb227925"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deEmpEmi}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TDR11_SUB2" pageWidth="539" pageHeight="430" whenNoDataType="AllSectionsNoDetail" columnWidth="539" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="15cfe25d-a470-438a-9439-039f7bf7db9a">
+	<property name="ireport.zoom" value="1.9487171000000756"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_NU_ANN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NU_EMI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<field name="nuAnn" class="java.lang.String"/>
+	<field name="nuEmi" class="java.lang.String"/>
+	<field name="nuDes" class="java.lang.String"/>
+	<field name="nuCorEmi" class="java.lang.String"/>
+	<field name="coDepEmi" class="java.lang.String"/>
+	<field name="deDepEmi" class="java.lang.String"/>
+	<field name="coEmpEmi" class="java.lang.String"/>
+	<field name="deEmpEmi" class="java.lang.String"/>
+	<field name="feEmi" class="java.lang.String"/>
+	<field name="coTipDocAdm" class="java.lang.String"/>
+	<field name="deTipDocAdm" class="java.lang.String"/>
+	<field name="nuDoc" class="java.lang.String"/>
+	<field name="nuDiaAte" class="java.lang.String"/>
+	<field name="deAsu" class="java.lang.String"/>
+	<field name="coDepDes" class="java.lang.String"/>
+	<field name="deDepDes" class="java.lang.String"/>
+	<field name="coEmpDes" class="java.lang.String"/>
+	<field name="deEmpDes" class="java.lang.String"/>
+	<field name="deDepEmp" class="java.lang.String"/>
+	<field name="deMot" class="java.lang.String"/>
+	<field name="dePri" class="java.lang.String"/>
+	<field name="dePro" class="java.lang.String"/>
+	<field name="nuExpediente" class="java.lang.String"/>
+	<group name="Destino" keepTogether="true">
+		<groupExpression><![CDATA[$F{nuDes}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<staticText>
+					<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="539" height="14" backcolor="#E6E6E6" uuid="13e2ef7d-e21a-4b67-92c5-f13d29239666">
+						<printWhenExpression><![CDATA[new Boolean($V{COLUMN_COUNT}.intValue() % 2 == 0) ? false : true]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					</box>
+					<textElement markup="none"/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="283" y="0" width="70" height="14" forecolor="#000000" uuid="31d0edb6-3efe-4c8c-ad4b-97b541d698b3"/>
+					<box bottomPadding="0">
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dePri}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="211" y="0" width="71" height="14" forecolor="#000000" uuid="6588edf0-27c5-48fb-a759-42164ac5e416"/>
+					<box bottomPadding="0"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{deMot}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="211" height="14" forecolor="#000000" uuid="421733da-95fa-439b-b309-2c3c12b94270"/>
+					<box leftPadding="1" bottomPadding="4">
+						<leftPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{deDepEmp}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="356" y="0" width="184" height="14" forecolor="#000000" uuid="c7c5bf5e-9d8c-4cbf-b3c5-f0721ca76d11"/>
+					<box bottomPadding="3">
+						<leftPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dePro}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="4">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="539" height="4" backcolor="#FFFFFF" uuid="5d0ad228-725e-410a-8e17-cd7493d80820"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

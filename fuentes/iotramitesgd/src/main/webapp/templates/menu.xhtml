@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:form id="frmMenu">
+    <input id="wsServiceLocation" type="hidden" name="wsServiceLocation"
+           value="#{cVariableSession.wsServiceLocation}"></input>
+    <input id="urlAplication" type="hidden" name="urlAplication" value="#{cVariableSession.urlAplication}"></input>
+
+
+    <p:menu style="width:250px">
+        <p:submenu label="Despacho">
+            <p:menuitem value="Pendientes" action="#{cEmisionExterna.inicializarControladora('P')}"
+                        icon="ui-icon-bullet" ajax="false" update=":frmBusquedaEmisionExterna:tdEmisionExterna"/>
+            <p:menuitem value="Enviados" action="#{cEmisionExterna.inicializarControladora('E')}" icon="ui-icon-bullet"
+                        ajax="false"/>
+            <p:menuitem value="Recepcionados" action="#{cEmisionExterna.inicializarControladora('R')}"
+                        icon="ui-icon-bullet" ajax="false"/>
+            <p:menuitem value="Observados" action="#{cEmisionExterna.inicializarControladora('O')}"
+                        icon="ui-icon-bullet" ajax="false"/>
+            <!--         	<p:menuitem value="Subsanados" action="#{cEmisionExterna.inicializarControladora('S')}" icon="ui-icon-bullet"  ajax="false"/> -->
+            <p:menuitem value="Cargos Masivos" action="#{cCargo.inicializarControladora()}" icon="ui-icon-bullet"
+                        ajax="false" rendered="#{cVariableSession.flgactcar eq 'S'}"/>
+
+        </p:submenu>
+        <p:submenu label="Recepción">
+            <p:menuitem value="Pendientes" action="#{cRecepcionExterna.inicializarControladora('P')}"
+                        icon="ui-icon-bullet" ajax="false"/>
+            <p:menuitem value="Recepcionados" action="#{cRecepcionExterna.inicializarControladora('R')}"
+                        icon="ui-icon-bullet" ajax="false"/>
+            <p:menuitem value="Observados" action="#{cRecepcionExterna.inicializarControladora('O')}"
+                        icon="ui-icon-bullet" ajax="false"/>
+        </p:submenu>
+        <p:submenu label="Reportes">
+            <p:menuitem value="Reporte por bandejas" action="#{cReporte.formReporteXBandejas()}" icon="ui-icon-bullet"
+                        ajax="false"/>
+            <p:menuitem value="Reporte por bandejas por mes" action="#{cReporte.formReporteXBandejasXMes()}"
+                        icon="ui-icon-bullet" ajax="false"/>
+        </p:submenu>
+
+
+    </p:menu>
+
+
+</h:form>
+
+
+</html>
+

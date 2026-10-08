@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:form id="formCabecera" style="background:url(#{request.contextPath}#{ruta.principal}/fondo-azul.jpg); 
+				 height:100%; 
+				 width:100%;">
+
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <div class="ui-g-6 ui-md-4" align="center">
+                <p:graphicImage value="#{ruta.logo}headerPCM1.png" style="float:left;"/>
+            </div>
+            <div class="ui-g-6 ui-md-4" align="center">
+                <p:commandLink id="wgCerrarSession" value="Cerrar Sesión" type="button" onclick="PF('WVconfirm').show()"
+                               style="color: white;float:right;"/>
+            </div>
+        </div>
+    </div>
+
+</h:form>
+<p:confirmDialog id="DlgConfirm"
+                 header="Cerrar Sesion"
+                 widgetVar="WVconfirm"
+                 appendTo="@(body)"
+                 modal="true"
+                 width="230"
+                 height="60"
+                 draggable="false"
+                 resizable="false"
+                 maximizable="false"
+                 position="center, center"
+                 security="alert"
+                 message="Esta seguro de cerrar la sesión."
+                 style="position: absolute;">
+    <h:form>
+        <h:panelGrid columns="2">
+            <p:commandButton value="Aceptar"
+                             ajax="false"
+                             action="#{login.logout}"
+                             icon="ui-icon-gear"/>
+
+            <p:commandButton value="Cancelar"
+                             ajax="true"
+                             onclick="WVconfirm.hide()"
+                             icon="ui-icon-close"/>
+        </h:panelGrid>
+    </h:form>
+</p:confirmDialog>
+</html>

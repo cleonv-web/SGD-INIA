@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SGD: compilar fuentes",
+      "type": "shell",
+      "command": "bash", "args": ["${workspaceFolder}/SGD.sh", "compilar"],
+      "windows": {"command": "${workspaceFolder}/SGD.bat", "args": ["compilar"]},
+      "problemMatcher": [], "group": {"kind": "build", "isDefault": true}
+    },
+    {
+      "label": "SGD: desplegar cambios",
+      "type": "shell",
+      "command": "bash", "args": ["${workspaceFolder}/SGD.sh", "desplegar"],
+      "windows": {"command": "${workspaceFolder}/SGD.bat", "args": ["desplegar"]},
+      "problemMatcher": []
+    },
+    {
+      "label": "SGD: verificar",
+      "type": "shell",
+      "command": "bash", "args": ["${workspaceFolder}/SGD.sh", "verificar"],
+      "windows": {"command": "${workspaceFolder}/SGD.bat", "args": ["verificar"]},
+      "problemMatcher": []
+    }
+  ]
+}

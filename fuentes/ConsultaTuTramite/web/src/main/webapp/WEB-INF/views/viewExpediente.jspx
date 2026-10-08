@@ -1,0 +1,157 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" 
+          xmlns:c="http://java.sun.com/jsp/jstl/core" 
+          xmlns:jsp="http://java.sun.com/JSP/Page" 
+          xmlns:spring="http://www.springframework.org/tags" 
+          xmlns:form="http://www.springframework.org/tags/form"
+          xmlns:util="urn:jsptagdir:/WEB-INF/tags/util">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <!--jsp:directive.page contentType="text/html;charset=ISO-8859-1"/-->
+    <jsp:output omit-xml-declaration="yes"/>
+    <spring:eval expression="@applicationProps['ruta_temporal']" var="pathPdf"/>
+    <c:set var="pathPdf" value="${pathPdf}" scope="request"/>
+    <title>
+        <spring:message code="application_name"/>:Inicio<tiles:insertAttribute name="title" ignore="true" />
+    </title>
+        
+    <div id="dlglogin_principal">                        
+            <fieldset>
+                <legend>Documento Encontrado</legend>
+                
+                 <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblFechaRegistro" class="col-lg-2 control-label alert-link subti_noti"><strong>Fecha</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        : <span id="rptLblFechaRegistro" style="font-weight:bold; padding-left:3%;">${docExpediente.fechaExpediente}</span>
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblExpediente" class="col-lg-2 control-label alert-link subti_noti"><strong>Expediente</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        : <span id="rptLblExpediente" style="font-weight:bold; padding-left:3%;">${docExpediente.nroExpediente}</span>
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblTipoDocumento" class="col-lg-2 control-label alert-link subti_noti"><strong>Tipo de Documento</strong>  </label>
+                                    <div class="col-lg-7 subti_noti">
+                                        :<span id="rptLblTipoDocumento"  style="padding-left:3%;">${docExpediente.tipoDocumento}</span>
+
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblNroDocumento" class="col-lg-2 control-label subti_noti"><strong>Número de Documento</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        :<span id="rptLblNroDocumento" style="padding-left:3%;">${docExpediente.nroDoc}</span>
+
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblInstitucion" class="col-lg-2 control-label subti_noti"><strong>Institución</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        :<span id="rptLblInstitucion" style="padding-left:3%;">${docExpediente.institucion}</span>
+
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblRemitente" class="col-lg-2 control-label subti_noti"><strong>Remitente</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        :<span id="rptLblRemitente" style="padding-left:3%;">${docExpediente.remitente}</span>
+
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblFolios" class="col-lg-2 control-label subti_noti"><strong>Folios</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        :<span id="rptLblFolios" style="padding-left:3%;">${docExpediente.folios}</span>
+
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblSumilla" class="col-lg-2 control-label subti_noti"><strong>Sumilla</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        <span>:</span><div id="rptLblSumilla" style="padding-left:3%;">${docExpediente.sumilla}</div>
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblObservaciones" class="col-lg-2 control-label subti_noti"><strong>Observaciones</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        <span>:</span><div id="rptLblObservaciones" style="margin-left:3%;">${docExpediente.observacion}</div>
+
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                     <div class="col-lg-2"></div>
+                           
+                                        <label for="rptLblOficinaAtencion" class="col-lg-2 control-label subti_noti"><strong>Oficina en Atención</strong></label>
+                                        
+                               
+                                    <div class="col-lg-7">
+                                     <span>:</span>
+                                    <div id="rptLblOficinaAtencion subti_noti" style="margin-left:3%;">${docExpediente.oficinaAtencion}</div>
+
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblEstadoDocumento" class="col-lg-2 control-label subti_noti"><strong>Estado Documento</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        :<span id="rptLblEstadoDocumento" style="font-weight:bold; color:#950000; padding-left:3%;">${docExpediente.estado}</span>
+
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-2"></div>
+                                    <label for="rptLblObservacionFinalizar" class="col-lg-2 control-label subti_noti"><strong>Observación Atención/Archivado</strong></label>
+                                    <div class="col-lg-7 subti_noti">
+                                        <span>:</span>
+                                        <div id="rptLblObservacionFinalizar" style="font-weight:bold; margin-left:3%;">${docExpediente.obsFinalizar}</div>
+                                    </div>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                
+            </fieldset>
+    </div>
+                        
+</jsp:root>	

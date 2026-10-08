@@ -1,0 +1,205 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <div class="ui-panel ui-corner-all"  style="width: 1150px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>DETALLE DE DOCUMENTO EMITIDO</span>
+        </div>
+        <div class="ui-panel-body">    
+            <fieldset>
+                <div class="btn-group btn-group-lg">
+                    <button title ="Ver Documento" class="btn btn-primary btn-lg" onclick="fn_verDocumentoEmiSeguiEst('documentoEmiSeguiBean');" type="button">
+                        <span class="glyphicon glyphicon-list-alt"><jsp:text/></span> Ver Documento</button>
+                    <button title ="Ver Documento Anexos - Referencias" class="btn btn-primary btn-lg" onclick="fn_verAnexoEmiSeguiEst('documentoEmiSeguiBean');" type="button">
+                        <span class="glyphicon glyphicon-paperclip"><jsp:text/></span> Ver Anexos</button>
+                    <button title ="Seguimiento de Documentos" class="btn btn-primary btn-lg" onclick="fn_verSeguimientoEmiSeguiEst('documentoEmiSeguiBean');" type="button">
+                        <span class="glyphicon glyphicon-transfer"><jsp:text/></span> Seguimiento</button>
+                    <button title ="Regresar Lista Documentos Emitidos" class="btn btn-primary btn-lg" onclick="regresarEmiDocumAdmSeguiEst();" type="button">
+                        <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>                           
+                    <button title ="Salir Detalle de Documento Emitido" class="btn btn-primary btn-lg" onclick="cerrarPantalla();" type="button">
+                        <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                </div>  
+            </fieldset>
+            <form:form modelAttribute="documentoEmiSeguiBean">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <fieldset>
+                                <legend>Expediente</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Número:</td>    
+                                        <td>
+                                            <form:input path="nuExpediente" readonly="true" size="20" style="text-align: center"/>
+                                        </td>
+                                        <td>
+                                            Fecha:
+                                            <form:input path="feExpCorta" readonly="true" style="text-align: center"/>
+                                        </td>                             
+                                    </tr>
+                                    <tr>
+                                        <td>Proceso:</td>    
+                                        <td colspan="3">
+                                            <form:input path="deProcesoExp" readonly="true" size="60" style="width:99%;text-align: center"/>
+                                        </td>   
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>
+                        <td>
+                            <fieldset>
+                                <legend>&amp;nbsp;</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Año:</td>    
+                                        <td>
+                                            <form:input path="nuAnn" readonly="true" size="10" style="text-align: center"/>
+                                            <form:hidden path="nuEmi"/>
+                                            <form:hidden path="nuDes"/>
+                                        </td>
+                                        <td rowspan="2">
+                                            <button type="button" class="btn btn-danger" >${documentoEmiSeguiBean.deEsDocRec}</button>
+                                        </td>                                                          
+                                    </tr>
+                                    <tr>
+                                        <td>Nro Recepción:</td>    
+                                        <td>
+                                            <form:input path="nuCorDes" readonly="true" size="10"  style="text-align: center"/>
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>						
+                    </tr>
+                    <tr>
+                        <td>
+                            <fieldset>
+                                <legend>Remitente</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Remite:</td>    
+                                        <td>
+                                            <form:input path="deOriEmi" readonly="true" size="60" style="width:99%;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Receptor:</td>    
+                                        <td>
+                                            <form:input path="deEmpRes" readonly="true" size="60" style="width:99%;"/>
+                                        </td>                             										
+                                    </tr>
+                                </table>
+                            </fieldset>  							
+                        </td>
+                        <td>
+                            <fieldset>
+                                <legend>Destinatario</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Dependencia:</td>    
+                                        <td>
+                                            <form:input path="deDepDes" readonly="true" size="60" style="width:99%;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Personal:</td>    
+                                        <td>
+                                            <form:input path="deEmpDes" readonly="true" size="60" style="width:99%;"/>
+                                        </td>  									 
+                                    </tr>
+                                </table>
+                            </fieldset>  							
+                        </td>						
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Documento</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Tipo:</td>    
+                                        <td>
+                                            <form:input path="deTipDocAdm" readonly="true" style="text-align: center"/>
+                                        </td>
+                                        <td>
+                                            Número:	 
+                                            <form:input path="nuDoc" readonly="true" style="text-align: center"/>
+                                        </td>
+                                        <td>
+                                            Fecha: 
+                                            <form:input path="feEmiCorta" readonly="true" style="text-align: center"/>
+                                        </td>
+                                        <td>
+                                            Atender en:
+                                            <form:input path="nuDiaAte" readonly="true" size="2" style="text-align: center"/>días
+                                        </td>                                                                                   
+                                    </tr>
+                                    <tr>
+                                        <td>Asunto:</td>    
+                                        <td colspan="2">
+                                            <form:textarea class="delUpperCase" path="deAsu"  rows="4" cols="60" readonly="true" style="height:90px;width:98%;"/>
+                                        </td>
+                                        <td colspan="2">
+                                            <fieldset>
+                                                <legend>REFERENCIA</legend>
+                                                <jsp:directive.include file="tablaRefEmiDocAdm.jspx"/>
+                                            </fieldset>		                                                                                     
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Motivo:</td>    
+                                        <td>
+                                            <form:input path="deMotivo" readonly="true"/>
+                                        </td>
+                                        <td>
+                                            Prioridad:	 
+                                            <form:input path="dePrioridad" readonly="true"/>
+                                        </td>
+                                        <td colspan="2">
+                                            Indicaciones:
+                                            <form:input path="deIndicaciones" class="delUpperCase" readonly="true" size="60"/>
+                                        </td>	                                                                                 
+                                    </tr>
+                                    <!--tr>
+                           
+                                    </tr-->
+                                </table>
+                            </fieldset>
+                        </td> 
+                    </tr>
+                    <tr  valign="top">
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Datos de Recepción</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td><a class="tooltip-link" title="Apellidos y nombres del receptor.">Ape.:</a></td>    
+                                        <td colspan="3">
+                                            <form:input path="deEmpRec" readonly="true" size="50" style="width:95%;"/> 
+                                        </td>
+                                        <td><a class="tooltip-link" title="Observaciones.">Obs.:</a></td>    
+                                        <td rowspan="2">
+                                            <form:textarea class="delUpperCase" path="deAne"  rows="4" cols="60" style="height:50px;width:98%;overflow:auto;resize:none;" readonly="true"/>
+                                        </td>                                                      
+                                    </tr>
+                                    <tr>
+                                        <td><a class="tooltip-link" title="Fecha recepción.">Rec.:</a></td> 
+                                        <td>
+                                            <form:input path="feRecCorta" style="text-align: center;width: 135px;" readonly="true"/>
+                                        </td>
+                                        <td><a class="tooltip-link" title="Fecha atención.">Ate.:</a>
+                                            <form:input path="feAtencionCorta" style="text-align: center;width: 80px;" readonly="true"/>
+                                        </td>                                                                                     
+                                        <td><a class="tooltip-link" title="Fecha en la que se Archivo el documento.">Arc.:</a>
+                                            <form:input path="feArchivamientoCorta" style="text-align: center;width: 80px;" readonly="true"/>
+                                        </td>                                                                                 
+                                    </tr>  
+                                </table>
+                            </fieldset>  						
+                        </td>
+                    </tr>
+                </table>
+            </form:form>
+        </div>
+    </div>
+</jsp:root>

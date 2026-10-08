@@ -1,0 +1,140 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <div class="ui-panel ui-corner-all"  style="width: 1180px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>DETALLE SEGUIMIENTO DE DOCUMENTO RECEPCIONADO EN MESA DE PARTES</span>
+        </div>
+        <div class="ui-panel-body">   
+            <fieldset>
+                    <div class="btn-group btn-group-lg">
+                       <button title ="Ver Documento" class="btn btn-primary btn-lg" onclick="fn_verDocumentoExtBeanSegui();" type="button">
+                           <span class="glyphicon glyphicon-list-alt"><jsp:text/></span> Ver Documento</button>
+                       <button title ="Ver Documento Anexos - Referencias" class="btn btn-primary btn-lg" onclick="fn_verAnexoDocExtBeanSegui();" type="button">
+                           <span class="glyphicon glyphicon-paperclip"><jsp:text/></span> Ver Anexos</button>
+                       <button title ="Seguimiento de Documentos" class="btn btn-primary btn-lg" onclick="fn_verSegumientoDocExtBeanSegui();" type="button">
+                           <span class="glyphicon glyphicon-transfer"><jsp:text/></span> Seguimiento</button>
+                        <button title ="Regresar Lista Consulta Recepci&#243;n Documentos Externos" class="btn btn-primary btn-lg" onclick="regresarLsSeguiDocExtRec();" type="button">
+                            <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>                           
+                            <button title ="Salir de Consulta Recepci&#243;n Documentos Externos" class="btn btn-primary btn-lg" onclick="cerrarPantallaMP();" type="button">
+                           <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                    </div>  
+            </fieldset>
+            <form:form modelAttribute="docExtRecSeguiEstBean">
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <fieldset>
+                                <legend>Expediente</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Número:</td>    
+                                        <td>
+                                            <form:input path="nuExpediente" readonly="true" style="text-align: center" maxlength="17"/>
+                                        </td>
+                                        <td>Fecha:
+                                            <form:input path="feExpCorta" readonly="true" style="text-align: center" maxlength="10"/>
+                                        </td>                             
+                                    </tr>
+                                    <tr>
+                                        <td>Proceso:</td>    
+                                        <td colspan="2">
+                                            <form:input path="deProcesoExp" readonly="true" style="text-align: center" size="60"/>
+                                        </td>   
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>
+                        <td width="50%">
+                            <fieldset>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Año:</td>    
+                                        <td>
+                                            <form:input path="nuAnn" readonly="true" size="10" style="text-align: center" maxlength="4"/>
+                                            <form:hidden path="nuEmi"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nro Emisión:</td>    
+                                        <td>
+                                            <form:input path="nuCorEmi" readonly="true" size="10"  style="text-align: center"/>
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>						
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Remitente</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td width="7%">Remitente:</td>    
+                                        <td width="43%">
+                                            <form:input path="deOriEmi" readonly="true" style="width:95%;"/>
+                                        </td>
+                                        <td width="10%">Receptor:</td>    
+                                        <td width="40%">
+                                            <form:input path="deEmpRec" readonly="true" style="width:98%;"/>
+                                        </td>                                                                
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Documento</legend>
+                                <table width="100%" cellpadding="0">
+                                    <tr>
+                                        <td>Tipo:</td>    
+                                        <td>
+                                            <form:input path="deTipDocAdm" readonly="true" style="width:190px;"/>
+                                    </td>
+                                    <td align="right">Número:
+                                        <form:input path="nuDoc" readonly="true" style="width:190px;"/>
+                                    </td>
+                                    <td align="center"><jsp:text>Fecha:</jsp:text>
+                                        <form:input path="feEmiCorta" readonly="true" style="text-align: center"/>
+                                    </td>
+                                    <td>Atender en:<form:input path="nuDiaAte" readonly="true" size="2" style="text-align: center"/><jsp:text>días</jsp:text>
+                                        </td>                                                                                   
+                                        </tr>
+                                        <tr>
+                                            <td width="2%">Asunto:</td>    
+                                            <td width="49%" colspan="2">
+                                            <form:textarea path="deAsu" rows="4" cols="60" class="delUpperCase" style="height:90px;width:98%;" readonly="true"/>
+                                        </td>
+                                        <td width="49%" colspan="2">
+                                            <fieldset>
+                                                <legend>REFERENCIA</legend>
+                                                <div id="divtablaRefEmiDocAdm">
+                                                    <jsp:directive.include file="tblRefDocExterno.jspx"/>
+                                                </div>
+                                            </fieldset>		                                                                                     
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Destinatario</legend>
+                                <table width="100%">
+                                    <tr><td><jsp:directive.include file="tblDestDocExtIntitu.jspx"/></td></tr>                                            
+                                </table>
+                            </fieldset>
+                        </td> 
+                    </tr>
+                </table>
+            </form:form>
+        </div>
+    </div>
+</jsp:root>

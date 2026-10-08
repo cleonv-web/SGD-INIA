@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <style>
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+    </style>
+</h:head>
+<body>
+
+<p:dialog widgetVar="emisionExternaEnvioDialogWidget"
+          id="emisionExternaEnvioDialogId" height="630" width="60%" modal="true"
+          closable="true" draggable="false" resizable="false" appendTo="@(body)">
+
+    <p:ajaxStatus onstart="PF('statusDialog').show()"
+                  onsuccess="PF('statusDialog').hide()"/>
+    <p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+              closable="false" resizable="false" showHeader="false"
+              appendTo="@(body)">
+        <p:graphicImage value="/util/images/principal/ajaxloadingbar.gif"/>
+    </p:dialog>
+    <h:form id="frmEnvioEmiExterna" enctype="multipart/form-data">
+        <p:growl id="messages" showDetail="true"/>
+
+        <div class="ui-fluid">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-12">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel value="RUC Ent. Destinataria"/>
+                            <p:inputText id="idNomEnt"
+                                         value="#{cEmisionExterna.consultaDocumento.vnomentrec}" readonly="true"
+                            />
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Num. Reg. SGD"/>
+                            <p:inputText id="idNumStd"
+                                         value="#{cEmisionExterna.consultaDocumento.vnumregstd}"
+                                         readonly="true"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Año Reg. SGD"/>
+                            <p:inputText id="idAniStd"
+                                         value="#{cEmisionExterna.consultaDocumento.vanioregstd}"
+                                         readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Tipo Documento"/>
+                            <p:selectOneMenu id="idTipDoc"
+                                             value="#{cEmisionExterna.consultaDocumento.ccodtipdoc}">
+                                <f:selectItem itemLabel="Seleccione"
+                                />
+                                <f:selectItems value="#{cEmisionExterna.cbotipdocmv}" var="tipDoc"
+                                               itemLabel="#{tipDoc.cdoc_desdoc}" itemValue="#{tipDoc.cidtipdoc}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Num. Documento"/>
+                            <p:inputText id="idNumDoc"
+                                         value="#{cEmisionExterna.consultaDocumento.vnumdoc}" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Fec. Documento"/>
+                            <p:calendar id="idFecDoc"
+                                        value="#{cEmisionExterna.consultaDocumento.dfecdoc0}"
+                                        showOn="" pattern="dd-MM-yyyy" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel value="Nom. Und. Org. Emisora"/>
+                            <p:inputText id="idUniOrgEmi"
+                                         value="#{cEmisionExterna.consultaDocumento.vuniorgrem}" readonly="true"/>
+                        </div>
+                    </div>
+
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel value="Nom. Und. Org. Destino"/>
+                            <p:inputText id="idUniOrgDst"
+                                         value="#{cEmisionExterna.consultaDocumento.vuniorgdst}" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Tip. Doc. Identidad"/>
+                            <p:inputText id="idTipDocIdeRem"
+                                         value="#{cEmisionExterna.consultaDocumento.ctipdociderem.equals('1')?'DNI':'Carnet de Extranjería'}"
+                                         readonly="true"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Num. Doc. Identidad"/>
+                            <p:inputText id="idNumDocIdeRem"
+                                         value="#{cEmisionExterna.consultaDocumento.vnumdociderem}"
+                                         readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Nom. Destinatario"/>
+                            <p:inputText id="idNomDstn"
+                                         value="#{cEmisionExterna.consultaDocumento.vnomdst}" readonly="true"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Car. Destinatario"/>
+                            <p:inputText id="idCarDstn"
+                                         value="#{cEmisionExterna.consultaDocumento.vnomcardst}" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel value="Asunto"/>
+                            <p:inputTextarea id="idAsunto"
+                                             value="#{cEmisionExterna.consultaDocumento.vasu}" cols="50"
+                                             rows="5" counter="display" maxlength="500"
+                                             counterTemplate="{0} Cantidad de carateres." autoResize="false"
+                                             readonly="true"/>
+                            <h:outputText id="display"/>
+                        </div>
+                    </div>
+
+                    <div class="ui-g">
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:spacer/>
+                            <p:commandButton icon="ui-icon-document" value="Documento Principal"
+                                             action="#{cEmisionExterna.documentoPrincipal()}"
+                                             immediate="true" update=":frmEmiExternaDocumentoPrincipal">
+                            </p:commandButton>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Num. Folios"/>
+                            <p:inputText id="idNumFol"
+                                         value="#{cEmisionExterna.consultaDocumento.snumfol}" readonly="true"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <p:outputLabel value="Num. Anexos"/>
+                            <p:inputText id="idNumAnx"
+                                         value="#{cEmisionExterna.consultaDocumento.snumanx}" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel value="Descripción de la anulación del documento"/>
+                            <p:selectBooleanCheckbox value="#{cEmisionExterna.flganu}" immediate="true">
+                                <p:ajax update="idDesAnu,btnAnular,btnEnviar"
+                                        listener="#{cEmisionExterna.verDescripcionAnulacion()}" immediate="true"/>
+                            </p:selectBooleanCheckbox>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:inputTextarea id="idDesAnu" disabled="#{cEmisionExterna.flgdesanu}"
+                                             value="#{cEmisionExterna.consultaDocumento.vdesanu}" cols="50"
+                                             rows="5" counter="display2" maxlength="500"
+                                             counterTemplate="{0} Cantidad de carateres." autoResize="false"/>
+                            <h:outputText id="display2"/>
+                        </div>
+                    </div>
+
+                    <div class="ui-g">
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:commandButton value="Anular"
+                                             id="btnAnular"
+                                             disabled="#{cEmisionExterna.flgdesanu}"
+                                             action="#{cEmisionExterna.anularRecepcion()}"
+                                             update="frmEnvioEmiExterna :frmBusquedaEmisionExterna"
+                                             oncomplete="handleEnvioDocumentoRequest(xhr, status, args)"
+                                             icon="ui-icon-transfer-e-w"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:commandButton value="Enviar"
+                                             id="btnEnviar"
+                                             disabled="#{cEmisionExterna.flganu}"
+                                             action="#{cEmisionExterna.enviarDocumento()}"
+                                             update="frmEnvioEmiExterna :frmBusquedaEmisionExterna"
+                                             oncomplete="handleEnvioDocumentoRequest(xhr, status, args)"
+                                             icon="ui-icon-transfer-e-w"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+
+            function handleEnvioDocumentoRequest(xhr, status, args) {
+
+                if (args.flag) {
+                    PF('emisionExternaEnvioDialogWidget').hide();
+                }
+            }
+        </script>
+    </h:form>
+
+
+</p:dialog>
+</body>
+</html>

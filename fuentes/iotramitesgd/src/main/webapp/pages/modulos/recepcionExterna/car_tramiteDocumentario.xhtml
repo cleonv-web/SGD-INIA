@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <style type="text/css">
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+    </style>
+</h:head>
+<body>
+
+<p:dialog widgetVar="cargoTramiteDialogWidget1"
+          id="cargoTramiteDialogId1" height="600" width="900" modal="true"
+          responsive="true" closable="true" draggable="false" resizable="false"
+          appendTo="@(body)">
+
+    <p:ajaxStatus onstart="PF('statusDialog').show()"
+                  onsuccess="PF('statusDialog').hide()"/>
+    <p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+              closable="false" resizable="false" showHeader="false"
+              appendTo="@(body)">
+        <p:graphicImage value="/util/images/principal/ajaxloadingbar.gif"/>
+    </p:dialog>
+    <h:form id="frmCargoTramite" enctype="multipart/form-data">
+        <p:remoteCommand name="getArgumentos"
+                         actionListener="#{cRecepcionExterna.getArgumentos()}"
+                         oncomplete="afterLoad(xhr,status,args)"/>
+        <p:spacer height="10"/>
+
+        <p:growl id="messages" showDetail="true"/>
+        <div class="ui-fluid">
+            <p:accordionPanel>
+                <p:tab title="Detalle Documento">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Ent. Emisora"/>
+                                    <p:inputText id="idRegNomEnt"
+                                                 value="#{cRecepcionExterna.consultaDocumento.vnomentemi}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Tip. Doc. Identidad"/>
+                                    <p:inputText id="idTipDocIdeRem"
+                                                 value="#{cRecepcionExterna.consultaDocumento.ctipdociderem.equals('1')?'DNI':'Carnet de Extranjería'}"
+                                                 readonly="true"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Num. Doc. Identidad"/>
+                                    <p:inputText id="idNumDocIdeRem"
+                                                 value="#{cRecepcionExterna.consultaDocumento.vnumdociderem}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Tipo Documento"/>
+                                    <p:selectOneMenu id="idRegTipDoc"
+                                                     value="#{cRecepcionExterna.consultaDocumento.ccodtipdoc}">
+                                        <f:selectItems value="#{cRecepcionExterna.cbotipdocmv}"
+                                                       var="tipDoc" itemLabel="#{tipDoc.cdoc_desdoc}"
+                                                       itemValue="#{tipDoc.cidtipdoc}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Num. Documento"/>
+                                    <p:inputText id="idRegNumDoc"
+                                                 value="#{cRecepcionExterna.consultaDocumento.vnumdoc}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Fec. Documento"/>
+                                    <p:calendar id="idRegFecDoc"
+                                                value="#{cRecepcionExterna.consultaDocumento.dfecdoc}"
+                                                showOn="" pattern="dd-MM-yyyy" readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Nom. Und. Org. Destino"/>
+                                    <p:inputText id="idRegUniOrgDst"
+                                                 value="#{cRecepcionExterna.consultaDocumento.vuniorgdst}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Nom. Destinatario"/>
+                                    <p:inputText id="idRegNomDstn"
+                                                 value="#{cRecepcionExterna.consultaDocumento.vnomdst}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Car. Destinatario"/>
+                                    <p:inputText id="idRegCarDstn"
+                                                 value="#{cRecepcionExterna.consultaDocumento.vnomcardst}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Asunto"/>
+                                    <p:inputTextarea id="idRegAsunto"
+                                                     value="#{cRecepcionExterna.consultaDocumento.vasu}" cols="50"
+                                                     rows="5" counter="display2" maxlength="500"
+                                                     counterTemplate="{0} Cantidad de carateres."
+                                                     autoResize="false" readonly="true"/>
+                                    <h:outputText id="display2"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:spacer/>
+                                    <p:commandButton icon="ui-icon-document"
+                                                     value="Archivo Principal"
+                                                     action="#{cRecepcionExterna.documentoPrincipal()}"
+                                                     immediate="true" update=":frmRecExternaDocumentoPrincipal"/>
+
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Num. Anexos"/>
+                                    <p:inputText id="idRegNumAnx"
+                                                 value="#{cRecepcionExterna.consultaDocumento.snumanx}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Anexo"/>
+                                    <p:dataList id="idRegDocAnx"
+                                                value="#{cRecepcionExterna.lstDocAnexo}" var="anexo"
+                                                type="ordered">
+                                        <f:facet name="header">
+                                            Anexo
+                                        </f:facet>
+                                        #{anexo.vnomdoc}
+                                    </p:dataList>
+                                </div>
+
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="CUO"/>
+                                    <p:inputText id="idRegCuo"
+                                                 value="#{cRecepcionExterna.consultaDocumento.vcuo}"
+                                                 readonly="true"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="CUO Referencia"/>
+                                    <p:inputText id="idRegCuoRef"
+                                                 value="#{cRecepcionExterna.consultaDocumento.vcuoref}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p:tab>
+
+                <p:tab title="Registro SGD">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:outputLabel value="Unid. Org. Destino" style="color:red"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel
+                                    value="#{cRecepcionExterna.consultaDocumento.vuniorgdst}"
+                                    style="color:red"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel value="Uni. Org. SGD"/>
+                            <p:selectOneMenu id="idCboOfi"
+                                             value="#{cRecepcionExterna.consultaDocumento.iCodOficina}"
+                                             filter="true" filterMatchMode="contains" autoWidth="false">
+                                <p:ajax listener="#{cRecepcionExterna.getResponsableOficina}"
+                                        update="idResOfi"/>
+                                <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                                <f:selectItems value="#{cRecepcionExterna.cboOficina}"
+                                               var="oficina" itemLabel="#{oficina.cNomOficina}"
+                                               itemValue="#{oficina.cCodOficina}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel value="Responsable"/>
+                            <p:inputText id="idResOfi"
+                                         value="#{cRecepcionExterna.consultaDocumento.cNombresTrabajador}"
+                                         readonly="true"/>
+                        </div>
+                    </div>
+
+
+                    <p:fieldset legend="Anexos" toggleSpeed="500"
+                                rendered="#{cRecepcionExterna.consultaDocumento.snumanx != 0?true:false}">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <h:outputLink
+                                        value="#{cRecepcionExterna.consultaDocumento.vurldocanx}"
+                                        target="_blank">
+                                    <p:outputLabel value="Descarga de anexos" style="color:red"/>
+                                </h:outputLink>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                <p:outputLabel value="Cargar anexo"/>
+                                <!--@elvariable id="cRecepcionExterna" type="pe.gob.segdi.iotramitesgd.controller.CRecepcionExterna"-->
+                                <p:fileUpload
+                                        fileUploadListener="#{cRecepcionExterna.fileUploadAnexo}"
+                                        mode="advanced" dragDropSupport="false" multiple="true"
+                                        label="Seleccionar" cancelLabel="Cancelar" uploadLabel="Subir"
+                                        invalidSizeMessage="Tamaño máximo excedido"
+                                        sizeLimit="#{cVariableSession.anx_tamanio}"
+                                        update="dtRegDocAnx"
+                                        fileLimitMessage="Número máximo de anexos excedido"
+                                        fileLimit="#{cVariableSession.anx_cantidad}"
+                                        allowTypes="/(\.|\/)(doc|docx|xls|xlsx|pdf|zip|jpg|jpeg|png|rar|PDF|DOC|DOCX|XLS|XLSX|PDF|JPG|JPEG|PNG|RAR)$/"/>
+                            </div>
+
+                        </div>
+
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                <p:dataTable id="dtRegDocAnx" var="anexo"
+                                             value="#{cRecepcionExterna.lstDocAnexo2}">
+                                    <p:column headerText="Anexos Adjuntos" width="90%">
+                                        <h:outputText value="#{anexo.vnomdoc}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton icon="ui-icon-trash"
+                                                         actionListener="#{cRecepcionExterna.eliminarAnexo()}"
+                                                         update="dtRegDocAnx">
+                                            <f:setPropertyActionListener
+                                                    target="#{cRecepcionExterna.documentoAnexo}"
+                                                    value="#{anexo}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </p:fieldset>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <p:outputLabel value="Observación"/>
+                            <p:inputTextarea id="idRegObs"
+                                             value="#{cRecepcionExterna.consultaDocumento.vobs}" cols="50"
+                                             rows="5" counter="display3" maxlength="500"
+                                             counterTemplate="{0} Cantidad de carateres." autoResize="false"/>
+                            <h:outputText id="display3"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-8">
+                            <h:outputLabel value="Actualizar Documento Principal"/>
+                            <p:fileUpload
+                                    fileUploadListener="#{cRecepcionExterna.fileUploadDocumentoPrincipal}"
+                                    mode="advanced" dragDropSupport="false" sizeLimit="40000000"
+                                    cancelLabel="Cancelar" uploadLabel="Cargar" label="Seleccionar"
+                                    fileLimit="1" update="@this, frmCargoTramite:messages"
+                                    allowTypes="/(\.|\/)(pdf|PDF)$/"/>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <input id="hiddenNameDocfirms" name="hiddenNameDocfirms"
+                                   type="hidden"></input> <input id="CodigoRecepcion"
+                                                                 name="CodigoRecepcion" type="hidden"
+                                                                 value="#{cRecepcionExterna.consultaDocumento.sidrecext}"></input>
+                            <button id="btnFirmaCargo" name="btnFirmaCargo"
+                                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+                                    onclick="fn_FirmarDocumento();" type="button" role="button"
+                                    aria-disabled="false">
+                                <span class="ui-button-icon-left ui-icon ui-c ui-icon-key"></span><span
+                                    class="ui-button-text ui-c">Firmar Cargo</span>
+                            </button>
+
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <button id="btnEnviarFirmaCargo" name="btnEnviarFirmaCargo"
+                                    style="background-color: gold !important; background: none; display: none;"
+                                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+                                    onclick="EmitirDocumentoClick();" type="button" role="button"
+                                    aria-disabled="false">
+                                <span class="ui-button-icon-left ui-icon ui-c ui-icon-key"></span>
+                                <span class="ui-button-text ui-c">Cargar Doc.</span>
+                            </button>
+                        </div>
+                        <div id="divRecepcionarDoc"
+                             class="ui-g-12 ui-md-6 ui-lg-2" style="display: none;">
+                            <p:commandButton value="Recepcionar"
+                                             actionListener="#{cRecepcionExterna.recepcionarDocumento}"
+                                             update="frmCargoTramite:messages :frmBusquedaRecepcionExterna:tdREcepcionExterna"
+                                             icon="ui-icon-newwin"/>
+
+                        </div>
+                    </div>
+
+
+                </p:tab>
+            </p:accordionPanel>
+        </div>
+
+        <!-- <div id="addComponent"></div> -->
+    </h:form>
+
+</p:dialog>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+>
+
+<h:head>
+    <title>SeGDI</title>
+
+    <style>
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+    </style>
+    <link href="#{request.contextPath}#{ruta.logo}logo_ongei.jpg" type="image/x-icon" rel="shortcut icon"/>
+</h:head>
+
+<h:body>
+
+    <f:view>
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north" size="110" resizable="false" closable="false" collapsible="false">
+                <h:panelGrid columns="3"
+                             columnClasses="alignMiddle,alignMiddle,alignBottom"
+                             style="background:url(#{request.contextPath}#{ruta.principal}/fondo-azul.jpg);
+							 height:100%; 
+							 width:100%;">
+                    <p:column>
+                        <p:graphicImage value="#{ruta.logo}logo_pcm_ongei.jpg" width="400px" style="float:left;"/>
+                    </p:column>
+
+                    <p:column>
+                        <p:graphicImage value="#{ruta.principal}vinetas-titulo-izq.png"/>
+                        <h:outputText value="M" style="color: white; font-size:300%;"/>
+                        <h:outputText value="ESA " style="color: white; font-size:150%"/>
+                        <h:outputText value="V" style="color: white; font-size: 300%;"/>
+                        <h:outputText value="IRTUAL" style="color: white; font-size:150%"/>
+                        <p:graphicImage value="#{ruta.principal}vinetas-titulo-der.png"/>
+                    </p:column>
+
+                    <p:column/>
+                </h:panelGrid>
+            </p:layoutUnit>
+
+            <p:layoutUnit position="center">
+                <p:panel header="Advertencia!!!">
+                    <h:outputLabel value="ACCESO DENEGADO" style="font-size: 20px; color: #B22222; font-weight:bold;"/>
+                    <p:separator/>
+                    <h:panelGrid columns="2" style="font-size: 11px;" columnClasses="alingRight,alingLeft">
+                        <p:graphicImage value="#{ruta.principal}no-encontrado.png" width="170" height="140"/>
+                        <h:panelGrid columns="1" style="font-size: 11px;" columnClasses="alingLeft,alingRight">
+
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <p:separator/>
+                </p:panel>
+            </p:layoutUnit>
+
+            <p:layoutUnit position="south" size="100" resizable="false" closable="false" collapsible="false">
+                <h:panelGrid columns="1" style="width: 100%; text-align:center; font-size: 11px;">
+                    <h:outputText value="CopyRight © Secretaría de Govierno Digital - SEGDI"/>
+                    <h:outputText value="Calle Francisco de Toledo 219 - Surco"/>
+
+                </h:panelGrid>
+            </p:layoutUnit>
+        </p:layout>
+    </f:view>
+</h:body>
+
+</html>

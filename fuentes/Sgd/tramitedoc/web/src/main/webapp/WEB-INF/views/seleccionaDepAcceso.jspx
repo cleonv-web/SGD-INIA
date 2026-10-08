@@ -1,0 +1,57 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+<jsp:directive.page contentType="text/html;charset=UTF-8"/>
+<jsp:output omit-xml-declaration="yes"/>
+    <c:set var="divId" value="windowDependenciaAcceso" scope="request"/>
+    <c:set var="posiciona" value="width:500px; height:363px;" scope="request"/>
+
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <tiles:putAttribute name="title" value="Dependencias Disponibles"/>
+        <tiles:putAttribute name="body">
+            <div id="buscaDestiDetalle">
+                <fieldset>
+                <legend>Dependencias</legend>  
+                <div class="ui-datatable ui-datatable-scrollable">
+                    <div class="ui-datatable-scrollable-header">
+                           <table width="100%" class="ui-state-default">
+                                 <thead>
+                                        <tr>
+                                            <th width="50">Siglas</th>
+                                            <th width="450">Unidad Orgánica</th>
+                                        </tr>
+                                 </thead>
+                           </table>
+                    </div>
+                    <div class="bx_sb ui-datatable-scrollable-body" style='height:200px;'>
+                          <table id="tlbDestinoEmi" width="100%" class="ui-datatable-data">
+                              <tbody>
+                                   <c:forEach var="lDestinatario" items="${listaDependenciaAcceso}" varStatus="status">
+                                      <c:choose>
+                                          <c:when test="${status.count % 2 == 0}">
+                                            <c:set var="rowStyle" scope="page" value="ui-datatable-even"/>
+                                          </c:when>
+                                          <c:otherwise>
+                                            <c:set var="rowStyle" scope="page" value="ui-datatable-odd"/>
+                                          </c:otherwise>
+                                      </c:choose>
+                                       <tr class="${rowStyle}" onclick="fu_setDependenciaAcceso('${lDestinatario.coDependencia}','${lDestinatario.deDependencia}');">
+                                           <td width="50">${lDestinatario.deCortaDepen}</td>
+                                           <td width="450">${lDestinatario.deDependencia}</td>
+                                           <td style="display:none">${lDestinatario.coDependencia}</td>
+                                      </tr>
+                                   </c:forEach>
+                              </tbody>
+                          </table>
+                    </div>
+                </div>
+                </fieldset>
+            </div>
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <button title ="Regresar a m&#243;dulo anterior" class="btn btn-default btn-sm" onclick="removeDomId('windowDependenciaAcceso');" type="button" value="Salir">
+                <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>
+        </tiles:putAttribute>
+        
+    </tiles:insertTemplate>
+</jsp:root>

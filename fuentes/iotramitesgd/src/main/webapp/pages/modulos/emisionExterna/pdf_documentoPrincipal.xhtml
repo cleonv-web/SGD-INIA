@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <style>
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+    </style>
+</h:head>
+<body>
+
+<p:dialog widgetVar="emisionExternaDocumentoPrincipalDialogWidget"
+          id="emisionExternaDocumentoPrincipalDialogId" height="630" width="60%"
+          header="Documento Principal" closable="true" maximizable="true"
+          draggable="true" resizable="true" appendTo="@(body)">
+
+
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <!-- <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+                <p:graphicImage value="/util/images/principal/ajaxloadingbar.gif" />
+            </p:dialog> -->
+            <h:form id="frmEmiExternaDocumentoPrincipal" enctype="multipart/form-data">
+                <div class="ui-g-12 ui-md-12 ui-lg-8">
+                    <p:media
+                            value="#{cVariableSession.documentoPrincipal!=null? cVariableSession.documentoPrincipal:ruta.perfil}"
+                            width="100%" height="600px" player="pdf">
+                    </p:media>
+
+                </div>
+                <div class="ui-g-4 ui-md-12 ui-lg-4">
+                    <p:dataTable id="tblItems" var="anexo"
+                                 value="#{cEmisionExterna.lstDocAnexo2}" rowKey="#{item.id}"
+                                 paginator="true" paginatorPosition="top"
+                                 rowsPerPageTemplate="10,20,30,40,50" rowIndexVar="item" rows="10"
+                                 style="text-align:center" emptyMessage="No existen registros">
+
+                        <p:column headerText="N&#186; Doc.">
+                            <h:outputText value="#{anexo.vnomdoc}"/>
+                        </p:column>
+                        <p:column headerText="Documento"
+                                  style="width:80px;text-align:center">
+                            <p:commandButton
+                                    action="#{cDocumentoAnexo.getDocumentoAnexo()}"
+                                    title="Descargar"
+                                    ajax="false"
+                                    icon="ui-icon ui-icon-arrowthickstop-1-s"
+                                    styleClass="colorSuccess">
+                                <f:setPropertyActionListener target="#{cDocumentoAnexo.ioDocumentoAnexo}"
+                                                             value="#{anexo}"/>
+                                <p:fileDownload value="#{cVariableSession.documentoAnexo}"
+                                                contentDisposition="attachment"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:form>
+        </div>
+
+    </div>
+
+
+</p:dialog>
+</body>
+<script type="text/javascript">
+    function start() {
+        PF('statusDialog').show();
+    }
+
+    function stop() {
+        PF('statusDialog').hide();
+    }
+</script>
+</html>

@@ -1,0 +1,139 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">
+        jQuery(document).ready(function(){
+            
+            $('[data-toggle="tooltip"]').tooltip();
+            
+            $('#feInicio').datepicker({ 
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy', 
+                yearRange: "-100:+0",
+                showButtonPanel: false,
+                onClose: function(selectedDate) {
+                    $('#feFin').datepicker('option', 'minDate', selectedDate);
+                }
+            });
+            
+            $('#feFin').datepicker({ 
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy', 
+                yearRange: "-100:+0",
+                showButtonPanel: false
+            });
+            
+        });
+    </script>
+    <div class="ui-panel ui-corner-all"  style="width: 1180px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>Asignación de Funcionarios</span>
+        </div>
+        <div class="ui-panel-body">   
+            <fieldset>
+                <div class="btn-group btn-group-lg">
+                    <button id="btn-grabar" title="Registrar" class="btn btn-primary btn-lg" onclick="fn_registrarAsignacionFuncionario('#frmAsginar');" type="button"><span class="glyphicon glyphicon-floppy-disk"></span> Registrar</button>                    
+                    <button id="btn-regresar" title="Regresar al listado de unidades org&#225;nicas" class="btn btn-primary btn-lg" onclick="fn_cerrarNuevaAsignacion();" type="button"><span class="glyphicon glyphicon-arrow-left"></span> Cerrar</button>
+                    <button id="btn-salir" title="Salir" value="Salir" class="btn btn-primary btn-lg" onclick="cerrarPantallaConfigTabla();" type="button"><span class="glyphicon glyphicon-log-out"></span> Salir</button>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Datos de la dependencia</legend>
+                <form id="frmDatosDependencia">
+                    <table width="70%">
+                        <tr>
+                            <td style="width: 200px">Dependencia : </td>                            
+                            
+                            <td>
+                                <div class="input-group anchoTotal">
+                                    <input readonly="readonly" class="form-control" id="deDependencia" type="text" />
+                                    <a href="javascript:;"  title="Seleccionar Dependencia" class="input-group-addon btn-default btnPequenoSGD" onclick="fn_buscaDependenciaAsignacion();" ><span class="glyphicon glyphicon-search"></span></a>
+                                </div>  
+                             </td>
+                             <td>
+                                 <a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a>
+                             </td>
+                                                       
+                        </tr>
+                        
+                        <tr>
+                            <td>Encargado : </td>
+                            <td><input type="text" style="width: 78%" id="deEncargado" readonly="true"/><span > - </span>
+                            <input type="text" style="width: 20%" id="deTipoEncargatura" readonly="true"/></td>
+                            
+                        </tr>
+                        <!--
+                        <tr>
+                            <td>Del: </td>
+                            <td><input type="text" style="width: 45%"/> Al <input type="text" style="width: 45%"/></td>
+                            <td></td>
+                            <td></td>
+                        </tr>-->
+                    </table>
+                </form>
+            </fieldset>
+            <fieldset>
+                <legend>Datos de la Asignación</legend>
+                <form:form modelAttribute="asignacionFuncionarioBean" id="frmAsginar">
+                    <form:hidden path="coDependencia" id="coDependencia"></form:hidden>
+                    <table width="70%">
+                        <tr>
+                            <td style="width: 200px">Empleado a Asignar :</td>
+                            
+                            <td>
+                            <div class="input-group anchoTotal">
+                                <form:hidden path="coEmpleado"/>
+                                <input readonly="readonly" class="form-control" id="deEmpleado" type="text" />
+                                <a href="javascript:;"  title="Seleccionar Empleado" class="input-group-addon btn-default btnPequenoSGD" onclick="fn_buscaEmpleadoAsignacion();" ><span class="glyphicon glyphicon-search"></span></a>
+                            </div> 
+                    
+                       
+                            </td>
+                            <td>
+                                <a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tipo de Encargatura :</td>
+                            <td>
+                                <form:select path="coTipoEncargo" style="width: 100%" id="coTipoEncargo" onchange="fu_iniNuevaAsignacion('#frmAsginar');return false;" > 
+                                    <form:option value="" label="--Seleccionar--">-- Seleccionar --</form:option>
+                                    <form:options items="${listaTipoEncargatura}" itemValue="celeCodele" itemLabel="celeDesele" />
+                                </form:select>  
+                            </td>
+                            <td>
+                                <a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Del : </td>
+                            <td>
+                                <input id="feInicio" name="feInicio" type="text" class="form-control" value="" readOnly="true"/>
+                                
+                                <span id="lblFeFin" ><a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a> al </span>
+                                
+                                <input id="feFin" name="feFin" type="text" class="form-control" value="" readOnly="true"/>
+                                
+                                <a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Documento de Asignación :</td>
+                            <td>
+                                <form:textarea path="deDocAsigna" style="width: 100%" id="deDocAsigna" maxlength="200" class="delUpperCase" rows="4"/>
+                            </td>
+                            <td>
+                                <a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a>
+                            </td>
+                        </tr>
+                    </table>    
+                </form:form>
+            </fieldset>
+        </div>
+    </div>
+</jsp:root>

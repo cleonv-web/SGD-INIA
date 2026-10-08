@@ -1,0 +1,42 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+<jsp:directive.page contentType="text/html;charset=UTF-8"/>
+<jsp:output omit-xml-declaration="yes"/>
+    <c:set var="divId" value="windowAlertChangePwd" scope="request"/>
+    <c:set var="posiciona" value="width:500px; height:250px;" scope="request"/>
+
+    <tiles:insertTemplate template="/WEB-INF/templates/wmodaldefault.jspx" flush="true">
+        <tiles:putAttribute name="title" value="Cambio de Contraseña"/>
+        <tiles:putAttribute name="body">
+        <div id="dlgchange">
+            <div class="alert alert-danger" role="alert" style="margin-bottom:0px;">
+                <c:choose>
+                    <c:when test="${tipoMsg eq 'EXP'}">
+                        <h4 style="margin-bottom:0px;"><strong>SU CONTRASEÑA HA CADUCADO.</strong><br/>
+                        Se Recomienda Cambiar la Contraseña.</h4>
+                    </c:when>
+                    <c:when test="${tipoMsg eq 'NF'}">
+                        <h4 style="margin-bottom:0px;">
+                        <strong>CREE SU CONTRASEÑA SEGURA.</strong></h4>
+                    </c:when>                        
+                    <c:otherwise>
+                        <c:set var="vdias" scope="page" value="1"/>
+                        <h4 style="margin-bottom:0px;">
+                        <strong>SU CONTRASEÑA CADUCARÁ EN ${tipoMsg} DÍA(S).</strong><br/>
+                        Se Recomienda Cambiar la Contraseña.</h4>
+                    </c:otherwise>
+                </c:choose>                 
+            </div>            
+        </div>
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <c:if test="${vdias eq '1'}">
+                <button type="button" class="btn btn-default btn-lg" onclick="login();" tabindex="2">
+                    <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Continuar</button>                
+            </c:if>
+            <button type="button" class="btn btn-default btn-lg" onclick="fn_PrecambiaPwd();" tabindex="1">
+                <span class="glyphicon glyphicon-lock"><jsp:text/></span> Cambiar</button>
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+</jsp:root>

@@ -1,0 +1,435 @@
+<!-- 
+    Document   : admEmpleadoEdit
+    Created on : 22/08/2014, 10:41:49 AM
+    Author     : GLuque
+-->
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <c:set var="divId" value="divOrigenMain" scope="request"/>
+    <c:set var="posiciona" value="width:800px; height:750px;" scope="request"/>
+    <script languaje="javascript">
+        jQuery(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('#fechaNacimiento').datepicker({ 
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy', 
+                maxDate: "+0D",
+                yearRange: "-100:+0",
+                showButtonPanel: false/*,
+                closeText: 'Limpiar', 
+                onClose: function () {
+                    var event = arguments.callee.caller.caller.arguments[0];                    
+                    if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                        $(this).val('');
+                    }
+                } */
+        });
+        
+        
+        if('${acceso.inAD}'!='')
+        {
+            $('#sInAD').val(${acceso.inAD});  
+        }
+        else
+        {
+             $('#sInAD').val('${ADActivo}');  
+        }
+        
+        });
+    </script>
+
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <tiles:putAttribute name="title" value="${titulo}"/>
+        <tiles:putAttribute name="body">
+            <div id="formEditPersonal">
+                <fieldset>
+                    <div class="btn-group btn-group-lg">
+                        <button id="btn_grabar" title="Guardar cambios" class="btn btn-primary btn-lg" onclick="fn_grabarDatosPersonal();"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar cambios</button>
+                        <a id="btn_salir" title="Salir" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-log-out"></span> Salir</a>
+                    </div>
+                </fieldset>
+                <table width="100%">
+                    <tr>
+                        <td style="width:50%">
+                            <fieldset>
+                                <legend>Datos del empleado</legend>
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td style="width: 30%">DNI:</td>
+                                        <td style="width: 70%">
+                                            <c:choose>
+                                                <c:when test="${empleado==null}">
+                                                    <input id="dni" name="dni" type="text" class="input-full-row" value="" maxlength="8" onkeypress="return fu_onKeyPressFiltrarTecladoNumero(event, false, public_enteros,'apPaterno','',fn_getPersonaDesdeDni);"/>
+                                                    <input type="hidden" id="dni_old"/>                                                   
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <input id="dni" name="dni" type="text" class="input-full-row" value="${empleado.dni}" maxlength="8" readonly="true"/>
+                                                    <input type="hidden" id="dni_old" value="${empleado.dni}"/>                                                 
+                                                </c:otherwise>
+                                            </c:choose>
+                                                
+                                        </td>
+                                        <td>
+                                            <a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ap Paterno:</td>
+                                        <td><input id="apPaterno" name="apPaterno" type="text" class="input-full-row" value="${empleado.apPaterno}" readOnly="true" /></td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ap Materno:</td>
+                                        <td><input id="apMaterno" name="apMaterno" type="text" class="input-full-row" value="${empleado.apMaterno}" readOnly="true" /></td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nombres:</td>
+                                        <td><input id="nombres" name="nombres" type="text" class="input-full-row" value="${empleado.nombres}" readOnly="true" /></td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fecha nacimiento:</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${empleado==null}">
+                                                    <input id="fechaNacimiento" name="fechaNacimiento" type="text" class="input-full-row" value="" readOnly="true"/>
+                                                </c:when>
+                                                <c:when test="${empleado.fechaNacimiento.length()>0}">
+                                                    <input id="fechaNacimiento" name="fechaNacimiento" type="text" class="input-full-row" value="${empleado.getFechaNacimiento()}" readOnly="true"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <input id="fechaNacimiento" name="fechaNacimiento" type="text" class="input-full-row" value="" readOnly="true"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sexo:</td>
+                                        <td>
+                                            <label>
+                                                <c:choose>
+                                                    <c:when test="${empleado.sexo eq 1}">
+                                                        <input type="radio" name="sexo" id="sexo1" value="1" checked="true" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <input type="radio" name="sexo" id="sexo1" value="1" />
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                Masculino
+                                            </label> 
+                                            <label>
+                                                <c:choose>
+                                                    <c:when test="${empleado.sexo eq 2}">
+                                                        <input type="radio" name="sexo" id="sexo2" value="2" checked="true"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <input type="radio" name="sexo" id="sexo2" value="2" />
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                Femenino
+                                            </label> 
+                                        </td>
+                                        <td> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Correo electrónico: </td>
+                                        <td>
+                                            <input type="text" id="email" name="email" value="${empleado.email}" class="input-full-row" style="text-transform:lowercase;" maxlength="45" />
+                                        </td>
+                                        <td> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cargo:</td>
+                                        <td>
+                                            <!-- Implementando cargar cargos desde un mismo controlador en comun por Fernando-->
+                                            <input type="hidden" id="coCargo" name="coCargo" value="${empleado.coCargo}"/>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="deCargo" name="deCargo" value="${empleado.deCargo}"  readOnly="true" style="padding-left:2px" />
+                                                <a href="javascript:;" onclick="fn_buscaCargoEmpleadoAdm('coCargo','deCargo');" id="bsq_cargo" class="input-group-addon" style="padding:3px 7px;color:#26A0F0;"><span class="glyphicon glyphicon-search"></span></a>
+                                            </div>
+                                                
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dependencia:</td>
+                                        <td>
+                                            <input type="hidden" id="coDependencia" name="coDependencia" value="${empleado.coDependencia}" />
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="deDependencia" name="deDependencia" value="${empleado.deDependencia}" style="padding-left:2px" />
+                                                <a href="javascript:;" onclick="fu_goAdmEmpleadoDependencia();" id="bsq_dependencia" class="input-group-addon" style="padding:3px 7px;color:#26A0F0;"><span class="glyphicon glyphicon-search"></span></a>
+                                                
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    <td>Localidad:</td>
+                                    <td>
+                                       <input type="hidden" id="coLocal" name="coLocal" value="${empleado.coLocal}" />
+                                       <div class="input-group">
+                                          <input type="text" class="form-control" id="noLocal" name="noLocal" value="${empleado.noLocal}" style="padding-left:2px" />
+                                          <a href="javascript:;" onclick="fn_buscaLocalEmpleadoEdit();" id="btn-SelUbi" class="input-group-addon" style="padding:3px 7px;color:#26A0F0;" title="Seleccionar ubigeo del domicilio"><span class="glyphicon glyphicon-search"></span></a>
+                                       </div>
+                                     </td>
+                                     <td>
+                                          <a href="#" data-toggle="tooltip" class="tooltipObligatorio" title="Campo Obligatorio">(*)</a> 
+                                     </td>
+                                  </tr>
+
+                                    <tr>
+                                        <td>Estado :</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${empleado==null}">
+                                                    <c:set var="estado" value="1"></c:set>
+                                                </c:when>
+                                                <c:when test="${empleado.estado.length()>0}">
+                                                    <c:set var="estado" value="${empleado.estado}"></c:set>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="estado" value="1"></c:set>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <input type="hidden" id="estado" name="estado" value="${estado}" />
+                                            <div id="divEstado1" style="display:${estado eq 1 ? 'block' : 'none'}">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-success dropdown-toggle btn-sm" data-toggle="dropdown">Activo <span class="caret"></span>&amp;nbsp;</button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="#" class="cambiar_estado" data-value="0">Baja</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div id="divEstado0" style="display:${estado eq 0 ? 'block' : 'none'}"> 
+                                                <div class="btn-group" >
+                                                    <button type="button" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown">Baja <span class="caret"></span>&amp;nbsp;</button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="#" class="cambiar_estado" data-value="1">Activar</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td> 
+                                        </td>
+                                    </tr>
+                                    
+                                     <tr>
+                                        <td colspan="2">Observación / Descripción: </td>
+                                        
+                                        <td> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"> 
+                                            <textarea id="coObservacion" name="coObservacion" class="input-full-row" style="text-transform:lowercase;" maxlength="500" rows="3" >${empleado.coObservacion}</textarea>
+                                        </td>
+                                        
+                                        <td> 
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+                                <input type="hidden" id="codEmp" value="${empleado.coEmpleado}" />
+                            </fieldset>
+                        </td>
+                        <td style="width:50%;vertical-align:top;">
+                            <fieldset>
+                                <legend>Datos de acceso</legend>
+                                <div class="btn-group btn-group-sm" id="user_btns">
+                                    <c:choose>
+                                        <c:when test="${acceso==null}">
+                                            <button type="button" class="btn btn-default" id="user_add"><span class="glyphicon glyphicon-plus"></span> Nuevo usuario</button>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="button" class="btn btn-default" id="user_delete" onclick="user_delete_admEmpleado();"><span class="glyphicon glyphicon-remove"></span> Borrar</button>
+                                            <button type="button" class="btn btn-default" id="user_reestablish" onclick="user_reestablish_pass();"><span class="glyphicon glyphicon-refresh"></span> Restablecer contraseña</button>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div><br /><br />
+                                <input type="hidden" id="username_tmp" value="${acceso.coUsuario}" />
+                                <table style="width: 100%">
+                                    <tr id="user_form">
+                                        <c:choose>
+                                            <c:when test="${acceso!=null}">
+                                                    <td style="width: 30%">Nombre Usuario</td>
+                                                    <td style="width: 70%"><input type="text" class="input-full-row" value="${acceso.coUsuario}" readonly="true" /></td>
+                                            </c:when>
+                                        </c:choose>
+                                    </tr>
+                                    <c:choose>
+                                            <c:when test="${acceso!=null}">
+                                                <tr id="user_form">
+                                                    <td style="width: 30%">Estado Usuario</td>
+                                                    <td style="width: 70%">
+                                                        
+                                                         <c:choose>
+                                                              <c:when test="${acceso.esUsuario==null}">
+                                                                <c:set var="estadousuario" value="X"></c:set>
+                                                            </c:when>
+                                                            <c:when test="${acceso.esUsuario.length()>0}">
+                                                                <c:set var="estadousuario" value="${empleado.esUsuario}"></c:set>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <c:set var="estadousuario" value="1"></c:set>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <input type="hidden" id="estadousuario" name="estadousuario" value="${estadousuario}" />
+                                                        <div id="divEstadoA" style="display:${estadousuario eq 'A' ? 'block' : 'none'}">
+                                                            <div class="btn-group">
+                                                                <button type="button" class="btn btn-success dropdown-toggle btn-sm" data-toggle="dropdown">Activo <span class="caret"></span>&amp;nbsp;</button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="N">Nuevo</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="B">Bloq. x Otros</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="X">Baja</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="M">Migración</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="I">Bloq. x Intentos</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div id="divEstadoI" style="display:${estadousuario eq 'I' ? 'block' : 'none'}"> 
+                                                            <div class="btn-group" >
+                                                                <button type="button" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown">Bloq. x Intentos<span class="caret"></span>&amp;nbsp;</button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="A">Activo</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="N">Nuevo</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="B">Bloq. x Otros</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="X">Baja</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="M">Migración</a></li>
+                                                                    
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                         <div id="divEstadoN" style="display:${estadousuario eq 'N' ? 'block' : 'none'}"> 
+                                                            <div class="btn-group" >
+                                                                <button type="button" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown">Nuevo<span class="caret"></span>&amp;nbsp;</button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="A">Activo</a></li> 
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="I">Bloq. x Intentos</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="B">Bloq. x Otros</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="X">Baja</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="M">Migración</a></li>
+                                                                    
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                         <div id="divEstadoB" style="display:${estadousuario eq 'B' ? 'block' : 'none'}"> 
+                                                            <div class="btn-group" >
+                                                                <button type="button" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown">Bloq. x Otros<span class="caret"></span>&amp;nbsp;</button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="A">Activo</a></li> 
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="I">Bloq. x Intentos</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="N">Nuevo</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="X">Baja</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="M">Migración</a></li>
+                                                                    
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div id="divEstadoX" style="display:${estadousuario eq 'X' ? 'block' : 'none'}"> 
+                                                            <div class="btn-group" >
+                                                                <button type="button" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown">Baja<span class="caret"></span>&amp;nbsp;</button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="A">Activo</a></li> 
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="I">Bloq. x Intentos</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="N">Nuevo</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="B">Bloq. x Otros</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="M">Migración</a></li>
+                                                                    
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                            <div id="divEstadoM" style="display:${estadousuario eq 'M' ? 'block' : 'none'}"> 
+                                                            <div class="btn-group" >
+                                                                <button type="button" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown">Migración<span class="caret"></span>&amp;nbsp;</button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="A">Activo</a></li> 
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="I">Bloq. x Intentos</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="N">Nuevo</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="B">Bloq. x Otros</a></li>
+                                                                    <li><a href="#" class="cambiar_estado_usuario" data-value="X">Baja</a></li>
+                                                                    
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                            
+                                                            
+                                                    </td>
+                                                    </tr>
+                                            </c:when>
+                                        </c:choose>
+                                                            
+                                                            
+                                        <tr>
+                                                <c:choose>
+                                                    <c:when test="${acceso!=null}">
+                                       <td>Autenticacion :</td>
+                                        <td>
+                                            <select id="sInAD" class="btn btn-info dropdown-toggle btn-sm" >
+                                                <option value="0" class="cambiar_estado">SGD </option>
+                                                <option value="1" class="cambiar_estado">Active Directory</option>                                               
+                                            </select>                                            
+                                        </td>
+                                                    </c:when></c:choose>
+                                        </tr>
+                                        
+                                        
+                                </table>
+                                <div id="div_user_verify">
+                                </div>
+                           
+                            </fieldset>
+                                     
+                            <c:choose>
+                              <c:when test="${empleado.creaUsuario!=null || empleado.actUsuario!=null ||
+                                      empleado.creaFecha!=null || empleado.actFecha!=null}">
+                                <fieldset>
+                                  <legend>Auditorìa</legend>
+                                   <table style="width: 100%">
+                                    <tr id="user_form">
+                                        <td style="width: 30%">Usuario Creación</td>
+                                        <td style="width: 70%"><input type="text" class="input-full-row" value="${empleado.creaUsuario}" readonly="true" disabled="true" /></td>
+                                    </tr>  
+                                     <tr id="user_form">
+                                        <td style="width: 30%">Fecha Creación</td>
+                                        <td style="width: 70%"><input type="text" class="input-full-row" value="${empleado.creaFecha}" readonly="true" disabled="true" /></td>
+                                    </tr>  
+                                     <tr id="user_form">
+                                        <td style="width: 30%">Usuario Modificación</td>
+                                        <td style="width: 70%"><input type="text" class="input-full-row" value="${empleado.actUsuario}" readonly="true" disabled="true" /></td>
+                                    </tr>  
+                                     <tr id="user_form">
+                                        <td style="width: 30%">Fecha Modificación</td>
+                                        <td style="width: 70%"><input type="text" class="input-full-row" value="${empleado.actFecha}" readonly="true" disabled="true" /></td>
+                                    </tr>  
+                                </table>
+                             </fieldset>
+                                    
+                              </c:when>                                        
+                            </c:choose>
+                            
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <jsp:text/>
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+</jsp:root>

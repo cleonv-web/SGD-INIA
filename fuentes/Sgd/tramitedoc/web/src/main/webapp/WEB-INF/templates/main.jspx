@@ -1,0 +1,52 @@
+<html xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:tiles="http://tiles.apache.org/tags-tiles"
+      xmlns:spring="http://www.springframework.org/tags"
+      xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:output omit-xml-declaration="yes"/>
+    <jsp:output doctype-root-element="HTML" doctype-system="about:legacy-compat" />
+    <jsp:directive.page contentType="text/html;charset=UTF-8" />
+    <jsp:directive.page pageEncoding="UTF-8" />
+    <jsp:directive.page session="false"/>
+    <spring:eval expression="@applicationProps['B64_IMG_TOP']" var="b64ImgTop"/>
+    <spring:eval expression="@applicationProps['B64_IMG_DEFAULT']" var="b64ImgDefault"/>
+    <spring:eval expression="@applicationProps['B64_IMG_DEFAULT2']" var="b64ImgDefault2"/>
+    <spring:eval expression="@applicationProps['B64_IMG_DEFAULT3']" var="b64ImgDefault3"/>
+    <spring:eval expression="@applicationProps['B64_IMG_FOOT']" var="b64ImgFoot"/> 
+    <spring:eval expression="@applicationProps['resources.version']" var="resourceVersion"/>
+    <c:set var="b64ImgTop" value="${b64ImgTop}" scope="request"/>
+    <c:set var="b64ImgDefault" value="${b64ImgDefault}" scope="request"/>
+    <c:set var="b64ImgFoot" value="${b64ImgFoot}" scope="request"/>
+    <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" /> 
+    <c:set var="resourceURL" value="resources-${resourceVersion}" scope="request"/>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                <link rel="shortcut icon" type="image/x-icon" href="${resourceURL}/images/favicon.ico" />
+        <util:load-scripts-ini/>
+
+		<spring:message code="application_name" var="app_name" htmlEscape="true"/>
+        <title><tiles:insertAttribute name="title" ignore="true" />::${app_name}</title>
+	</head>
+
+  	<body onkeydown="fu_bs(event);">
+            <div style="display: none">
+                <a id="idTradocDesktop" onclick="this.click();" href="javascript:void(0);" target="_self"><jsp:text/></a>    
+            </div>
+          <div id="bcMain">
+              <tiles:insertAttribute name="regionTop" ignore="true" />
+              <tiles:insertAttribute name="regionLeft" ignore="true" />
+              <tiles:insertAttribute name="regionBody" ignore="true" />
+              <tiles:insertAttribute name="regionBottom" ignore="true" />
+          </div>
+          <div id="loadding" class="box" style="display: none">
+              <div class="image"><img align='absmiddle' src='${resourceURL}/images/loading.gif'/><jsp:text/></div>
+              <div class="line1">PROCESANDO</div>
+              <div class="line2">Ejecutando petición, por favor espere...</div>
+          </div>
+              <div style="display: none">
+                  <a href="http://apycom.com/">Apycom jQuery Menus</a>
+              </div>
+	</body>
+        
+</html>

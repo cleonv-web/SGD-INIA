@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TDR15" pageWidth="183" pageHeight="183" whenNoDataType="AllSectionsNoDetail" columnWidth="167" leftMargin="9" rightMargin="7" topMargin="7" bottomMargin="7" isFloatColumnFooter="true" uuid="bd10e517-8410-4561-a727-95a4894f28a6">
+	<property name="ireport.zoom" value="4.0000000000000036"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="54"/>
+	<parameter name="CO_USER" class="java.lang.String"/>
+	<parameter name="NU_ANN" class="java.lang.String"/>
+	<parameter name="NU_EMI" class="java.lang.String"/>
+	<parameter name="P_LOGO_DIR" class="java.io.InputStream"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nuExpediente" class="java.lang.String"/>
+	<field name="deDependencia" class="java.lang.String"/>
+	<field name="deInstitucion" class="java.lang.String"/>
+	<field name="anexoMesaPartes" class="java.lang.String"/>
+	<field name="fonoInstitucion" class="java.lang.String"/>
+	<field name="pagWeb" class="java.lang.String"/>
+	<field name="feExp" class="java.sql.Timestamp"/>
+	<field name="nuCorrExp" class="java.lang.String"/>
+	<field name="deMesaPartes" class="java.lang.String"/>
+	<field name="deSlogan" class="java.lang.String"/>
+	<field name="cclave" class="java.lang.String"/>
+	<field name="codUser" class="java.lang.String"/>
+	<field name="deOriEmi" class="java.lang.String"/>
+	<field name="nuFolios" class="java.lang.String"/>
+	<field name="deDepDes" class="java.lang.String"/>
+	<field name="nuEmiRef" class="java.lang.String"/>
+	<field name="nuCopias" class="java.lang.String"/>
+	<field name="deUsuario" class="java.lang.String"/>
+	<field name="deObsDoc" class="java.lang.String"/>
+	<field name="deAne" class="java.lang.String"/>
+	<field name="obsVoucherMP" class="java.lang.String"/>
+	<pageHeader>
+		<band height="164">
+			<image hAlign="Center">
+				<reportElement x="0" y="0" width="167" height="20" uuid="188e4b8d-6606-4c67-972a-b7e3bc3f4844"/>
+				<imageExpression><![CDATA[$P{P_LOGO_DIR}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="19" width="167" height="7" uuid="3e779ced-0a85-414e-800a-962d79c8c33c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="5" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deMesaPartes}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="25" width="167" height="12" uuid="41079fdb-6ca3-4d73-9a30-94f7a97b5181"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Expediente N°"+$F{nuExpediente}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="134" width="167" height="8" uuid="feae7186-3de5-4a83-b040-89913ccde66e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="5" isBold="false" isItalic="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Nota: La recepción NO da conformidad al contenido.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="121" width="167" height="8" uuid="0549bbf9-0166-4ae4-8859-9d59ebb1bd45"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="5" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Consultas: "+$F{pagWeb}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="128" width="167" height="8" uuid="4f01e4c9-9403-4f1a-9e6f-6c3de1b2ad18"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" size="5" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Teléfonos: "+$F{fonoInstitucion}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="0" y="142" width="167" height="3" uuid="5f3c9a6c-7e6c-4671-9199-aced8bc888f3"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="160" width="167" height="3" uuid="98e5878a-a681-4a2e-b80f-dd15a68dcf6a"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="144" width="167" height="3" uuid="9cf4a9f3-bb86-492c-af11-ce2c4a8fd3a5"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="146" width="167" height="3" uuid="95e4f6cd-7ce7-41ac-b60e-344b7cf004de"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="148" width="167" height="3" uuid="d8ec1e03-a913-4c99-9f75-f825761dbad3"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="156" width="167" height="3" uuid="2bcf9c6e-6dff-4649-81b2-3d572473b4be"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="150" width="167" height="3" uuid="37bdf1fb-9b60-46b6-98a7-62417e66a7d3"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="152" width="167" height="3" uuid="6ee1dec7-e818-4639-9a87-37fd8bed4a7f"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="154" width="167" height="3" uuid="1e2f6f27-8145-4066-a5f2-09f4bf5ccbb1"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="0" y="158" width="167" height="3" uuid="6e81012b-8b3c-4f30-98ac-099cda8a9e87"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
+					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="74" y="87" width="93" height="8" uuid="2bf53912-f7d8-40db-9186-86105386aa10"/>
+				<textElement markup="none">
+					<font fontName="SansSerif" size="6" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deUsuario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="73" width="74" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="2dccc114-9c93-4b0e-a329-5ce29f7c9c73"/>
+				<textElement markup="none">
+					<font size="6" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{feExp}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="38" width="167" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="16a5cd98-b712-4734-99dc-c02e7e599949"/>
+				<textElement markup="none">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Remitente:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="45" width="167" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="b9d1f8fd-afc9-4a99-92f1-96e2608ce997"/>
+				<textElement markup="none">
+					<font size="5" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deOriEmi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="122" y="52" width="51" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="4d4e9b22-df89-42dc-a8d1-703308c971e8"/>
+				<textElement markup="none">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["N° de Folios:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="126" y="59" width="41" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="1412270f-8d32-463e-8f97-03c1e1c3b7f1"/>
+				<textElement markup="none">
+					<font size="6" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nuFolios}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="59" width="74" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="ca7a328b-44bc-4ae4-9e63-ccdee7ad472c"/>
+				<textElement markup="none">
+					<font size="6" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deDepDes}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="74" y="73" width="41" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="07fe46fd-3076-4590-86e1-1686cf9851b8"/>
+				<textElement markup="none">
+					<font size="6" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deAne}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="52" width="74" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="9b138126-d758-4128-a2fa-0209b87558ed"/>
+				<textElement markup="none">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Destinatario:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="74" y="66" width="42" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="758eb8c0-4a5e-445f-b7dd-a686373e3077"/>
+				<textElement markup="none">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["N° Anexos:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="80" width="74" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="55a4c275-bb13-4e7c-b958-5f8ff293cf19"/>
+				<textElement markup="none">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Referencia:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="87" width="74" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="ed07458c-59a3-4d1c-b9d6-eabb4f275595"/>
+				<textElement markup="none">
+					<font size="3" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nuEmiRef}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="74" y="52" width="40" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="4be25f17-61c4-427b-bbca-6ca563dc9824"/>
+				<textElement markup="none">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["c/copia:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="74" y="59" width="52" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="a4225fd2-a727-41ef-be2d-d318aa522ec1"/>
+				<textElement markup="none">
+					<font size="6" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nuCopias}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="66" width="74" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="a66ad17b-3419-4efd-bdba-ca72f5f19323"/>
+				<textElement markup="none">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Recibido: "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="74" y="80" width="93" height="8" forecolor="#000000" backcolor="#FFFFFF" uuid="c236be1e-273a-46a0-8801-1243c2254308"/>
+				<textElement markup="none">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Registrador: "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy - HH:mm" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="96" width="167" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="e1c3711a-6b2a-482f-972f-1fb3dbb329b5"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font size="5" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deObsDoc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="108" width="167" height="13" uuid="d1164bba-421c-46b8-aef1-ac86720bad08"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obsVoucherMP}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

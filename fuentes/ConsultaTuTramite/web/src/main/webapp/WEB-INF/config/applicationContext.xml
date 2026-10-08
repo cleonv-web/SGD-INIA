@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    #############################################################################################################################
+
+        applicationContext.xml
+        ==========================
+
+        Contenido:      Configuracion de la capa de .
+        Comentarios:    Utilice este archivo para configurar todo lo concerniente a la regla de negocios
+                        No incluya en este archivo la declaracion de Daos y Services.
+
+    #############################################################################################################################
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:task="http://www.springframework.org/schema/task"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:jee="http://www.springframework.org/schema/jee"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+        http://www.springframework.org/schema/task  
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd"
+		default-autowire="byName">
+
+<!-- ################################## -->
+<!-- #           RECURSOS             # -->
+<!-- ################################## -->
+    <!--
+        Escaneo automático de clases anotadas:
+        La siguiente declaración se encargará de levantar las clases que posean las
+        anotaciones (@Controller, @RequestMapping, @Repository, @Service, etc) en el paquete que
+        se le indique. Para el caso, se indica el paquete web.
+    -->
+    <context:component-scan base-package="pe.gob.onpe.consultadoc" />
+
+    <!--  Carga el archivo de configuración para el acceso a la base de datos  -->
+    <context:property-placeholder  location="file:///${catalina.base}/consultaproperties/application.properties,file:///${catalina.base}/consultaproperties/jdbc.properties" />
+    
+      <!--[JNDI]-->
+    <jee:jndi-lookup id="dataSource" jndi-name="${jndi.main.jndiName}"/>
+
+    <bean id="applicationProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations" >
+            <list>                
+                <value>file:///${catalina.base}/consultaproperties/application.properties</value>
+            </list>
+        </property>
+    </bean>
+    <!--Inicializamos las constantes utilizando application.properties-->
+    <bean id="applicationPropertiesBean" class="pe.gob.onpe.consultadoc.web.util.ApplicationProperties" init-method="inicializarConstantes"/>
+    <task:annotation-driven />
+ </beans>

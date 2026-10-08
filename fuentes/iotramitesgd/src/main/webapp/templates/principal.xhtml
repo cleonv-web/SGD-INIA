@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>SeGDI</title>
+    <style>
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+
+        .ui-layout-pane {
+            border: 0;
+            margin: 0;
+        }
+
+        .ui-layout-pane-north.ui-widget-content {
+            border: 0;
+        }
+
+        .ui-layout-pane-south.ui-widget-content {
+            border: 0;
+        }
+
+        .ui-layout-pane-east.ui-widget-content {
+            border: 0;
+        }
+
+        .ui-layout-pane-west.ui-widget-content {
+            border: 0;
+        }
+
+        .ui-layout-pane-center.ui-widget-content {
+            border: 0;
+        }
+
+
+        .ui-steps .ui-steps-item {
+            width: 24%;
+        }
+
+        .ui-state-highlight {
+            text-shadow: none !important;
+        }
+
+        .ui-steps.custom {
+            margin-bottom: 30px;
+        }
+
+        .ui-steps.custom .ui-steps-item .ui-menuitem-link {
+            height: 10px;
+            padding: 0 1em;
+        }
+
+        .ui-steps.custom .ui-steps-item .ui-steps-number {
+            background-color: #0081c2;
+            color: #FFFFFF;
+            display: inline-block;
+            width: 30px;
+            border-radius: 10px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        .ui-steps.custom .ui-steps-item.ui-state-highlight .ui-steps-title {
+            color: #555;
+        }
+
+        .ui-outputlabel {
+            font-weight: bold;
+        }
+    </style>
+
+
+    <link href="#{request.contextPath}#{ruta.logo}logo_ongei.jpg" type="image/x-icon" rel="shortcut icon"/>
+
+    <!-- <script type="text/javascript" src="https://pki.reniec.gob.pe/invoker/resources/js/client.js"></script>
+    <script type="text/javascript" src="https://dsp.reniec.gob.pe/refirma_invoker/resources/js/client.js"></script> -->
+
+    <h:outputScript name="jquery.websokect.js" library="js"/>
+    <h:outputStylesheet name="bootstrap.css" library="css"/>
+
+    <script type="text/javascript">
+        //<![CDATA[
+        var documentName_ = null;
+        //
+        window.addEventListener('getArguments', function (e) {
+
+            type = e.detail;
+            if (type === 'W') {
+                ObtieneArgumentosParaFirmaDesdeLaWeb(); // Llama a getArguments al terminar.
+            } else if (type === 'L') {
+                ObtieneArgumentosParaFirmaDesdeArchivoLocal(); // Llama a getArguments al terminar.
+            }
+        });
+
+        function getArguments(arg) {
+            console.log("getArguments ==>" + arg);
+            dispatchEventClient('sendArguments', arg);
+        }
+
+        window.addEventListener('invokerOk', function (e) {
+            type = e.detail;
+            if (type === 'W') {
+                MiFuncionOkWeb();
+            } else if (type === 'L') {
+                MiFuncionOkLocal();
+            }
+        });
+
+        window.addEventListener('invokerCancel', function (e) {
+            MiFuncionCancel();
+        });
+
+        //::LÓGICA DEL PROGRAMADOR::
+        function ObtieneArgumentosParaFirmaDesdeLaWeb() {
+            //alert("ObtieneArgumentosParaFirmaDesdeLaWeb ==>");
+            getArgumentos();
+
+        }
+
+        function ObtieneArgumentosParaFirmaDesdeArchivoLocal() {
+            //document.getElementById("signedDocument").href="#";
+            $.get("argumentsServlet", {}, function (data, status) {
+                documentName_ = data;
+                //Obtiene argumentos
+                $.post("argumentsServlet", {
+                    type: "L",
+                    documentName: documentName_
+                }, function (data, status) {
+                    //alert("Data: " + data + "\nStatus: " + status);
+                    document.getElementById("argumentos").value = data;
+                    getArguments();
+                });
+
+            });
+
+        }
+
+        function MiFuncionOkWeb() {
+            //alert("Documento firmado desde una URL correctamente.");
+            document.getElementById("signedDocument").href = "getFileServlet?documentName=" + documentName_;
+        }
+
+        function MiFuncionOkLocal() {
+            alert("Documento firmado desde la PC correctamente.");
+            document.getElementById("signedDocument").href = "getFileServlet?documentName=" + documentName_;
+        }
+
+        function MiFuncionCancel() {
+            alert("El proceso de firma digital fue cancelado.");
+            document.getElementById("signedDocument").href = "#";
+        }
+
+        function afterLoad(xhr, status, args) {
+            //alert(args.parametro);
+            getArguments(args.parametro);
+        }
+
+        //]]>
+    </script>
+
+</h:head>
+
+<body>
+
+
+<p:layout fullPage="true">
+    <p:layoutUnit position="north" size="100">
+        <ui:include src="/templates/cabecera.xhtml"/>
+    </p:layoutUnit>
+    <p:layoutUnit position="south" size="100">
+        <ui:include src="/templates/pie.xhtml"/>
+    </p:layoutUnit>
+    <p:layoutUnit position="west" size="258">
+        <ui:include src="/templates/menu.xhtml"/>
+    </p:layoutUnit>
+    <p:layoutUnit position="center">
+        <ui:insert name="content">
+
+        </ui:insert>
+    </p:layoutUnit>
+</p:layout>
+</body>
+</html>

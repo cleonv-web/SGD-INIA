@@ -1,0 +1,362 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">jQuery(document).ready(function() {
+            fu_inicializarRecepDocumAdm('${documentoRecepBean.esDocRec}', '0');
+            cargarEtiquetasEstadoDocumento();
+            var vmaxdate= getDiasMin('${pfechaActual}');
+             $("#feAteDoc").datepicker({ maxDate: new Date(vmaxdate)});
+             $("#feArcDoc").datepicker({ maxDate: new Date(vmaxdate)});
+             
+         
+        });</script>  
+    <div class="ui-panel ui-corner-all"  style="width: 1150px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>RECEPCION DE DOCUMENTOS ADMINISTRATIVOS</span>
+        </div>
+        <div class="ui-panel-body">    
+            <fieldset>
+                <div id="divToolBarRecAdm">
+                    <jsp:text/>
+                </div>
+            </fieldset>
+            <input id="envDocumentoRecepBean" name="envDocumentoRecepBean" type="hidden" value="0"/>
+            <input id="fileSizeMaxCargo" name="fileSizeMaxCargo" type="hidden" value="${fileSizeMaxCargo}"/>
+            <input id="fechaToday" name="fechaToday" type="hidden" value="${pfechaActual}"/>
+<!--            <input type="hidden" id="coPrioridadRef" value="${documentoRecepBean.coPri}'" />-->
+            <form:form modelAttribute="documentoRecepBean">
+                <form:hidden path="existeDoc"/>    
+                <form:hidden path="existeAnexo"/>    
+                <form:hidden path="tiEmi"/>    
+                <form:hidden path="coDepDes"/>    
+                <form:hidden path="coPri" value="${documentoRecepBean.coPri}" />
+                
+                
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <fieldset>
+                                <legend>Expediente</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Número:</td>    
+                                        <td>
+                                            <!--form:input path="nuExpediente" readonly="true" size="20" style="text-align: center"/-->
+                                            <!--<input readonly="true" size="20" style="text-align: center" value="${expedienteBean.nuExpediente}"/>-->
+                                            <form:input path="nuExpediente" readonly="true" size="20" style="text-align: center"/>
+                                            <form:hidden path="nuAnnExp"/>
+                                            <form:hidden path="nuSecExp"/>
+                                        </td>
+                                        <td>
+                                            <!--form:input path="feExpCorta" readonly="true" size="20" style="text-align: center"/-->
+                                            Fecha:
+                                            <form:input path="feExpCorta" readonly="true" style="text-align: center"/>
+                                        </td>                             
+                                    </tr>
+                                    <tr>
+                                        <td>Proceso:</td>    
+                                        <td colspan="3">
+                                            <!--form:input path="deProceso" readonly="true" size="60" style="text-align: center"/-->
+                                            <form:hidden path="coProceso"/>
+                                            <form:input path="deProceso" readonly="true" size="60" style="width:99%;text-align: center"/>
+                                        </td>   
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>
+                        <td>
+                            <fieldset>
+                                <legend>Estado recepción</legend>
+
+                                <table width="100%">
+                                    <tr>
+                                        <td>Año:</td>    
+                                        <td>
+                                            <form:input path="nuAnn" readonly="true" size="10" style="text-align: center"/>
+                                            <form:hidden path="nuEmi"/>
+                                            <form:hidden path="nuDes"/>
+                                            
+                                        </td>
+                                        <td rowspan="2">
+                                            <!--input id="txtAnnio" name="txtAnnio" value ="NO LEIDO" readonly="true" size="20" style="text-align: center;"/-->
+                                            <form:hidden path="esDocRec"/>
+                                            <!--span><strong class="mainField">${documentoRecepBean.deEsDocDes}</strong></span-->
+                                            <button type="button" class="btn btn-danger" >${documentoRecepBean.deEsDocDes}</button>
+                                            <!--h2><span class="mainField">${documentoRecepBean.deEsDocDes}</span></h2-->
+
+                                        </td>        
+                                        <td rowspan="2">
+                                            <div class="btn-group" id="divEtiqueta">
+                                                <form:hidden path="coEtiquetaRec"/>
+                                                
+                                                
+                                                <button id="btn-etiquetaRecep" type="button" class="btn btn-default btn dropdown-toggle" data-toggle="dropdown" style="width: 188px;" title="Etiquetar documento,para tener organizado sus documentos recepcionados">
+                                                    <span class="glyphicon glyphicon-tag"><jsp:text/></span><span> Etiqueta Documento </span><span class="caret"></span>&amp;nbsp;
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <jsp:text/>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nro Recepción:</td>    
+                                        <td>
+                                            <form:input path="nuCorDes" readonly="true" size="10"  style="text-align: center"/>
+                                        </td> 
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>						
+                    </tr>
+                    <tr>
+                        <td>
+                            <fieldset>
+                                <legend>Emisor</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Remite:</td>    
+                                        <td>
+                                            <form:input path="deOriEmi" readonly="true" size="60" style="width:99%;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Elaboró:</td>    
+                                        <td>
+                                            <form:input path="deEmpRes" readonly="true" size="60" style="width:99%;"/>
+                                        </td>                             										
+                                    </tr>
+                                </table>
+                            </fieldset>  							
+                        </td>
+                        <td>
+                            <fieldset>
+                                <legend>Destinatario</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Dependencia:</td>    
+                                        <td>
+                                            <form:input path="deDepDes" readonly="true" size="60" style="width:99%;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Personal:</td>    
+                                        <td>
+                                            <form:input path="deEmpDes" readonly="true" size="60" style="width:99%;"/>
+                                        </td>  									 
+                                    </tr>
+                                </table>
+                            </fieldset>  							
+                        </td>						
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Documento</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Tipo:</td>    
+                                        <td>
+                                            <form:hidden path="coTipDocAdm"/>
+                                            <form:input path="deTipDocAdm" readonly="true" style="text-align: center"/>
+                                        </td>
+                                        <td>
+                                            Número:	 
+                                            <form:input path="nuDoc" readonly="true" style="text-align: center"/>
+                                        </td>
+                                        <td>
+                                            Fecha: 
+                                            <form:input path="feEmiCorta" readonly="true" style="text-align: center"/>
+                                            <form:hidden path="feEmiCorta2"/>
+                                        </td>
+                                        <td>
+                                            Atender en:
+                                            <form:input path="nuDiaAte" readonly="true" size="2" style="text-align: center"/>días
+                                        </td> 
+                                       <!-- <td>
+                                            <form:hidden path="confidencial"/>
+                                             <c:choose>
+                                                        <c:when test="${documentoRecepBean.confidencial eq '1'}">                                                             
+                                                            <input type="checkbox"    checked="true" disabled="disabled"   />   
+                                                        </c:when>
+                                                        <c:otherwise> 
+                                                           <input type="checkbox"    disabled="disabled"  />  
+                                                        </c:otherwise>
+                                                    </c:choose> Confidencial
+                                        </td> -->
+                                    </tr>
+                                    <!--tr>
+                   
+                                    </tr-->
+                                    <tr>
+                                        <td>Asunto:</td>    
+                                        <td colspan="2">
+                                            <!--textarea name="txtAnnio" rows="4" cols="100" size="40">&amp;nbsp;</textarea-->
+                                            <form:textarea class="delUpperCase" path="deAsu"  rows="4" cols="60" readonly="true" style="height:90px;width:98%;"/>
+                                        </td>
+                                        <td colspan="3">
+                                            <fieldset>
+                                                <legend>REFERENCIA</legend>
+                                                <jsp:directive.include file="tablaRefRecepDocAdm.jspx"/>
+                                            </fieldset>		                                                                                     
+                                        </td>
+                                        <!--Observacion &amp;nbsp;<br/> <textarea name="txtObservacion" rows="4" cols="60" size="40">&amp;nbsp;</textarea-->                             
+                                    </tr>
+                                    <tr>
+                                        <td>Trámite:</td>    
+                                        <td>
+                                            <form:input path="deMot" readonly="true"/>
+                                        </td>
+                                        <td>
+                                            Prioridad:	 
+                                            <form:input path="dePri" readonly="true"/>
+                                        </td>
+                                        <td colspan="3">
+                                            Indicaciones:
+                                            <form:input path="dePro" class="delUpperCase" readonly="true" size="60"/>
+                                        </td>	                                                                                 
+                                    </tr>
+                                    <!--tr>
+                           
+                                    </tr-->
+                                </table>
+                            </fieldset>
+                        </td> 
+                    </tr>
+                    <tr  valign="top">
+                        <td>
+                            <fieldset>
+                                <legend>Datos de Recepción</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Ape.:</td>    
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${documentoRecepBean.esDocRec eq '0'}">
+                                                    <form:hidden path="coEmpRec" value="${pcodEmp}"/>
+                                                    <!--<form:input path="deEmpRec" readonly="true" size="59" value="${pdesEmp}" class="inp-xs-grup" style="height: 17px;"/> -->
+                                                    <form:input path="deEmpRec" readonly="true" size="59" value="${pdesEmp}" style="height: 17px;"/> 
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <form:hidden path="coEmpRec"/>
+                                                    <form:input path="deEmpRec" readonly="true" size="60" style="height: 17px;"/> 
+                                                </c:otherwise>
+                                            </c:choose>                                           
+                                            <!--<button class="btn btn-default btn-xs-grup" onclick="fn_buscaEmpleado();" type="button" style="height: 23px;"><span class="button.ui-button-icon-only ui-icon icon_search"></span></button>-->
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>Fecha:</td>    
+                                        <td>
+                                            <table style="width: 100%;">
+                                                <tr>
+                                                    <td>
+                                                        <!--<div class="input-append" id="divDatepickRecepDoc">-->
+                                                        <c:choose>
+                                                            <c:when test="${documentoRecepBean.esDocRec eq '0'}">
+                                                                <form:input path="feRecDoc" maxlength="19" value="${pfechaHoraActual}" onkeypress="return filtrarTeclado(event, false, public_enteros+'/:','deAne','',fu_validaFechaRecepDocAdm);"/>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <form:input path="feRecDoc" maxlength="19" readonly="true" value="${documentoRecepBean.feRecDocCorta}" onkeypress="return filtrarTeclado(event, false, public_enteros+'/:','deAne','',fu_validaFechaRecepDocAdm);"/>
+                                                            </c:otherwise>
+                                                        </c:choose>                                             
+                                                        <!--</div>-->
+                                                    </td>
+                                                    <td style="float: right;">
+                                                        <div id="divTipoDocRecep" class="btn-group">
+                                                            <form:hidden path="tiFisicoRec"/>
+                                                            <button idRecepcionTipoDoc="1" id="btn-TipoDocRecep" type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" style="text-align: left;" title="Si recibe este documento en forma física, marque esta opción.">
+                                                                <span class="glyphicon glyphicon-hdd"><jsp:text/></span><span> &#160; </span><span class="caret"></span>&amp;nbsp;
+                                                            </button>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                <li><a href="#" id="1" onClick="fn_seleccionarRecepcionTipoDoc(0, this);"><span class="glyphicon glyphicon-hdd"><jsp:text/></span> Recepción Documento digital </a></li>
+                                                                <li><a href="#" id="2" onClick="fn_seleccionarRecepcionTipoDoc(1, this);"><span class="glyphicon glyphicon-book"><jsp:text/></span> Recepción Documento fisico </a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>    
+                                    <tr>
+                                        <td>Obs.:</td>    
+                                        <td >
+                                            <form:textarea class="delUpperCase" path="deAne"  rows="4" cols="60" style="height:90px;width:98%;overflow:auto;resize:none;" maxlength="200"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>  							
+                        </td>
+                        <td>
+                            <fieldset>
+                                <legend>Atención/Archivar</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Fecha de Atención:</td>    
+                                        <td>
+                                            <!--<div class="input-append" id="divDatepickAteDoc">-->
+                                            <c:choose>
+                                                <c:when test="${not empty documentoRecepBean.feAteDoc}">
+                                                    <form:input path="feAteDoc" value="${documentoRecepBean.feAteDocCorta}" readonly="true" style="text-align: center" maxlength="16" onkeypress="return filtrarTeclado(event, false, public_enteros+'/:','feArcDoc','',fu_preValidaFechaAteDoc);"/>
+
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <form:input path="feAteDoc" value="" style="text-align: center" readonly="true" maxlength="16" onkeypress="return filtrarTeclado(event, false, public_enteros+'/:','feArcDoc','',fu_preValidaFechaAteDoc);"/>
+                                                </c:otherwise>
+                                            </c:choose>                                               
+                                            <!--</div>                                                                                                          -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fecha de Archivamiento:</td>    
+                                        <td>
+                                            <!--<div class="input-append" id="divDatepickArchDoc">-->
+                                            <c:choose>
+                                                <c:when test="${not empty documentoRecepBean.feArcDoc}">
+                                                    <form:input path="feArcDoc" value="${documentoRecepBean.feArcDocCorta}" readonly="true" style="text-align: center" maxlength="16" onkeypress="return filtrarTeclado(event, false, public_enteros+'/:','deAne','',fu_preValidaFechaArchDoc);"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <form:input path="feArcDoc" value="" style="text-align: center" readonly="true" maxlength="16" onkeypress="return filtrarTeclado(event, false, public_enteros+'/:','deAne','',fu_preValidaFechaArchDoc);"/>
+                                                </c:otherwise>
+                                            </c:choose>                                             
+                                            <!--</div>                                                                                         -->
+                                        </td>
+                                    </tr>       
+                                    <!--YUAL-->
+                                    <tr style="margin-top:15px;" >
+                                                <td width="120px; ">Archivo Adjunto:</td>
+                                                <td width="200px;">
+                                                    <input readonly="readonly" name="txtNombreAnexo" id="txtNombreAnexo" type="text" value=""/>
+                                                    <button id="btn-ReemplazarDoc" title="Adjunat Archivo Atención" class="btn btn-default btn-xs" onclick="fn_anexoArchivarDocumento();" type="button"><span class="glyphicon glyphicon-open"></span></button>
+                                                    <button id="btn-VerDocumento" title="Ver documento" class="btn btn-default btn-xs" type="button" onclick="fn_verDocAnexoArchivado();" ><span class="glyphicon glyphicon-folder-open"></span></button>
+                                                        <input id="fileupload" type="file" name="files[]" data-url="" multiple="" style="display: none;"/>
+                                                        <div id="progress" class="progress" style="width:200px;display: none;">
+                                                            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                                <span style="top: 3px; "><jsp:text/></span>
+                                                            </div>
+                                                        </div>
+                                                            
+
+                                                </td>    
+                                                
+                                     </tr>
+                                         <tr>
+                                      <div id="divError" class="alert alert-danger" style="display:none">
+                                        <ul id="divErrorLista"><jsp:text/></ul>
+                                    </div>
+                                     </tr>
+                                </table>
+                            </fieldset>  						
+                        </td>
+                    </tr>
+                </table>
+            </form:form>
+        </div>
+        <!--<script type="text/javascript">pushFocusEvent(true, "rectificacion", fu_cargaDatosDni_R);</script>-->
+    </div>
+</jsp:root>

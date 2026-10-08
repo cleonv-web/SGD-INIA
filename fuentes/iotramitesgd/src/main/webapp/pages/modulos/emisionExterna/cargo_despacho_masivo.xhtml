@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+>
+    <h:head>
+        <link href="#{request.contextPath}/util/css/estilos.css"
+              rel="stylesheet" type="text/css"/>
+        <style>
+            body {
+                font: 62.5% "Trebuchet MS", sans-serif;
+                margin: 50px;
+            }
+
+            .ui-layout-pane {
+                border: 0;
+                margin: 0;
+            }
+        </style>
+
+    </h:head>
+
+    <ui:composition template="/templates/principal.xhtml">
+        <ui:define name="content">
+            <h:form id="frmCargoDespacho">
+                <p:growl id="msgs" showDetail="true"/>
+
+                <p:panel id="pnlEmisionExterna" header="Despacho">
+                    <p:spacer height="25px"/>
+
+                    <p:pickList id="idLista" value="#{cCargo.lista}"
+                                var="entidad"
+                                itemValue="#{entidad.vrucentrec}" itemLabel="#{entidad.vnomentrec}"
+                                effect="bounce"
+                                showSourceFilter="true" showTargetFilter="true"
+                                filterMatchMode="contains"
+                                showCheckbox="true"
+                                converter="#{entidadConverter}"
+                                responsive="true">
+                        <f:facet name="sourceCaption">Available</f:facet>
+                        <f:facet name="targetCaption">Starting</f:facet>
+
+                        <p:ajax event="transfer" listener="#{cCargo.onTransfer}"/>
+
+                        <p:column style="width:85%;">
+                            <h:outputText value="#{entidad.vnomentrec}"/>
+                        </p:column>
+                    </p:pickList>
+
+                    <div class="ui-fluid">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:spacer height="25px"/>
+                                <p:commandButton id="btnActualizar" value="Actualizar"
+                                                 actionListener="#{cCargo.actualizarCargoDespacho()}"
+                                                 ajax="false"
+                                                 icon="ui-icon-search"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+
+</f:view>

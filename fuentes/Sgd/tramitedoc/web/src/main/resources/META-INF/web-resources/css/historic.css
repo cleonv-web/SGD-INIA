@@ -1,0 +1,46 @@
+/* 
+    Document   : historic
+    Created on : 25/10/2013, 09:20:10 AM
+    Author     : ngilt
+    Description:
+        Panel para la barra derecha de historial.
+*/
+
+.rightPanel{ 
+    background: grey;
+    height: 37px;
+    position: fixed;
+    right: 10px;
+    top: 50%;
+    width: 20px;
+    z-index: 99999;
+}
+.fnp-next {
+    height: 37px;
+    position: fixed;
+    right: 10px;
+    top: 50%;
+    width: 20px;
+    z-index: 99999;
+}
+.fnp-box-right {
+    background: url("../imgs/arrow-right.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    height: 37px;
+    position: relative;
+    width: 20px;
+}
+.fnp-content-right {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 20px 0 0 20px;
+    color: #000000;
+    display: block;
+    height: 101px;
+    overflow: hidden;
+    padding: 5px 60px 0 10px;
+    position: absolute;
+    right: -235px;
+    top: -36px;
+    width: 200px;
+    z-index: -1;
+}

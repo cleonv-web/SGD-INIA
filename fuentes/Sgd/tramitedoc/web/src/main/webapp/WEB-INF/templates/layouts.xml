@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+  <definition name="main" template="/WEB-INF/templates/main.jspx">
+    <put-attribute name="regionTop" value="/WEB-INF/views/mainHeader.jspx" />
+    <put-attribute name="regionLeft" value="/WEB-INF/views/mainMenu.jspx" />
+    <!--<put-attribute name="regionBody" value="/WEB-INF/views/mainBody.jspx" />-->
+    <put-attribute name="regionBottom" value="/WEB-INF/views/mainFooter.jspx" />
+  </definition>
+
+  <definition name="public" template="/WEB-INF/templates/default.jspx">
+    <put-attribute name="header" value="/WEB-INF/views/header.jspx" />
+    <put-attribute name="footer" value="/WEB-INF/views/footer.jspx" />
+  </definition>
+
+</tiles-definitions>

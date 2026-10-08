@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+
+
+    <!--<div id="headPanel" dojotype="dijit.layout.ContentPane" region="top" role="group" splitter="true">-->
+    <div id="headPanel" >
+        <div id="headPanel_top"  max-width="100%" style="background-image: url(data:image/png;base64,${b64ImgTop})">
+            <div style="position: relative; width:90%; left:10%;">
+                <table width="100%" border="0" cellspacing="0" >
+                    <tr>
+                        <td width="40%" valign="center" id="titulo_interno">Sistema de Gesti&#243;n Documental</td>
+                        <td width="50%" valign="center" id="txt_nav">
+                            <span class="txt_nav2"><a href="#" onclick="fn_cambiaDependencia();"> ${usuarioConfig.deDep}</a></span>
+                            <br/>${usuario.dePrenombres} ${usuario.deApellidoPaterno} ${usuario.deApellidoMaterno}
+                        </td>
+                        <td width="10%" align="right" valign="top">
+                            <a href="#" id="main_links" onclick="salir('${ctx}/index.jsp')">
+                                <strong>Salir</strong><img src="${resourceURL}/images/icon_exit01.png" border="0" alt="Salir del Sistema" name="exit" width="40" height="40" align="absmiddle"/>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</jsp:root>

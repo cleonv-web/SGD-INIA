@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:jsp="http://java.sun.com/JSP/Page">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+
+    <!--<div id="bottomPanel" dojotype="dijit.layout.ContentPane" region="bottom" widgetid="bottomPanel" role="group">-->
+    <div id="bottomPanel">
+        <div style="width:75%; float:left;">
+            <table width="100%" class="padded-table10" border="0" cellspacing="0" >
+                <tr>
+                    <td class="txt_footer" align="left" width="50%" valign="top">
+                        Equipo: Tramite Documentario<br/>
+                        Versión ${applicationVersion}<br/>
+                        Ruta de Documentos:<br/>
+                        <a id="RutaDocs" name="RutaDocs" href="#" onclick="fn_abrirRutaDocs();"><strong>${usuarioConfig.deRutaAnexo}</strong></a>
+                    </td>
+                    <td class="txt_footer" align="left" width="50%" valign="top">
+                        Unidad Orgánica:<br/>
+                        <strong>${usuarioConfig.deDep}</strong><br/>
+                        <strong>${usuarioConfig.deLocal}</strong><br/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <form id="depFormDir" name="depFormDir" action="acceso.do" method="POST">
+                <input id="txtCoDep" name="txtCoDep" type="hidden" value=""/>
+            </form>                    
+        </div>
+     
+        <div style="width:25%; float:right;">
+            <img src="data:image/png;base64,${b64ImgFoot}" title="SGD"/>
+        </div>
+      <!-- no mostrar logo -->
+        <!--<table width="100%">-->
+        <!--<tr>-->
+          <!--<td width="70"><span id="txtStatusLeft">AVISOS</span></td>-->
+          <!--<td width="20" align="right"><font face="verdana">Local: ${usuario.parametrosGlobales.deLocal}</font></td>-->
+          <!--<td width="10" align="right">Versión ${applicationVersion}</td>-->
+        <!--</tr>-->
+        <!--</table>-->
+    </div>
+</jsp:root>

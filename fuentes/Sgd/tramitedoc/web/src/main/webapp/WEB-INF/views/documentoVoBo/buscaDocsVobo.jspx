@@ -1,0 +1,171 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <jsp:scriptlet><![CDATA[response.setHeader("Cache-Control", "max-age=43200");]]></jsp:scriptlet>
+    
+	<script languaje="javascript">jQuery(document).ready(function() {fn_inicializaBusqDocsVoBo(/*'${buscarDocumentoEmiBean.sCoAnnio}'*/);});</script>  	    
+    <div class="ui-panel ui-corner-all" id="divBusqDocumentoVoBo">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>DOCUMENTOS VISTO BUENO</span>
+        </div>
+        <div class="ui-panel-body">
+                <fieldset>
+                    <div class="btn-group btn-group-lg">
+                       <button title ="Editar Documento" class="btn btn-primary btn-lg" onclick="editarDocumentoVoBoButtonToolBar();" type="button">
+                           <span class="glyphicon glyphicon-edit"><jsp:text/></span> Editar</button>
+                       <button title ="Ver Documento" class="btn btn-primary btn-lg" onclick="fn_verDocumentoLista();" type="button">
+                           <span class="glyphicon glyphicon-list-alt"><jsp:text/></span> Ver Documento</button>
+                       <button title ="Ver Documento Anexos - Referencias" class="btn btn-primary btn-lg" onclick="fn_verAnexoDocVoboLs();" type="button">
+                           <span class="glyphicon glyphicon-paperclip"><jsp:text/></span> Ver Anexos</button>
+                       <button title ="Seguimiento de Documentos" class="btn btn-primary btn-lg" onclick="fn_verSeguimientoEmi();" type="button">
+                           <span class="glyphicon glyphicon-transfer"><jsp:text/></span> Seguimiento</button>
+                       <button title ="Salir de Documento Visto Bueno" class="btn btn-primary btn-lg" onclick="cerrarPantalla();" type="button">
+                           <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                    </div>                    
+                    
+                </fieldset>
+            <form:form modelAttribute="buscarDocumentoVoBoBean">
+            <form:hidden path="tipBusqueda"/>
+            <form:hidden path="feIni"/>  
+            <form:hidden path="feFin"/>  
+            <table width="100%">
+                <tr valign="top">
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Búsqueda</legend>
+                            <table width="100%">
+                                <tr>
+                                   <td>Nro Emisión:</td>
+                                   <td>
+                                       <form:input path="nuCorEmi" maxlength="6" style="width: 60px;" onkeypress="return fu_onKeyPressFiltrarTecladoNumero(event, false, public_enteros)"/>
+                                   </td>
+                                   <td>Nro Documento:</td>
+                                   <td>
+                                       <form:input path="nuDoc" style="width: 60px;" maxlength="6"/>
+                                   </td>
+                                   <td>Expediente:</td>
+                                   <td>
+                                       <form:input path="nroExp" style="width: 80px;" maxlength="20"/>
+                                   </td>
+                                   <td align="right">
+                                        <button title ="Buscar documentos" class="btn btn-default btn-sm" onclick="fn_validarTipoBusquedaDocsVoBo('#buscarDocumentoVoBoBean','1');" type="button">
+                                            <span class="glyphicon glyphicon-search"><jsp:text/></span> Buscar</button>
+                                        <button title ="Limpiar datos de b&#250;squeda" class="btn btn-default btn-sm" onclick="fu_cleanDocVoBo('1');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                   </td>  
+                               </tr>
+                               <tr>
+                                   <td>Asunto:</td>
+                                   <td colspan="5">
+                                       <form:input path="asunto" style="width: 360px;" onkeypress="return fu_onKeyPressFiltrarTecladoCadena(event, false, public_letras)"/>
+                                   </td>
+                                   <td align="right">
+                                       <form:checkbox path="esIncluyeFiltro"/><strong>Incluir Filtro</strong>
+                                   </td>                                    
+                               </tr>
+                            </table>
+                        </fieldset>                        
+                    </td>
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Filtro</legend>
+                            <table width="100%">
+                                <tr>
+                                    <td colspan="2">
+                                        <form:hidden path="nuAnn"/>  
+					<div id="fechaFiltro" class="cajaFechas">
+                                            <div class="cajaIcono"><span class="glyphicon glyphicon-calendar fa fa-calendar"><jsp:text/></span></div>
+                                            <div name="labelDate" class="cajaEtiqueta" style="text-align: center;width: 210px;"><jsp:text/></div>
+                                            <div class="cajaTriangulo"><b class="caret"><jsp:text/></b></div>
+                                        </div>                                        
+                                    </td>
+                                    <td>Estado:</td>
+                                    <td>
+                                        <form:select path="esDoc" style="width:180px">
+                                            <form:options items="${deEstadosList}" itemValue="coEst" itemLabel="deEst" />
+                                        </form:select>
+                                    </td>
+                                   <td align="right">
+                                        <button title ="Filtrar documentos" class="btn btn-default btn-sm" onclick="fn_validarTipoBusquedaDocsVoBo('#buscarDocumentoVoBoBean','0');" type="button">
+                                            <span class="glyphicon glyphicon-filter"><jsp:text/></span> Filtrar</button>
+                                        <button title ="Limpiar datos de Filtro" class="btn btn-default btn-sm" onclick="fu_cleanDocVoBo('0');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                   </td>  
+                                </tr>
+                                <tr>    
+                                    <td>Prioridad:</td>
+                                    <td>
+                                        <form:select path="coPrioridadDoc">
+                                            <form:options items="${dePrioridadesList}" itemValue="coPri" itemLabel="dePri" />
+                                        </form:select>
+                                    </td>    
+                                    <td>Tipo Doc:</td>
+                                    <td>
+                                        <form:select path="tipDoc" style="width:180px">
+                                            <form:options items="${deTipoDocumentoList}" itemValue="coTipDoc" itemLabel="deTipDoc" />
+                                        </form:select>
+                                    </td>
+                                    <td align="right">
+                                        <a href="#" title="M&#225;s datos de Filtro" onclick="mostrarOcultarDivBusqFiltro('1');" class="btn-actdiv">
+                                            <span id="spanDivFiltro" class="glyphicon glyphicon-collapse-down"><jsp:text/></span>
+                                        </a>
+                                    </td>    
+                                </tr>
+                            </table>
+                            <div id="divConfigFiltro" style="display:none;">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="100px">Referencia Origen:</td>
+                                        <td>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtRefOrigen" name="txtRefOrigen" size="50" readonly="true" value="[TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaReferenciaOrigenBusqDocVoBo();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                            <form:input path="coRefOri" type="hidden"/>
+                                        </td>     
+                                    </tr>
+                                    <tr>                                    
+                                        <td>Elaborado por:</td>
+                                        <td>
+                                            <form:input path="coEmpElabora" type="hidden"/>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtElaboradoPor" name="txtElaboradoPor" size="50" readonly="true" value="[TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaElaboradoPorDocVobo();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>                                                
+                                    <!--<tr>                                    
+                                        <td>Tipo Expediente:</td>
+                                        <td>
+                                            <form:select path="tiExp">
+                                                <form:options items="${deExpedienteList}" itemValue="coExp" itemLabel="deExp" />
+                                            </form:select>
+                                        </td>
+                                        <td>
+                                            
+                                        </td>
+                                    </tr>                                            -->
+                                </table>
+                            </div>
+                        </fieldset>                        
+                    </td>
+                </tr>
+            </table>
+            </form:form>
+                
+                <fieldset>
+                <legend>Detalle</legend>
+                <div id="divTblDocsVoBo">
+                    <jsp:directive.include file="tblDocsVobo.jspx"/>
+                </div>
+                </fieldset>
+        </div>
+    </div>
+    <div id="divNewEmiDocumVoBo" style="display:none;">&amp;nbsp;</div>                
+</jsp:root>

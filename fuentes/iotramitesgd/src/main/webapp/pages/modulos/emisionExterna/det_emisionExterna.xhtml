@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <style>
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+    </style>
+</h:head>
+<body>
+
+<p:dialog widgetVar="emisionExternaDetalleDialogWidget"
+          id="emisionExternaDetalleDialogId" height="630" width="900"
+          modal="true" closable="true" draggable="false" resizable="true"
+          appendTo="@(body)">
+    <h:form id="frmDetalleEmiExterna" enctype="multipart/form-data">
+        <p:growl id="messages" showDetail="true"/>
+        <p:accordionPanel>
+            <p:tab title="Detalle Documento">
+                <div class="ui-fluid">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Ent. Receptora"/>
+                                    <p:inputText id="idDetNomEnt"
+                                                 value="#{cEmisionExterna.consultaDocumento.vnomentrec}"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Num. Reg. STD"/>
+                                    <p:inputText id="idDetNumStd"
+                                                 value="#{cEmisionExterna.consultaDocumento.vnumregstd}"
+                                                 readonly="true"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Año Reg. STD"/>
+                                    <p:inputText id="idDetAniStd"
+                                                 value="#{cEmisionExterna.consultaDocumento.vanioregstd}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Tipo Documento"/>
+                                    <p:selectOneMenu id="idDetTipDoc"
+                                                     value="#{cEmisionExterna.consultaDocumento.ccodtipdoc}">
+                                        <f:selectItem itemLabel="Seleccione" itemValue=""
+                                                      noSelectionOption="true"/>
+                                        <f:selectItems value="#{cEmisionExterna.cbotipdocmv}"
+                                                       var="tipDoc" itemLabel="#{tipDoc.cdoc_desdoc}"
+                                                       itemValue="#{tipDoc.cidtipdoc}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Num. Documento"/>
+                                    <p:inputText id="idDetNumDoc"
+                                                 value="#{cEmisionExterna.consultaDocumento.vnumdoc}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Fec. Documento"/>
+                                    <p:calendar id="idDetFecDoc"
+                                                value="#{cEmisionExterna.consultaDocumento.dfecdoc0}"
+                                                showOn="" pattern="dd-MM-yyyy" readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Nom. Und. Org. Emisora"/>
+                                    <p:inputText id="idDetUniOrgEmi"
+                                                 value="#{cEmisionExterna.consultaDocumento.vuniorgrem}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Nom. Und. Org. Destino"/>
+                                    <p:inputText id="idDetUniOrgDst"
+                                                 value="#{cEmisionExterna.consultaDocumento.vuniorgdst}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Nom. Destinatario"/>
+                                    <p:inputText id="idDetNomDstn"
+                                                 value="#{cEmisionExterna.consultaDocumento.vnomdst}"
+                                                 readonly="true"/>
+                                </div>
+
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Car. Destinatario"/>
+                                    <p:inputText id="idDetCarDstn"
+                                                 value="#{cEmisionExterna.consultaDocumento.vnomcardst}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Asunto"/>
+                                    <p:inputTextarea id="idDetAsunto"
+                                                     value="#{cEmisionExterna.consultaDocumento.vasu}" cols="50"
+                                                     rows="5" counter="display" maxlength="500"
+                                                     counterTemplate="{0} Cantidad de carateres."
+                                                     autoResize="false" readonly="true"/>
+                                    <h:outputText id="display"/>
+                                </div>
+                            </div>
+                            <!--
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-2"><p:outputLabel value="Tupa" /></div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                    <p:selectOneRadio id="idDetTupa" value="#{cEmisionExterna.consultaDocumento.cindtup}">
+                                        <f:selectItem itemLabel="Si" itemValue="S" />
+                                        <f:selectItem itemLabel="No" itemValue="N" />
+                                    </p:selectOneRadio>
+                                </div>
+                            </div>
+                            -->
+                            <div class="ui-g">
+                                <!-- <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <p:outputLabel value="Archivo Principal" />
+                                    <p:inputText id="idDetNomDocPri"
+                                        value="#{cEmisionExterna.consultaDocumento.vnomdoc}" />
+                                </div> -->
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:spacer/>
+                                    <p:commandButton icon="ui-icon-document"
+                                                     value="Documento Principal"
+                                                     action="#{cEmisionExterna.documentoPrincipal()}"
+                                                     immediate="true" update=":frmEmiExternaDocumentoPrincipal">
+                                    </p:commandButton>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Num. Folios"/>
+                                    <p:inputText id="idDetNumFol"
+                                                 value="#{cEmisionExterna.consultaDocumento.snumfol}"
+                                                 readonly="true"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Num. Anexos"/>
+                                    <p:inputText id="idDetNumAnx"
+                                                 value="#{cEmisionExterna.consultaDocumento.snumanx}"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Anexo"/>
+                                    <p:dataList id="idDetDocAnx"
+                                                value="#{cEmisionExterna.lstDocAnexo}" var="anexo"
+                                                type="ordered">
+                                        <f:facet name="header">
+                                            Anexo
+                                        </f:facet>
+                                        #{anexo.vnomdoc}
+                                    </p:dataList>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="CUO Referencia"/>
+                                    <p:inputText id="idCuoRef"
+                                                 value="#{cEmisionExterna.consultaDocumento.vcuoref}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p:tab>
+            <p:tab title="Cargo" id="tabCargo"
+                   disabled="#{cEmisionExterna.consultaDocumento.cflgest.equals('P')?true:cEmisionExterna.consultaDocumento.cflgest.equals('E')?true:false }">
+                <div class="ui-fluid">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12">
+
+                            <p:spacer height="15px"></p:spacer>
+
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Uni. Orgánica Receptora"/>
+                                    <p:inputText id="idDetOfiStd"
+                                                 value="#{cEmisionExterna.consultaDocumento.vuniorgstdrec}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Año de Expediente"/>
+                                    <p:inputText id="idDetAnio"
+                                                 value="#{cEmisionExterna.consultaDocumento.vanioregstdrec}"
+                                                 readonly="true"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <p:outputLabel value="Num. de Expediente"/>
+                                    <p:inputText id="idDetNum"
+                                                 value="#{cEmisionExterna.consultaDocumento.vnumregstdrec}"
+                                                 readonly="true"/>
+                                </div>
+
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Fec. Registro SGD"/>
+                                    <p:inputText id="idDetFec"
+                                                 value="#{cEmisionExterna.consultaDocumento.dfecregstdrec}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <h:outputLabel value="Usuario registrador"/>
+                                    <p:inputText id="idUsuReg"
+                                                 value="#{cEmisionExterna.consultaDocumento.vusuregstdrec}"
+                                                 readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <h:outputLabel value="Estado"/>
+                                    <p:selectOneMenu id="idDetEst"
+                                                     value="#{cEmisionExterna.consultaDocumento.cflgest}"
+                                                     required="true" requiredMessage="Seleccione estado">
+                                        <f:selectItem itemLabel="Seleccione Estado" itemValue=""/>
+                                        <f:selectItem itemLabel="Recepcionado" itemValue="R"/>
+                                        <f:selectItem itemLabel="Observado" itemValue="O"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:outputLabel value="Observación"/>
+                                    <p:inputTextarea id="idDetObs"
+                                                     value="#{cEmisionExterna.consultaDocumento.vobs}" cols="50"
+                                                     rows="5" counter="display3" maxlength="500"
+                                                     counterTemplate="{0} Cantidad de carateres."
+                                                     autoResize="false" readonly="true"/>
+                                    <h:outputText id="display3"/>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <h:outputLabel value="Descargar Cargo"/>
+                                    <p:commandButton icon="ui-icon-document"
+                                                     value="Descargar Cargo" id="idDesCargo"
+                                                     action="#{cEmisionExterna.cargoDocumento()}" immediate="true"
+                                                     update=":frmCargoDocumento">
+                                    </p:commandButton>
+                                </div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <h:outputLabel value="Actualizar Cargo"/>
+                                    <p:fileUpload
+                                            fileUploadListener="#{cEmisionExterna.fileUploadCargo}"
+                                            mode="advanced" dragDropSupport="false"
+                                            sizeLimit="40000000" cancelLabel="Cancelar"
+                                            uploadLabel="Cargar" label="Seleccionar" fileLimit="1"
+                                            update="@this, frmDetalleEmiExterna:messages"
+                                            allowTypes="/(\.|\/)(pdf|PDF)$/"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                    <p:commandButton value="Habilitar documento SGD"
+                                                     id="btnHabilitar"
+                                                     rendered="#{cEmisionExterna.consultaDocumento.cflgest.equals('O') }"
+                                                     action="#{cEmisionExterna.habilitarDocumentoSGD()}"
+                                                     update="frmDetalleEmiExterna :frmBusquedaEmisionExterna"
+                                                     oncomplete="handleEnvioDocumentoRequest(xhr, status, args)"
+                                                     icon="ui-icon-transfer-e-w"/>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </p:tab>
+        </p:accordionPanel>
+        <!-- <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> -->
+    </h:form>
+
+</p:dialog>
+</body>
+</html>

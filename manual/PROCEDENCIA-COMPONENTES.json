@@ -1,0 +1,18 @@
+{
+  "postgresql_windows_origen": "https://get.enterprisedb.com/postgresql/postgresql-17.11-2-windows-x64-binaries.zip",
+  "postgresql_linux_fuente": "https://ftp.postgresql.org/pub/source/v17.11/postgresql-17.11.tar.gz",
+  "postgresql_linux_compilacion": "Debian 11 glibc 2.31, GCC, configure --prefix=/opt/pgsql --without-readline --without-icu; make; make install; contrib; libz.so.1 incluida. Relocatable. Sin TLS.",
+  "postgresql_fuente_verificacion": "SHA256 comparado con archivo .sha256 oficial antes de compilar.",
+  "python_windows": "Python 3.13.16 embeddable oficial python.org",
+  "python_linux": "python-build-standalone 3.13.16+20261003 astral-sh (x86_64 Linux GNU)",
+  "runtime_windows_cpp": "DLL Microsoft firmadas, app-local en bin; no modificación global del sistema.",
+  "archivos": {
+    "bd/postgresql-windows-backup.zip": "2f868d77832f5cbc62182a0ca57f02df14d33d85ce0d0bbaaeb0de3a7029bd2b",
+    "bd/postgresql-linux-x64.tar.gz": "70fde1e9bec5178869bfd7ab78bdc6018cf63a0d62f1924fd29e2f1c9f85f907",
+    "bd/postgresql-17.11-fuente.tar.gz": "5367f6fb2ec97efe1eb2e0c7926bb33438e51b0bd3a9733b88498056a7dc9a7e",
+    "java/linux-x64.tar.gz": "9c70e102f527ac674ac2fe9c7d47b9a04e2d19842ba5ab8e9b33f368bbadfaea",
+    "payara/payara-5.2022.5-backup.zip": "3ac63a66604595bd63f18f37271e8d5ef923a14ce1acf6426fd46193fb5b281b",
+    "herramientas/python-windows.zip": "97dae5274cc54867065e8d5a3226e48c35017ed332a0fdb0e27d5b5821961297",
+    "herramientas/python-linux.tar.gz": "4595c5589fff7bf0cb158d9a88a797e0d791fa33830770fcb7bf3f4b104feeae"
+  }
+}

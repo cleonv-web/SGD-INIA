@@ -1,0 +1,47 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <div class="ui-panel ui-corner-all" style="width: 850px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>DOCUMENTOS POR DEPENDENCIA</span>
+        </div>
+        <div class="ui-panel-body">
+                <form:form modelAttribute="buscarDocDependencia">
+                <fieldset>
+                     <table width="100%">
+                         <tr>
+                             <td>DEPENDENCIA:</td>
+                             <td>
+                                <form:select path="codDepencia" style="width: 100%;">
+                                    <form:options items="${dependenciaList}" itemValue="coDependencia" itemLabel="deDependencia" />
+                                </form:select>                                 
+                             </td>
+                             <td>
+                                <input type="button"
+                                value="MOSTRAR"
+                                size="10"
+                                onclick="mostrarListaDocDependencia();"
+                                class="ui-button ui-widget ui-state-default ui-button-text-only"/>                                                              
+                             </td>
+                             <td>
+                                 <input type="button"
+                                       value="CERRAR"
+                                       size="10"
+                                       class="ui-button ui-widget ui-state-default ui-button-text-only"
+                                       onclick="cerrarPantalla();"/>
+                             </td>  
+                         </tr>
+                     </table>
+                </fieldset>
+                <fieldset>
+                    <legend>DETALLE</legend>
+                    <div id="divTablaListDocDependencia">
+                        <jsp:directive.include file="tablaDocDependencia.jspx"/>
+                    </div>
+                </fieldset>
+            </form:form>
+        </div>
+    </div>
+</jsp:root>

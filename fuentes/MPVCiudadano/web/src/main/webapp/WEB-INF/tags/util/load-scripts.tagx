@@ -1,0 +1,43 @@
+<jsp:root xmlns:c="http://java.sun.com/jsp/jstl/core" 
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+          xmlns:jsp="http://java.sun.com/JSP/Page" 
+          xmlns:spring="http://www.springframework.org/tags" 
+          version="2.0">
+    <jsp:output omit-xml-declaration="yes" />
+
+    <spring:eval expression="@applicationProps['application.version']" var="applicationVersion" scope="request"/>
+    <spring:eval expression="@applicationProps['resources.version']" var="resourceVersion"/>
+    <spring:eval expression="@applicationProps['web_resources_version']" var="webResourcesVersion"/>
+    
+
+    <c:set var="resourceURL" value="resources-${resourceVersion}" scope="request"/>
+    <c:set var="versionWR" value="${webResourcesVersion}" scope="request"/>
+    
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/default.css?v=${versionWR}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/stylegobpe.css?v=${versionWR}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/bootstrap.css?v=${versionWR}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/themes/custom-theme/skin.css?v=${versionWR}" />  
+
+    <script type="text/javascript">var resourceURL="${resourceURL}"</script>
+    
+    <script src="${resourceURL}/js/jquery-1.10.1.min.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+    <script src="${resourceURL}/js/jquery-ui-1.10.3.custom.min.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+    <script src="${resourceURL}/js/jquery.blockUI.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+    <script src="${resourceURL}/js/jquery.browser.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+    
+    
+    
+    <script src="${resourceURL}/js/overLib.js?v=${versionWR}" type="text/javascript"><!-- required for FF3 and Opera --></script>
+    <script src="${resourceURL}/js/bootstrap.min.js?v=${versionWR}" type="text/javascript"><!-- required for FF3 and Opera --></script>
+    <script src="${resourceURL}/js/bootbox.min.js?v=${versionWR}" type="text/javascript"><!-- required for FF3 and Opera --></script>
+    <script src="${resourceURL}/js/jquery.validate.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+    
+    <script src="${resourceURL}/js/jquery.dataTables.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+    <script src="${resourceURL}/js/util.js?v=${versionWR}" type="text/javascript"><!-- required for FF3 and Opera --></script>    
+    <script src="${resourceURL}/js/utiles.js?v=${versionWR}" type="text/javascript"><!-- required for FF3 and Opera --></script>
+    <script src="${resourceURL}/js/default.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+    <script src="${resourceURL}/js/jquery.fileupload.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+   <script src="${resourceURL}/js/jquery.iframe-transport.js?v=${versionWR}" type="text/javascript"> required for FF3 and Opera </script>
+    <script type="text/javascript">var pRutaContexto = "${ctx}";var pAppVersion="${applicationVersion}";</script>
+     
+</jsp:root>

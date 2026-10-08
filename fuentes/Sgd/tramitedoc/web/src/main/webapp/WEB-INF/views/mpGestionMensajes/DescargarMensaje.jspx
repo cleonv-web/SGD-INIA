@@ -1,0 +1,366 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <c:set var="divId" value="divOrigenMain" scope="request"/>
+    <c:set var="posiciona" value="width:670px; height:750px;" scope="request"/>
+    <script>
+    $( function() {
+
+       /* var vCantidadDias = getNumeroDeDiasDiferencia('${pfec_enviomsj}','${fechaActual}');
+ 
+        if (vCantidadDias>0)
+           {
+              vCantidadDias=-vCantidadDias;
+           }      */
+
+        var vmindate= getDiasMin('${pfec_enviomsj}');
+
+        $("#txtFechaEnt").datepicker(
+                { minDate:new Date(vmindate)}//,beforeShowDay: $.datepicker.noWeekends } 
+                
+            );
+
+          $("#txtFechaEnt").change(
+                function() {  
+                                
+                                calPenEnv();
+                            }
+                                    
+                                    
+                
+            );
+    
+            $("#txtFechaDev").datepicker(
+                { minDate: new Date(vmindate)}//,beforeShowDay: $.datepicker.noWeekends } 
+                
+            );
+        
+        
+          $("#txtFechaDev").change(
+                function() {  
+                                
+                                calPenDev();
+                }
+                
+            );
+     
+        calPenEnv();    
+        //calPenDev();
+        var vmindateActa1= getDiasMin('${pfe_Acta_Vis1}');
+        $("#txt_fe_Acta_Vis1").datepicker(
+                { minDate:new Date(vmindateActa1)}//,beforeShowDay: $.datepicker.noWeekends } 
+            );
+       var vmindateActa2= getDiasMin('${pfe_Acta_Vis2}');
+        $("#txt_fe_Acta_Vis2").datepicker(
+                { minDate:new Date(vmindateActa2)}//,beforeShowDay: $.datepicker.noWeekends } 
+            );
+
+        $('#es_Acta1_msj').val( $('#hes_Acta1_msj').val());
+        $('#es_Acta2_msj').val($('#hes_Acta2_msj').val());
+    
+        $("#txt_fe_Acta_Vis1").change(function(){            
+            $('#txt_fe_Acta_Vis2').datepicker('destroy');
+                var vmindateActaC= getDiasMin($("#txt_fe_Acta_Vis1").val());
+            console.log("mindate a:"+$("#txt_fe_Acta_Vis1").val());
+            console.log("mindate:"+vmindateActaC);
+             $("#txt_fe_Acta_Vis2").datepicker(            
+                
+                { minDate:new Date(vmindateActaC)}//,beforeShowDay: $.datepicker.noWeekends } 
+            );
+            
+        });
+        $('#cleanVisita1').click(function(){
+            $("#txt_fe_Acta_Vis1").val('');
+        });
+        $('#cleanVisita2').click(function(){
+            $("#txt_fe_Acta_Vis2").val('');
+        });
+    } );
+    </script>                        
+            
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <tiles:putAttribute name="title" value="DESCARGAR MENSAJE PENDIENTE"/>
+        <tiles:putAttribute name="body">
+            
+      
+            
+            <form:form modelAttribute="descargaMensajeBean" enctype="multipart/form-data">
+
+            <div id="divConfigPersonal">
+                
+                    <fieldset>
+                        <div class="btn-group btn-group-lg">
+                            <button id="btn-grabar" title="Descargar" class="btn btn-primary btn-lg" onclick="fn_grabarDescargaMsj();" type="button"><span class="glyphicon glyphicon-floppy-disk"></span> Descargar</button>
+                            <button id="btn-salir" title="Salir" class="btn btn-primary btn-lg" onclick="removeDomId('divOrigenMain');" type="button"><span class="glyphicon glyphicon-log-out"></span> Salir</button>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Datos del documento</legend>
+                        <table width="640px">
+                            <tr>
+                                <td width="150px;">Documento:</td>
+                                <td width="330px;"><input readonly="readonly" id="tipoDoc" name="tipoDoc" type="text" style="width: 320px;" value="${pde_TipoDoc}" data-toggle="tooltip" title="${pde_TipoDoc}" /></td>
+
+                                <td width="110px;">Fecha Emisión:</td>
+                                <td colspan="2"><input readonly="readonly" id="txtFechaEnvio" type="text" style="width: 100px;" value="${pfe_emi}" /></td>
+                            </tr>
+                            <tr>
+                                <td>Elaborado Por:</td>
+                                <td colspan="5"><input readonly="readonly" id="txtDependencia" type="text" style="width: 100%;" value="${pde_dependencia}" /></td>
+                                    
+                            </tr>
+                            <tr>
+                                <td>Destinatario:</td>
+                                <td colspan="5"><input readonly="readonly" id="txtDestinatario" type="text" style="width: 100%;" value="${pde_destinatario}" /></td>
+                                    
+                            </tr>
+                            <tr>
+                                <td width="120px;">Asunto:</td>
+                                <td colspan="5">
+                                    <textarea readonly="readonly" id="deAsu" name="deAsu" maxlength="1000" style="font-size: 14px;height:60px;width:100%;resize: none;background-color: #f2f5f7;" class="delUpperCase" rows="3" cols="60">${pde_Asu}</textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                            
+                    <fieldset>
+                        <table width="640px">
+                            <legend>Datos de mensajería</legend>
+                            <tr>
+                                <td width="150px;">Nro. Mensaje:</td>
+                                <td width="120px;"><input readonly="readonly" id="txtNu_Msj" type="text" style="width: 100px;" value="${pnu_msj}" /></td>
+                                <td width="120px;">Fecha Recepción:</td>
+                                <td width="120px;"><input readonly="readonly" id="txtNu_Msj" type="text" style="width: 100px;" value="${pfec_recepmp}" /></td> 
+                                
+                                <td width="120px;">Fecha Envío:</td>
+                                <td colspan="2"><input readonly="readonly" id="txtFechaEnvio" type="text" style="width: 100px;" value="${pfec_enviomsj}" /></td>
+                            </tr>
+                            <tr>
+                                <td>Ámbito:</td>
+                                <td><input readonly="readonly" id="txtAmbito" type="text" style="width: 100px;" value="${pde_ambito}" /></td>
+                                <td>Tipo Mensajero:</td>
+                                <td><input readonly="readonly" id="txtTipoMsj" type="text" style="width: 100px;" value="${pde_tipomsj}" />
+                                    
+                                </td> 
+                                
+                                <td>Tipo de Envío:</td>
+                                <td colspan="2"><input readonly="readonly" id="txtTipoEnv" type="text" style="width: 100px;" value="${pde_tipoenv}" /></td>
+                            </tr>
+                            <tr>
+
+                                <td>Responsable de Envío:</td>
+                                <td colspan="6"><input readonly="readonly" id="txtRespEnv" type="text" style="width: 100%" value="${pde_resenv}" /></td>                                    
+                            </tr>
+                        </table>
+                    </fieldset>
+                     <fieldset>
+                        <table width="640px">
+                            <legend>Primera visita</legend>                            
+                            <tr>
+                                <td width="120px;">Nro. Acta</td>
+                                <td width="115px;"><input readonly="readonly" id="txt_pnu_Acta_Vis1" type="text" style="width: 100px;" value="${pnu_Acta_Vis1}" /></td>
+                                <td width="95px;">Fecha Visita</td>
+                                <td><input readonly="readonly" maxlength="10" id="txt_fe_Acta_Vis1" type="text" style="width: 100px;" placeholder="dd/mm/aaaa" value="${pfe_Acta_Vis1}" onkeypress="return filtrarTeclado(event, false, public_textual_date,'','',null);"/>
+                                    <a class="btn btn-default btn-xs" id="cleanVisita1"><span class="glyphicon glyphicon-trash"></span></a>
+                                </td>
+                                
+                                <td>Estado Acta:</td>
+                                <td width="100px;">
+                                     <form:select path="es_Acta1_msj" style="width:100px"  >
+                                            <form:options items="${deEstadosList}" itemValue="coEst" itemLabel="deEst"/>
+                                        </form:select>                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Adjuntar Notificación:</td>
+                                <td colspan="5">
+                                    <input readonly="readonly" name="txtNombreActa1" id="txtNombreActa1" type="text" value="" style="float:left;"/>
+                                    <div id="btn-opciones" style="float:left;">
+                                        <button  id="btn-ReemplazarDocActa1" title="Anexar Acta 1" class="btn btn-default btn-xs" onclick="fn_anexoDocumentoActa1();" type="button"><span class="glyphicon glyphicon-open"></span></button>
+                                        <c:if test="${parchivo_acta1 !=null}">
+                                        <button type="button" class="btn btn-default btn-xs" title="DESCARGAR" onclick="fn_verDocActa('${pnu_ann}', '${pnu_emi}', '${pnu_des}','${pnu_Acta_Vis1}','${parchivo_acta1}');" nuAnn="${pnu_ann}" nuEmi="${pnu_emi}" nuDes="${pnu_des}" nombreArchivo="${parchivo_acta1}"><span class="glyphicon glyphicon-folder-open"></span></button>
+                                        </c:if>
+                                        
+                                        <input id="fileuploadActa1" type="file" name="files[]" data-url="" multiple="" style="display: none;"/>
+                                        <div id="progressActa1" class="progress" style="float:left; width:100px;display: none;">
+                                            <div class="progress-bar" role="progressActa1" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%; float:left;">
+                                                <span><jsp:text/></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>    
+                            </tr>
+                        </table>
+                    </fieldset> 
+                    <fieldset>
+                        <table width="640px">
+                            <legend>Segunda visita</legend>                            
+                            <tr>
+                                <td width="120px;">Nro. Acta</td>
+                                <td width="115px;"><input readonly="readonly" id="txt_pnu_Acta_Vis2" type="text" style="width: 100px;" value="${pnu_Acta_Vis2}" /></td>
+                                <td width="95px;">Fecha Visita</td>
+                                <td><input readonly="readonly" maxlength="10" id="txt_fe_Acta_Vis2" type="text" style="width: 100px;" placeholder="dd/mm/aaaa" value="${pfe_Acta_Vis2}" onkeypress="return filtrarTeclado(event, false, public_textual_date,'','',null);"/>
+                                <a class="btn btn-default btn-xs" id="cleanVisita2"><span class="glyphicon glyphicon-trash"></span></a>
+                                </td>
+                                
+                                <td>Estado Acta:</td>
+                                <td width="100px;">
+                                <form:select path="es_Acta2_msj" style="width:100px"  >
+                                       <form:options items="${deEstadosList}" itemValue="coEst" itemLabel="deEst"/>
+                                   </form:select>                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Adjuntar Notificación</td>
+                                <td colspan="5">
+                                    <input readonly="readonly" name="txtNombreActa2" id="txtNombreActa2" type="text" value="" style="float:left;"/>
+                                    <div id="btn-opciones" style="float:left;">
+                                        <button  id="btn-ReemplazarDocActa2" title="Anexar Acta 2" class="btn btn-default btn-xs" onclick="fn_anexoDocumentoActa2();" type="button"><span class="glyphicon glyphicon-open"></span></button>
+                                        <c:if test="${parchivo_acta2 !=null}">
+                                                  <button type="button" class="btn btn-default btn-xs" title="DESCARGAR" onclick="fn_verDocActa('${pnu_ann}', '${pnu_emi}', '${pnu_des}','${pnu_Acta_Vis2}','${parchivo_acta2}');" nuAnn="${pnu_ann}" nuEmi="${pnu_emi}" nuDes="${pnu_des}" nombreArchivo="${parchivo_acta1}"><span class="glyphicon glyphicon-folder-open"></span></button>
+                                        </c:if>
+                                        <input id="fileuploadActa2" type="file" name="files[]" data-url="" multiple="" style="display: none;"/>
+                                        <div id="progressActa2" class="progress" style="float:left; width:100px;display: none;">
+                                            <div class="progress-bar" role="progressActa2" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%; float:left;">
+                                                <span><jsp:text/></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>    
+                            </tr>
+                        </table>
+                    </fieldset>  
+                    <fieldset>
+                        <legend>Datos de descarga</legend>
+                        <input id="txtNu_Emi" name="txtNu_Emi" type="hidden" value="${pnu_emi}"/>
+                        <input id="txtNu_Ann" name="txtNu_Ann" type="hidden" value="${pnu_ann}"/>
+                        <input id="txtNu_Des" name="txtNu_Des" type="hidden" value="${pnu_des}"/>
+                        <input id="txtFe_Pla" name="txtFe_Pla" type="hidden" value="${pfe_pla}"/>
+                        <input id="txtFe_Act" name="txtFe_Act" type="hidden" value="${fechaActual}"/>
+                        <input id="hes_Acta1_msj" name="hes_Acta1_msj" type="hidden" value="${es_Acta1_msj}"/>
+                        <input id="hes_Acta2_msj" name="hes_Acta2_msj" type="hidden" value="${es_Acta2_msj}"/>
+                        <input id="txtDia_Pla_Dev" name="txtDia_Pla_Dev" type="hidden" value="${pdias_pla_dev}"/>
+                        <input id="txtDia_Pen_Dev" name="txtDia_Pen_Dev" type="hidden" value="${pdias_pla_dev}"/>
+                        <input id="txtAnexarCargo" name="txtAnexarCargo" type="hidden" value="${anexar_cargo}"/>
+                        <input id="txtFe_Pla_Dev" name="txtFe_Pla_Dev" type="hidden" value=""/>
+                        <input id="txtPeEnvMsj" name="txtPeEnvMsj" type="hidden" value="${pPeEnvMsj}"/>
+                        <input id="fileSizeMaxCargo" name="fileSizeMaxCargo" type="hidden" value="${fileSizeMaxCargo}"/>
+                        <table width="640px">
+
+                            <tr>
+                                <td width="120px;">Estado Final:</td>
+                                <td>
+                                        <form:select path="co_EstadoDoc" style="width:120px" onchange="fn_verMotivo()" >
+                                            <form:options items="${deEstadosList}" itemValue="coEst" itemLabel="deEst"/>
+                                        </form:select>
+                                </td>                               
+                                                               
+                                   
+                                <td colspan="4" align="right">
+                                        <div id="divMotivo" style="display:none;" >
+                                            <span> Motivo: </span>
+                                                <form:select path="coMotivo" style="width:200px"  onchange="calPenDev()">
+                                                    <form:options items="${deMotivoList}" itemValue="celeDescor" itemLabel="celeDesele"/>
+                                                </form:select>
+                                        </div>   
+                                </td>
+                                
+    
+                            </tr>
+                            <tr>
+                                <td>Observaciones:</td>
+                                <td colspan="6"> <textarea id="txtObservaciones" maxlength="500" name="txtObservaciones" rows="4" style="font-size: 14px;width:100%;resize: none;"></textarea></td>
+                            </tr>
+                            <tr>
+                                <table>
+                                    <tr>
+                                        <td width="120px;"><div id="LblFechaEnt">Fecha de Entrega:</div></td>
+                                        <td><input readonly="readonly" maxlength="10" id="txtFechaEnt" type="text" style="width: 100px;" placeholder="dd/mm/aaaa"  onkeypress="return filtrarTeclado(event, false, public_textual_date,'','',null);"/></td>
+                                        <td width="65px;" align="right">Hora :</td>
+                                        <td width="120px;" colspan="2"><input maxlength="5" id="txtHoraEnt" type="text" style="width: 80px;" value="" placeholder="hh:mm" class="delUpperCase"/></td>
+                                        <td width="70px;" id="rowPen1">Penalización:</td>                                
+                                        <td colspan="5"><input id="txtes_pen_msj" name="txtes_pen_msj" type="hidden" value="N"/><div id="txtes_pen"  style="width:30px;color:#ffffff; font-size: 14px; "></div></td>
+                                    </tr>
+                                </table>                           
+
+                            </tr>
+                            <tr>
+                                <table>
+                                    <tr>
+                                        <td width="120px;"><div id="LblFechaDev">Fecha de Devol./Denun.:</div></td>
+                                        <td><input readonly="readonly" maxlength="10" id="txtFechaDev" type="text" style="width: 100px;" placeholder="dd/mm/aaaa"  onkeypress="return filtrarTeclado(event, false, public_textual_date,'','',null);"/></td>
+                                        <td width="65px;" align="right">Hora :</td>
+                                        <td width="120px;" colspan="2"><input maxlength="5" id="txtHoraDev" type="text" style="width: 80px;" value="" placeholder="hh:mm" class="delUpperCase"/></td>
+                                        <td width="70px;" id="rowPen2">Penalización:</td>                                
+                                        <td colspan="5"><input id="txtes_pen_dev" name="txtes_pen_dev" type="hidden" value="N"/><div id="txtes_dev"  style="width:30px;color:#ffffff; font-size: 14px; "></div></td>
+                                    </tr>
+                                </table>
+                                
+                            </tr>
+                            <tr>
+                                 <table>
+                                    <tr>
+                                        <td width="120px;">Número de guía de devolución:</td>
+                                        <td > <input maxlength="150" id="txtNroGuiaDevolucion"  name="txtNroGuiaDevolucion" rows="6" style="font-size: 14px;width:100%;resize: none;"></input></td>
+                                    </tr>
+                                </table>
+                            </tr>
+                            <tr>
+                                
+                                
+                                    <table>
+                                        
+                                            <tr>
+                                                <td width="120px;">Adjuntar Cargo:</td>
+                                                <td>
+                                                    <input readonly="readonly" name="txtNombreAnexo" id="txtNombreAnexo" type="text" value=""/>
+                                                </td>
+                                                <td width="20%" align="">
+                                                    <div id="btn-opciones">
+                                                        <button id="btn-ReemplazarDoc" title="Anexar Cargo" class="btn btn-default btn-xs" onclick="fn_anexoDocumento();" type="button"><span class="glyphicon glyphicon-open"></span></button>
+                                                             
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                   <div>
+                                                        <input id="fileupload" type="file" name="files[]" data-url="" multiple="" style="display: none;"/>
+                                                        <div id="progress" class="progress" style="margin-top:15px;width:200px;display: none;">
+                                                            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                                <span style="top: 3px; "><jsp:text/></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                  
+                                                </td>    
+                                                
+                                            </tr>
+                                            <tr>
+                                                   <div id="divError" class="alert alert-danger" style="display:none">
+                                                                        <ul id="divErrorLista"><jsp:text/></ul>
+                                                   </div>
+                                            </tr>
+                                    </table>
+                                                        
+
+
+                                
+                            </tr>
+                        </table>
+
+                        <br/>
+                        
+                        <input type="hidden" id="codEmp" value=""/>
+                        <input type="hidden" id="codDep" value=""/>
+                    </fieldset>
+                
+            </div>
+        </form:form>
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <jsp:text/>
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+
+</jsp:root>

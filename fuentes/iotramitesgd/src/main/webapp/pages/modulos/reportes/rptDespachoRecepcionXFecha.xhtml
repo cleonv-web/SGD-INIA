@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core">
+
+
+    <ui:composition template="/templates/principal.xhtml">
+        <ui:define name="content">
+            <h:body>
+                <p:panel id="pnlReporte" header="Reporte por fechas">
+
+                    <div class="ui-fluid">
+                        <h:form>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                    <p:outputLabel value="Desde"/>
+                                    <p:calendar id="idFecDesde" value="#{cReporte.dfecdesde}" showOn="button"
+                                                pattern="dd-MM-yyyy"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                    <p:outputLabel value="Hasta"/>
+                                    <p:calendar id="idFecHasta" value="#{cReporte.dfechasta}" showOn="button"
+                                                pattern="dd-MM-yyyy"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                    <p:spacer height="5px"/>
+                                    <p:commandButton action="#{cReporte.reporteXBandejasXFecha()}" value="Consultar"
+                                                     ajax="false"/>
+                                </div>
+                            </div>
+                        </h:form>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                <p:chart type="pie" model="#{cReporte.pieModelDespacho}"
+                                         style="width:400px;height:300px"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:chart type="pie" model="#{cReporte.pieModelRecepcion}"
+                                         style="width:400px;height:300px"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+            </h:body>
+        </ui:define>
+    </ui:composition>
+
+
+</f:view>

@@ -1,0 +1,193 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <c:set var="divId" value="divOrigenMain" scope="request"/>
+    <c:set var="posiciona" value="width:670px; height:750px;" scope="request"/>
+
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <tiles:putAttribute name="title" value="CONSULTA - MENSAJE DESCARGADO"/>
+        <tiles:putAttribute name="body">
+            
+      
+            
+            <form:form modelAttribute="mensajesConsulBean">
+                        
+            
+            <div id="divConfigPersonal">
+                
+                    <fieldset>
+                        <div class="btn-group btn-group-lg">
+                            
+                            <button id="btn-salir" title="Salir" class="btn btn-primary btn-lg" onclick="removeDomId('divOrigenMain');" type="button"><span class="glyphicon glyphicon-log-out"></span> Salir</button>
+                        </div>
+                    </fieldset>
+                <fieldset>
+                        <legend>Datos del documento</legend>
+                        <table width="640px">
+                            <tr>
+                                <td width="120px;">Nro. Mensaje:</td>
+                                <td><input readonly="readonly" id="txtNu_Msj" type="text" style="width: 100px;" value="${pnu_msj}" /></td>
+                                <td>Documento:</td>
+                                <td><input readonly="readonly" id="tipoDoc" name="tipoDoc" type="text" style="width: 180px;" value="${pde_TipoDoc}" data-toggle="tooltip" title="${pde_TipoDoc}" /></td>
+                                <td>Fecha Emi.:</td>
+                                <td><input readonly="readonly" id="txtFechaEnvio" type="text" style="width: 100px;" value="${pfe_emi}" /></td>
+                            </tr>
+                            <tr>
+                                <td width="90px;">Asunto:</td>
+                                <td colspan="5">
+                                    <textarea readonly="readonly" id="deAsu" name="deAsu" maxlength="1000" style="height:70px;width:100%;resize: none;background-color: #f2f5f7;" class="delUpperCase" rows="3" cols="60">${pde_Asu}</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="90px;">Fecha Recepción:</td>
+                                <td><input readonly="readonly" id="txtNu_Msj" type="text" style="width: 100px;" value="${pfec_recepmp}" /></td>                         
+                                <td>Fecha Envío:</td>
+                                <td><input readonly="readonly" id="txtFechaEnvio" type="text" style="width: 100px;" value="${pfec_enviomsj}" /></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Datos de descarga</legend>
+                        
+                        <input id="txtNu_Ann" name="txtNu_Ann" type="hidden" value="${pnu_ann}"/>
+                        <input id="txtNu_Emi" name="txtNu_Emi" type="hidden" value="${pnu_emi}"/>
+                        
+                        
+                        <table style="font-size: 12px">
+
+                            <tr>
+                                <td width="180px;"><div style="color: #004370;font-weight: bold;">Estado:</div></td>
+                                <td colspan="2">                                    
+                                        ${pest_msj}
+                                </td>                               
+                                                               
+    
+                                <td colspan="4" align="right">
+                                    <c:choose>                                    
+                                        <c:when test='${pest_msj!="ENTREGADO"}'>
+                                            <div id="divMotivo"  >
+                                                <span style="color: #004370;font-weight: bold;"> Motivo: </span>
+                                                    ${pmo_msj_dev} 
+                                             </div>  
+                                        </c:when>   
+                                    </c:choose>
+ 
+                                </td>
+                                
+    
+                            </tr>
+                            <tr>
+                                <td><div style="color: #004370;font-weight: bold;">Observaciones:</div></td>
+                                <td colspan="6">${pobservacion}</td>
+                            </tr>
+                            <tr>
+                                <td><div style="color: #004370;font-weight: bold;">Fecha Entrega/Primera Visita:</div></td>
+                                <td colspan="2">${pfe_ent_msj}</td>
+                                <td><div style="color: #004370;font-weight: bold;">Hora:</div></td><td colspan="2">${pho_ent_msj}</td>
+                                <td><div style="color: #004370;font-weight: bold;">Penalización:</div></td>
+                                
+                                <td colspan="5">
+                                    <c:choose>
+                                        <c:when test='${pes_pen_msj eq "S"}'>
+                                            <div style="color: #ffffff;background: #ac2925;width: 20px;">SI</div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div style="color: #ffffff;background: #468847;width: 20px;">NO</div>
+                                        </c:otherwise>
+ 
+                                    </c:choose>	
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="color: #004370;font-weight: bold;">Fecha Retorno/Devolución:</div></td>
+                                <td colspan="2">${pfe_dev_msj}</td>
+                                <td><div style="color: #004370;font-weight: bold;">Hora:</div></td><td colspan="2">${pho_dev_msj}</td>
+                                <td><div style="color: #004370;font-weight: bold;">Penalización:</div></td>
+                                
+                                <td colspan="5">
+                                    <c:choose>
+                                        <c:when test='${pes_pen_dev eq "S"}'>
+                                            <div style="color: #ffffff;background: #ac2925;width: 20px;">SI</div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div style="color: #ffffff;background: #468847;width: 20px;">NO</div>
+                                        </c:otherwise>
+ 
+                                    </c:choose>	
+                                    
+                                </td>
+                                
+                            </tr>
+                            
+                            <tr id="btnActa1">
+                                    <td style="color: #004370;font-weight: bold;">Nro. Acta:</td>
+                                    <td colspan="2">${pnu_Acta_Vis1}</td>
+                                    <td style="color: #004370;font-weight: bold;">Fecha Visita:</td>
+                                    <td  colspan="2">${pfe_Acta_Vis1}</td>
+                                    
+                                    <td>
+                                            <button type="button"  class="btn btn-default btn-xs" title="DESCARGAR"
+                                        onclick="fn_verDocActa('${pnu_ann}', '${pnu_emi}', '${pnu_des}','${pnu_Acta_Vis1}','${parchivo_acta1}');" 
+                                        nuAnn="${pnu_ann}" nuEmi="${pnu_emi}" nuDes="${pnu_des}" 
+                                        nombreArchivo="${parchivo_acta1}"><span class="glyphicon glyphicon-folder-open"></span></button>
+                                        
+                                    </td>
+                      
+                                
+                             </tr>   
+                            <tr id="btnActa2" >
+                                    <td style="color: #004370;font-weight: bold;">Nro. Acta:</td>
+                                    <td colspan="2">${pnu_Acta_Vis2}</td>
+                                    <td style="color: #004370;font-weight: bold;">Fecha Visita:</td>
+                                    <td  colspan="2">${pfe_Acta_Vis2}</td>
+                                     <td>
+                                            <button type="button"  class="btn btn-default btn-xs" title="DESCARGAR"
+                                        onclick="fn_verDocActa('${pnu_ann}', '${pnu_emi}', '${pnu_des}','${pnu_Acta_Vis2}','${parchivo_acta2}');" 
+                                        nuAnn="${pnu_ann}" nuEmi="${pnu_emi}" nuDes="${pnu_des}" 
+                                        nombreArchivo="${parchivo_acta2}"><span class="glyphicon glyphicon-folder-open"></span></button>
+                                        
+                                    </td>
+                            </tr>  
+                            
+                            <tr>
+                                <td><div style="color: #004370;font-weight: bold;">Nro de Guía de Devolución</div></td>
+                                <td colspan="6">${nro_guia_devolucion}</td>
+                            </tr>
+                            
+                            
+                            <tr>
+                                <td><div style="color: #004370;font-weight: bold;">Cargo:</div></td>
+                                <td>
+                                    
+                                     <c:choose>
+                                        <c:when test='${tiene_cargo eq "SI"}'>
+                                             <button type="button" class="btn btn-default btn-xs" title="DESCARGAR" onclick="fn_verDocAnexo('${pnu_ann}', '${pnu_emi}', '${parchivo_Cargo}');" nuAnn="${pnu_ann}" nuEmi="${pnu_emi}" nuDes="${parchivo_Cargo}"><span class="glyphicon glyphicon-folder-open"></span></button>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div  >NO TIENE CARGO ADJUNTADO</div>
+                                        </c:otherwise>
+ 
+                                    </c:choose>	
+                                    
+                                    
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        
+                        <input type="hidden" id="codEmp" value=""/>
+                        <input type="hidden" id="codDep" value=""/>
+                    </fieldset>
+                
+            </div>
+        </form:form>
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <jsp:text/>
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+
+</jsp:root>

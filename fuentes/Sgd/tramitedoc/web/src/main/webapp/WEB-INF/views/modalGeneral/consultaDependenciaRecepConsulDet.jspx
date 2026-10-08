@@ -1,0 +1,88 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">jQuery(document).ready(function() {
+        var tableaux = $('#tlbDestinoEmi');
+        tableaux.find('tr').each(function(index, row) {
+            if(index == 0){
+                $(this).addClass('row_selected');                        
+                return false;
+            }
+        });
+        var searchOnTable = function(evento) {
+                var table = $('#tlbDestinoEmi');
+                var value = this.value;
+                //alert(evento.which);
+                var isFirst = false;
+                var indexSelect = -1;
+                table.find('tr').each(function(index, row) {
+                        if ( $(this).hasClass('row_selected') ) {
+                            $(this).removeClass('row_selected');
+                        }
+                        //var allCells = $(row).find('td');
+                        var allCells = $(row).find('td');
+                        if(allCells.length > 0) {
+                                var found = false;
+                                allCells.each(function(index, td) {
+                                        var regExp = new RegExp(value, 'i');
+                                        if(regExp.test($(td).text())) {
+                                                found = true;
+                                                return false;
+                                        }
+                                });
+                                if (found == true) {$(row).show(); if(!isFirst){$(this).addClass('row_selected'); isFirst = true; indexSelect = index;}}
+                                else {$(row).hide();}
+                        }
+                });
+                if(evento.which == 13){
+                    if(isFirst){
+                        var pdesDest= $("#tlbDestinoEmi tbody tr:eq("+indexSelect+")").find("td:eq(1)").html();
+                        var pcodDest= $("#tlbDestinoEmi tbody tr:eq("+indexSelect+")").find("td:eq(2)").html();
+                        fu_setDatoDependenciaRecepConsul(pcodDest,pdesDest);
+                    }
+                }
+        };        
+        $('#txtConsultaFind').keyup(searchOnTable);
+        $("#tlbDestinoEmi tbody tr").click(function(e) {
+            var pdesDest= $(this).find("td:eq(1)").html();
+            var pcodDest= $(this).find("td:eq(2)").html();
+            fu_setDatoDependenciaRecepConsul(pcodDest,pdesDest);            
+        });
+    });</script>      
+    <fieldset>
+    <legend>Detalle</legend>  
+    <div class="ui-datatable ui-datatable-scrollable">
+        <div class="ui-datatable-scrollable-header">
+               <table width="100%" class="ui-state-default">
+                     <thead>
+                            <tr>
+                                <th width="50">Siglas</th>
+                                <th width="450">Unidad Orgánica</th>
+                            </tr>
+                     </thead>
+               </table>
+        </div>
+        <div class="bx_sb ui-datatable-scrollable-body" style='height:200px;'>
+              <table id="tlbDestinoEmi" width="100%" class="ui-datatable-data">
+                  <tbody>
+                       <c:forEach var="lDestinatario" items="${listaDependenciaDestEmi}" varStatus="status">
+                          <c:choose>
+                              <c:when test="${status.count % 2 == 0}">
+                                <c:set var="rowStyle" scope="page" value="ui-datatable-even"/>
+                              </c:when>
+                              <c:otherwise>
+                                <c:set var="rowStyle" scope="page" value="ui-datatable-odd"/>
+                              </c:otherwise>
+                          </c:choose>
+                           <tr class="${rowStyle}">
+                               <td width="50">${lDestinatario.deCortaDepen}</td>
+                               <td width="450">${lDestinatario.deDependencia}</td>
+                               <td style="display:none">${lDestinatario.coDependencia}</td>
+                          </tr>
+                       </c:forEach>
+                  </tbody>
+              </table>
+        </div>
+    </div>
+    </fieldset>
+</jsp:root>

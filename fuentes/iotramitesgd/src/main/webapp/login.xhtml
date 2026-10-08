@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+>
+
+
+<h:head>
+    <title>SeGDI</title>
+    <link href="#{request.contextPath}/util/css/estilos.css" rel="stylesheet" type="text/css"/>
+
+    <style type="text/css">
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+
+        .ui-layout-pane {
+            border: 0;
+            margin: 0;
+        }
+
+        .ui-panelgrid tr, td {
+            border: 0 !important;
+        }
+
+    </style>
+    <link href="#{request.contextPath}#{ruta.logo}logo_pcm_segdi.jpg" type="image/x-icon" rel="shortcut icon"/>
+
+</h:head>
+
+<h:body>
+    <p:layout style="margin: 0px !important;" fullPage="true">
+        <p:layoutUnit position="north" size="100" resizable="true">
+            <h:panelGrid columns="3"
+                         style="background:url(#{request.contextPath}#{ruta.principal}/fondo-azul.jpg);
+							 height:100%; 
+							 width:100%;
+							 text-align:center">
+                <p:column>
+                    <p:graphicImage value="#{ruta.logo}headerPCM1.png" style="float:left;"/>
+                </p:column>
+
+                <p:column style="text-align:center">
+                    <div>
+                        <p:graphicImage value="#{ruta.principal}vinetas-titulo-izq.png" style="float:rigth;"/>
+                        <h:outputText value="M" style="color: white; font-size:300%;"/>
+                        <h:outputText value="ESA " style="color: white; font-size:150%"/>
+                        <h:outputText value="D" style="color: white; font-size:300%;"/>
+                        <h:outputText value="E " style="color: white; font-size:150%"/>
+                        <h:outputText value="P" style="color: white; font-size:300%;"/>
+                        <h:outputText value="ARTES " style="color: white; font-size:150%"/>
+                        <h:outputText value="V" style="color: white; font-size: 300%;"/>
+                        <h:outputText value="IRTUAL" style="color: white; font-size:150%"/>
+                        <p:graphicImage value="#{ruta.principal}vinetas-titulo-der.png"/>
+                    </div>
+                </p:column>
+
+            </h:panelGrid>
+        </p:layoutUnit>
+
+        <p:layoutUnit position="south" size="100">
+            <!-- 					<ui:include src="/templates/pie.xhtml" /> -->
+            <h:form id="formCabecera2" style="background:url(#{request.contextPath}#{ruta.principal}/fondo-azul.jpg);
+							 height:100%; 
+							 width:100%;">
+                <h:panelGrid columns="1"
+                             style="background:url(#{request.contextPath}#{ruta.principal}/fondo-azul.jpg);
+							 height:100%; 
+							 width:100%;
+							 text-align:center">
+                    <p:column>
+                        <p style="color: white; font-size:15px;">Programa Nacional de Asistencia Solidaria Pension
+                            65<br/>
+                            DIRECCION
+                        </p>
+                    </p:column>
+
+                </h:panelGrid>
+
+            </h:form>
+        </p:layoutUnit>
+
+        <p:layoutUnit position="center">
+            <!-- <f:phaseListener type="pe.gob.segdi.iotramite.controller.LoginMB" /> -->
+            <h:form id="frmLogin">
+
+                <p:growl id="messages" showDetail="true" sticky="true"/>
+                <p:focus context="pngLogin" for="usuario"/>
+                <div align="center">
+                    <p:panelGrid styleClass="ui-panelgrid;alignMiddle">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="2" style="text-align: center;">Login</p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column style="width:100px">
+                                &nbsp;
+                            </p:column>
+                            <p:column style="width:321px">
+                                &nbsp;
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="width:100px">
+                                <h:outputLabel value="Usuario :" style="text-align: right;"/>
+                            </p:column>
+                            <p:column style="width:321px">
+                                <p:inputText id="usuario" value="#{login.usuario}" autocomplete="false"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Password :"/>
+                            </p:column>
+                            <p:column>
+                                <p:password id="contrasenia" value="#{login.password}" style="font-size: 11px;"
+                                            autocomplete="off"/>
+                            </p:column>
+
+                        </p:row>
+
+                    </p:panelGrid>
+
+                    <p:panelGrid>
+
+                        <p:row>
+
+                            <!--
+                            <p:captcha id="idCaptcha" label="Captcha" language="es" required="true"/>
+                            -->
+                            <p:column style="width:500px">
+                                <p:spacer height="20px"/>
+
+                                <center>
+                                    <p:commandButton
+                                            id="btnIngresar"
+                                            value="Aceptar"
+                                            action="#{login.doLogin}"
+                                            ajax="false"
+                                            icon="ui-icon-newwin"
+                                    >
+
+                                    </p:commandButton>
+                                </center>
+
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                </div>
+                <!--  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> -->
+            </h:form>
+        </p:layoutUnit>
+
+    </p:layout>
+
+
+</h:body>
+
+</html>

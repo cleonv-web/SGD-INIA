@@ -1,0 +1,79 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <c:set var="divId" value="windowAtendido" scope="request"/>
+    <c:set var="posiciona" value="width:650px; height:363px;" scope="request"/>
+
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <tiles:putAttribute name="title" value="Lista de Documentos Atendidos / Derivados"/>
+        <tiles:putAttribute name="body">
+        <div class="ui-datatable ui-datatable-scrollable">
+            <div class="ui-datatable-scrollable-header">
+                   <table class="ui-state-default">
+                         <thead>
+                                <tr>
+                                    <th width="40">Nro Emi.</th>
+                                    <th width="150">Tipo Documento</th>
+                                    <th width="200">Número de Documento</th>
+                                    <th width="40">F. Emisión</th>
+                                    <th width="100">Estado</th>
+                                    <th width="20"></th>
+                                </tr>
+                         </thead>
+                   </table>
+            </div>
+            <div class="bx_sb ui-datatable-scrollable-body" style='height:100px;'>
+                  <table class="ui-datatable-data" id="tbListaRefRecDocAdm">
+                      <tbody>
+                           <c:forEach var="refAtendido" items="${listAtendido}" varStatus="status">
+                               <c:choose>
+                                   <c:when test="${status.count % 2 == 0}">
+                                     <c:set var="rowStyle" scope="page" value="ui-datatable-even"/>
+                                   </c:when>
+                                   <c:otherwise>
+                                     <c:set var="rowStyle" scope="page" value="ui-datatable-odd"/>
+                                   </c:otherwise>
+                                 </c:choose>
+
+                               <tr class="${rowStyle}">
+                               <c:choose>
+                                   <c:when test="${status.count eq 1}">
+                                       <!--td width="16">${status.count}</td-->
+                                       <td width="40">${refAtendido.nuCorEmi}</td>
+                                       <td width="150">${refAtendido.liTipDoc}</td>
+                                       <td width="200">${refAtendido.liNuDoc}</td>
+                                       <td width="40">${refAtendido.feEmiCorta}</td>
+                                       <td width="100">${refAtendido.deEsDocEmi}</td>
+                                       <td><button title ="Ver Documento" class="btn btn-default btn-xs" onclick="fn_verDocumento('${refAtendido.nuAnn}', '${refAtendido.nuEmi}');" type="button"><span class="glyphicon glyphicon-file"><jsp:text/></span></button></td>                                                                              
+                                   </c:when>
+                                   <c:otherwise>
+                                       <!--td>${status.count}</td-->
+                                       <td>${refAtendido.nuCorEmi}</td>
+                                       <td>${refAtendido.liTipDoc}</td>
+                                       <td>${refAtendido.liNuDoc}</td>
+                                       <td>${refAtendido.feEmiCorta}</td>
+                                       <td>${refAtendido.deEsDocEmi}</td>
+                                       <td><button title ="Ver Documento" class="btn btn-default btn-xs" onclick="fn_verDocumento('${refAtendido.nuAnn}', '${refAtendido.nuEmi}');" type="button"><span class="glyphicon glyphicon-file"><jsp:text/></span></button></td>                                                                              
+                                    </c:otherwise>
+                               </c:choose>
+                              </tr>
+                           </c:forEach>
+                      </tbody>
+                  </table>
+            </div>
+        </div>
+        <div class="alert alert-warning" style="margin-bottom:0px;padding:5px;" > <h4 style="margin:0px;"> El Documento ya fue derivado y/o atendido con los documentos listados</h4><h4 style="margin:0px;">Desea continuar con la derivación / atención? </h4></div>
+            
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <div class="btn-group btn-group-lg">
+                <button title ="Continuar con Crear Documento" class="btn btn-default btn-lg" onclick="fu_continuarCreacionDocumento();" type="button" value="Atender">
+                    <span class="glyphicon glyphicon-pencil"><jsp:text/></span> Continuar</button>
+                <button title ="Regresar a m&#243;dulo anterior" class="btn btn-default btn-lg" onclick="removeDomId('windowAtendido');" type="button" value="Salir">
+                    <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>
+            </div>
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+</jsp:root>

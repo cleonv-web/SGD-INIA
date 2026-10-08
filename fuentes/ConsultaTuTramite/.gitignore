@@ -1,0 +1,11 @@
+# Maven
+log/
+target/
+
+# Java class files
+*.class
+*.jar
+
+# Netbeans: Archivos de configuracion
+nb-configuration.xml
+nbactions.xml

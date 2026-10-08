@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+    <h:head>
+        <link href="#{request.contextPath}/util/css/estilos.css"
+              rel="stylesheet" type="text/css"/>
+        <link href="/util/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+
+
+        <h:outputScript library="js" name="jquery-cookie.js"/>
+<!--        <h:outputScript library="js" name="jquery-ui-widget.js"/>-->
+        <h:outputScript library="js" name="jquery.browser.js"/>
+        <h:outputScript library="js" name="jquery.dynatree.js"/>
+        <h:outputScript library="js" name="jquery.websokect.js"/>
+        <style type="text/css">
+            body {
+                font: 62.5% "Trebuchet MS", sans-serif;
+                margin: 50px;
+            }
+        </style>
+
+
+    </h:head>
+    <body>
+    <ui:composition template="/templates/principal.xhtml">
+        <ui:define name="content">
+            <div style="display: none">
+                <a target="_self" href="javascript:void(0);"
+                   onclick="this.click();" id="idTradocDesktop"></a>
+            </div>
+            <a style="display: none" id="RutaDocs" name="RutaDocs" href="#"><strong>
+            </strong></a>
+            <h:form id="frmBusquedaRecepcionExterna">
+                <input id="wsServiceLocation" name="wsServiceLocation"
+                       type="hidden" value="#{cVariableSession.wsServiceLocation}"></input>
+                <p:growl id="msgs" showDetail="true"/>
+
+                <p:panel id="pnlRecepcionExterna"
+                         header="Recepcion - #{cRecepcionExterna.cflgest.equals('P')?'Pendientes':cRecepcionExterna.cflgest.equals('R')?'Recepcionados':'Observados'}">
+                    <div class="ui-fluid">
+                        <div id="padre"></div>
+
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <h:outputLabel value="Desde"/>
+                                <p:calendar id="idFecDesde"
+                                            value="#{cRecepcionExterna.dfecdesde}" showOn="button"
+                                            pattern="dd/MM/yyyy"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <h:outputLabel value="Hasta"/>
+                                <p:calendar id="idFecHasta"
+                                            value="#{cRecepcionExterna.dfechasta}" showOn="button"
+                                            pattern="dd/MM/yyyy"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                <div id="appletIco"
+                                     style="font-size: 50px; color: #D9534F; margin-top: 5px; float: right; z-index: 99;">
+                                    <span class="glyphicon glyphicon-ban-circle"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btnBuscar" value="Buscar"
+                                                 update="tdREcepcionExterna"
+                                                 actionListener="#{cRecepcionExterna.bsqDocumentoExterno()}"/>
+                            </div>
+                        </div>
+
+                    </div>
+                </p:panel>
+
+                <p:dataTable id="tdREcepcionExterna" var="recepcionExterna"
+                             value="#{cRecepcionExterna.lstConsultaDocumento}" reflow="true"
+                             rows="10" paginator="true" style="margin-bottom:20px"
+                             emptyMessage="No se encontraron datos para mostrar"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}">
+                    <f:facet name="{Exporters}">
+                        <h:commandLink>
+                            <p:graphicImage value="/util/images/icon/excel.png"
+                                            style="float:right"/>
+                            <p:dataExporter type="xls" target="tdREcepcionExterna"
+                                            fileName="recepcion"/>
+                        </h:commandLink>
+                    </f:facet>
+                    <p:column headerText="NUM. DOCUMENTO" filterBy="#{recepcionExterna.vnumdoc}"
+                              footerText="contiene"
+                              filterMatchMode="contains"
+                              sortBy="#{recepcionExterna.vnumdoc}">
+                        <p:commandLink id="ajax" update=":frmDetalleRecepcionExterna"
+                                       action="#{cRecepcionExterna.detalletRecepcionExterna()}">
+                            <h:outputText value="#{recepcionExterna.vnumdoc}"/>
+                            <f:setPropertyActionListener
+                                    target="#{cRecepcionExterna.consultaDocumento}"
+                                    value="#{recepcionExterna}"/>
+                        </p:commandLink>
+
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="TIP DOCUMENTO"/>
+                        </f:facet>
+                        <h:outputText
+                                value="#{recepcionExterna.ccodtipdoc.equals('01')?'OFICIO':'CARTA'}"/>
+                    </p:column>
+                    <p:column headerText="RUC. REMITENTE"
+                              filterBy="#{recepcionExterna.vrucentrem}">
+                        <h:outputText value="#{recepcionExterna.vrucentrem}"/>
+                    </p:column>
+                    <p:column headerText="ENT. REMITENTE"
+                              filterBy="#{recepcionExterna.vnomentemi}" footerText="contiene"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{recepcionExterna.vnomentemi}"/>
+                    </p:column>
+                    <p:column headerText="UNI. ORG. REMITENTE"
+                              filterBy="#{recepcionExterna.vrucentrem}">
+                        <h:outputText value="#{recepcionExterna.vuniorgrem}"/>
+                    </p:column>
+
+                    <p:column headerText="FEC. REGISTRO">
+                        <h:outputText value="#{recepcionExterna.dfecreg}"/>
+                    </p:column>
+                    <p:column headerText="NUM. REG. TRAMITE"
+                              rendered="#{cRecepcionExterna.cflgest eq 'R'}">
+                        <h:outputText
+                                value="#{recepcionExterna.vanioregstd.concat(' - ').concat(recepcionExterna.vnumregstd)}"/>
+                    </p:column>
+                    <p:column headerText="FEC. REG. TRAMITE"
+                              rendered="#{cRecepcionExterna.cflgest eq 'R'}">
+                        <h:outputText value="#{recepcionExterna.dfecregstd0}"/>
+                    </p:column>
+                    <p:column headerText="UNI. ORGANICA"
+                              rendered="#{cRecepcionExterna.cflgest eq 'R'}"
+                              filterBy="#{recepcionExterna.vuniorgstd}" footerText="contiene"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{recepcionExterna.vuniorgstd}"/>
+                    </p:column>
+
+                    <p:column headerText="CUO" filterBy="#{recepcionExterna.vcuo}"
+                              sortBy="#{recepcionExterna.vcuo}" footerText="contiene"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{recepcionExterna.vcuo}"/>
+                    </p:column>
+                    <p:column headerText="RECEPCION"
+                              rendered="#{cRecepcionExterna.cflgest eq 'P'}">
+                        <p:commandButton icon="ui-icon-transfer-e-w"
+                                         action="#{cRecepcionExterna.formCargoRecepcionExterna1()}"
+                                         update=":frmCargoTramite"
+                                         rendered="#{recepcionExterna.cflgest.equals('P')?true:false}">
+                            <f:setPropertyActionListener
+                                    target="#{cRecepcionExterna.consultaDocumento}"
+                                    value="#{recepcionExterna}"/>
+                        </p:commandButton>
+                    </p:column>
+                    <c:if
+                            test="#{cRecepcionExterna.cflgest eq 'R' or cRecepcionExterna.cflgest eq 'O'}">
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="REENVIAR CARGO"/>
+                            </f:facet>
+                            <p:commandButton icon="ui-icon-transfer-e-w"
+                                             action="#{cRecepcionExterna.reenviarCargo()}"
+                                             update="frmBusquedaRecepcionExterna:msgs,frmBusquedaRecepcionExterna:tdREcepcionExterna"
+                                             rendered="#{recepcionExterna.cflgenvcar eq 'S'}">
+                                <f:setPropertyActionListener
+                                        target="#{cRecepcionExterna.consultaDocumento}"
+                                        value="#{recepcionExterna}"/>
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-transfer-e-w"
+                                             action="#{cRecepcionExterna.reenviarCargo()}"
+                                             update="frmBusquedaRecepcionExterna:msgs,frmBusquedaRecepcionExterna:tdREcepcionExterna"
+                                             rendered="#{recepcionExterna.cflgenvcar eq 'N'}"
+                                             style="background:#DF6348;border:#DF6348;">
+                                <f:setPropertyActionListener
+                                        target="#{cRecepcionExterna.consultaDocumento}"
+                                        value="#{recepcionExterna}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </c:if>
+                </p:dataTable>
+            </h:form>
+
+            <ui:include src="det_tramiteDocumentario.xhtml"/>
+            <ui:include src="car_tramiteDocumentario.xhtml"/>
+
+
+        </ui:define>
+    </ui:composition>
+
+    </body>
+
+</html>

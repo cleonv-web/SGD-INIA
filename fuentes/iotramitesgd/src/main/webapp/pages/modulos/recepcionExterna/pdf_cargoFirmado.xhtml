@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <style>
+        body {
+            font: 62.5% "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+    </style>
+</h:head>
+<body>
+
+<p:dialog widgetVar="cargoDialogWidget"
+          id="documentoCargoDialogId" height="600" width="900"
+          header="Documento Cargo" closable="true" maximizable="false"
+          draggable="false" resizable="true" appendTo="@(body)">
+
+
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <h:form id="frmCargoDocumento" enctype="multipart/form-data">
+                <div class="ui-g-12 ui-md-12">
+                    <div class="ui-g-12 ui-md-6 ui-lg-10">
+                        <p:media
+                                value="#{cVariableSession.documentoPrincipalCargo!=null? cVariableSession.documentoPrincipalCargo:ruta.perfil}"
+                                width="850" height="570px" player="pdf">
+                        </p:media>
+                    </div>
+                </div>
+
+
+            </h:form>
+        </div>
+
+    </div>
+
+
+</p:dialog>
+</body>
+
+</html>

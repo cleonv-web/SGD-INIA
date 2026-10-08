@@ -1,0 +1,130 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <div class="ui-panel ui-corner-all"  style="width: 1150px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>DETALLE DE DOCUMENTO DEL PROFESINOAL EMITIDO</span>
+        </div>
+        <div class="ui-panel-body">    
+                        <fieldset>
+                                <div class="btn-group btn-group-lg">
+                                   <button title ="Ver Documento" class="btn btn-primary btn-lg" onclick="fn_verDocPersEmiDetConsul();" type="button">
+                                       <span class="glyphicon glyphicon-list-alt"><jsp:text/></span> Ver Documento</button>
+                                   <button title ="Ver Documento Anexos - Referencias" class="btn btn-primary btn-lg" onclick="fn_verAnexoDocPersEmiDetConsul();" type="button">
+                                       <span class="glyphicon glyphicon-paperclip"><jsp:text/></span> Ver Anexos</button>
+                                   <button title ="Seguimiento de Documentos" class="btn btn-primary btn-lg" onclick="fn_verSeguimientoDocPersEmiDetConsul();" type="button">
+                                       <span class="glyphicon glyphicon-transfer"><jsp:text/></span> Seguimiento</button>
+                                    <button title ="Regresar Lista Documentos Personal Emitidos" class="btn btn-primary btn-lg" onclick="regresarEmiDocumPerConsul();" type="button">
+                                        <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>                           
+                                   <button title ="Salir Detalle de Documento Personal Emitido" class="btn btn-primary btn-lg" onclick="cerrarPantalla();" type="button">
+                                       <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                                </div>  
+                        </fieldset>
+			<form:form modelAttribute="documentoEmiPersConsulBean">
+				<table width="100%">
+					<tr>
+						<td>
+							<fieldset>
+								<legend>&amp;nbsp;</legend>
+								 <table width="100%">
+									 <tr>
+										 <td>Año:</td>    
+										 <td>
+											 <form:input path="nuAnn" readonly="true" size="10" style="text-align: center"/>
+                                                                                         <form:hidden path="nuEmi"/>
+										 </td>
+                                                                                <td>Nro Emisión:</td>    
+										 <td>
+											 <form:input path="nuCorEmi" readonly="true" size="10" style="text-align: center"/>
+										 </td>
+                                                                                 <td align="center">         
+                                                                                        <button type="button" class="btn btn-danger">${documentoEmiPersConsulBean.deEsDocEmi}</button>                                                                                    
+                                                                                 </td>   
+									 </tr>
+								 </table>
+							</fieldset>							
+						</td>						
+					</tr>
+					<tr>
+						<td>
+							<fieldset>
+								<legend>Remitente</legend>
+								 <table width="100%">
+									 <tr>
+										 <td>Dependencia:</td>    
+										 <td>
+											 <form:input path="deDepEmi" readonly="true" size="60" style="width:95%;"/>
+										 </td>
+										 <td>Local/Sede/Agencia:</td>    
+										 <td>
+											 <form:input path="deLocEmi" readonly="true" size="60" style="width:99%;"/>
+										 </td>                                                                                 
+									 </tr>
+									 <tr>
+										 <td>Firmado por:</td>    
+										 <td>
+											 <form:input path="deEmpFirmo" readonly="true" size="60" style="width:95%;"/>
+										 </td>
+										 <td>Elaborado por:</td>    
+										 <td>
+											 <form:input path="deEmpElaboro" readonly="true" size="60" style="width:99%;"/>
+										 </td>                                                                                 
+									 </tr>
+								 </table>
+							</fieldset>  							
+						</td>
+					</tr>
+					<tr>
+                                            <td colspan="2">
+							<fieldset>
+								<legend>Documento</legend>
+								 <table width="100%">
+									 <tr>
+										 <td>Tipo:</td>    
+										 <td>
+											 <form:input path="tipoDoc" readonly="true" style="text-align: center"/>
+										 </td>
+										 <td>
+										     Número:	 
+                                            <form:input path="nuDoc" readonly="true" style="text-align: center"/>
+										 </td>
+										 <td>
+										     Fecha: 
+                                            <form:input path="feEmiCorta" readonly="true" style="text-align: center"/>
+										 </td>
+										 <td>
+                                            Atender en:
+										     <form:input path="nuDiaAte" readonly="true" size="2" style="text-align: center"/>días
+										 </td>                                                                                   
+									 </tr>
+									 <tr>
+										 <td width="2%">Asunto:</td>    
+										 <td width="49%" colspan="2">
+											 <form:textarea class="delUpperCase" path="deAsu"  rows="4" cols="60" readonly="true" style="height:90px;width:98%;"/>
+										 </td>
+                                            <td colspan="2" width="49%">
+                                               <fieldset>
+                                                       <legend>REFERENCIA</legend>
+                                                       <jsp:directive.include file="tablaRefDocPersConsul.jspx"/>
+                                               </fieldset>		                                                                                     
+                                            </td>
+									 </tr>
+								 </table>
+							</fieldset>
+						</td> 
+					</tr>
+                                        <tr>
+                                            <td>
+                                               <fieldset>
+                                               <legend>DESTINATARIO</legend>
+                                                <jsp:directive.include file="tblDestDocPersConsul.jspx"/>
+                                                </fieldset>		                                                                                     
+                                            </td> 
+                                        </tr>                                        
+				</table>
+			</form:form>
+        </div>
+    </div>
+</jsp:root>

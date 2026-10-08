@@ -1,0 +1,205 @@
+{
+  "fecha": "2026-10-08 01:22:45",
+  "destinos_sin_docker": true,
+  "postgresql": "17.11 nativo",
+  "windows": {
+    "http": [
+      {
+        "ruta": "/sisdoc/login.do",
+        "http": 200,
+        "bytes": 7396,
+        "recursos_verificados": 13
+      },
+      {
+        "ruta": "/consulta/inicio.do",
+        "http": 200,
+        "bytes": 564379,
+        "recursos_verificados": 18
+      },
+      {
+        "ruta": "/verifica/inicio.do",
+        "http": 200,
+        "bytes": 561656,
+        "recursos_verificados": 18
+      },
+      {
+        "ruta": "/mpd/inicio.do",
+        "http": 200,
+        "bytes": 141443,
+        "recursos_verificados": 20
+      },
+      {
+        "ruta": "/recursos/favicon.ico",
+        "http": 200,
+        "bytes": 82838
+      }
+    ],
+    "usuarios": [
+      {
+        "usuario": "admin",
+        "autenticacion": true
+      },
+      {
+        "usuario": "mesa_demo",
+        "autenticacion": true
+      },
+      {
+        "usuario": "area_demo",
+        "autenticacion": true
+      },
+      {
+        "usuario": "jefe_demo",
+        "autenticacion": true
+      }
+    ],
+    "websocket": 101,
+    "fecha": "2026-10-08 01:12:44",
+    "plataforma": "Windows"
+  },
+  "linux_debian_12": {
+    "http": [
+      {
+        "ruta": "/sisdoc/login.do",
+        "http": 200,
+        "bytes": 7396,
+        "recursos_verificados": 13
+      },
+      {
+        "ruta": "/consulta/inicio.do",
+        "http": 200,
+        "bytes": 564379,
+        "recursos_verificados": 18
+      },
+      {
+        "ruta": "/verifica/inicio.do",
+        "http": 200,
+        "bytes": 561656,
+        "recursos_verificados": 18
+      },
+      {
+        "ruta": "/mpd/inicio.do",
+        "http": 200,
+        "bytes": 141443,
+        "recursos_verificados": 20
+      },
+      {
+        "ruta": "/recursos/favicon.ico",
+        "http": 200,
+        "bytes": 82838
+      }
+    ],
+    "usuarios": [
+      {
+        "usuario": "admin",
+        "autenticacion": true
+      },
+      {
+        "usuario": "mesa_demo",
+        "autenticacion": true
+      },
+      {
+        "usuario": "area_demo",
+        "autenticacion": true
+      },
+      {
+        "usuario": "jefe_demo",
+        "autenticacion": true
+      }
+    ],
+    "websocket": 101,
+    "fecha": "2026-10-08 06:16:40",
+    "plataforma": "Linux"
+  },
+  "recuperacion_windows": {
+    "motor": "PostgreSQL 17.11 nativo",
+    "fecha": "2026-10-08 01:12:07",
+    "parada_arranque_nativo": true,
+    "carga_repetida_sin_duplicacion": true,
+    "rollback_sql_completo": true,
+    "dump_restaurado_en_base_nueva": true
+  },
+  "compilacion": "Ocho WAR desde fuentes con JDK/Maven incluidos y repositorio offline",
+  "base": {
+    "tablas": 103,
+    "funciones": 102,
+    "usuarios_ficticios": 4,
+    "jdbc_sin_superusuario": true
+  },
+  "alcance": "Instalación y acceso inicial. Ciclo documental, firma, correo y PIDE pendientes de aceptación institucional.",
+  "linux_laboratorio": "Motor nativo y aplicaciones dentro de Debian aislado mediante Docker solamente en esta PC. El instalador no usa Docker.",
+  "recuperacion_linux": {
+    "motor": "PostgreSQL 17.11 nativo",
+    "fecha": "2026-10-08 06:16:16",
+    "parada_arranque_nativo": true,
+    "carga_repetida_sin_duplicacion": true,
+    "rollback_sql_completo": true,
+    "dump_restaurado_en_base_nueva": true
+  },
+  "replica_desde_zip": {
+    "http": [
+      {
+        "ruta": "/sisdoc/login.do",
+        "http": 200,
+        "bytes": 7396,
+        "recursos_verificados": 13
+      },
+      {
+        "ruta": "/consulta/inicio.do",
+        "http": 200,
+        "bytes": 564379,
+        "recursos_verificados": 18
+      },
+      {
+        "ruta": "/verifica/inicio.do",
+        "http": 200,
+        "bytes": 561656,
+        "recursos_verificados": 18
+      },
+      {
+        "ruta": "/mpd/inicio.do",
+        "http": 200,
+        "bytes": 141443,
+        "recursos_verificados": 20
+      },
+      {
+        "ruta": "/recursos/favicon.ico",
+        "http": 200,
+        "bytes": 82838
+      }
+    ],
+    "usuarios": [
+      {
+        "usuario": "admin",
+        "autenticacion": true
+      },
+      {
+        "usuario": "mesa_demo",
+        "autenticacion": true
+      },
+      {
+        "usuario": "area_demo",
+        "autenticacion": true
+      },
+      {
+        "usuario": "jefe_demo",
+        "autenticacion": true
+      }
+    ],
+    "websocket": 101,
+    "fecha": "2026-10-08 01:22:02",
+    "plataforma": "Windows",
+    "zip_limpio": true,
+    "instalacion_ruta_distinta": true,
+    "base_nueva": true,
+    "compilacion_offline": true,
+    "sin_docker": true,
+    "claves_nuevas": true
+  },
+  "respaldo_windows_a_linux": {
+    "windows_a_linux": true,
+    "formato": "pg_dump custom",
+    "motor_destino": "PostgreSQL 17.11 nativo Linux",
+    "tablas": 103,
+    "fecha_utc": "2026-10-08 06:21:20"
+  }
+}

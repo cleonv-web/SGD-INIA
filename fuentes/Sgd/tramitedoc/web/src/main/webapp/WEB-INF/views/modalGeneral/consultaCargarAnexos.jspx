@@ -1,0 +1,37 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <spring:eval expression="@applicationProps['application.version']" var="applicationVersion" scope="request"/>
+    <c:set var="divId" value="windowConsultaCargarAnexo" scope="request"/>
+    <c:set var="posiciona" value="width:690px;top:77px;" scope="request"/>
+    <c:set var="nodoPadre_pkEmiDoc" value="${pkEmiDoc}" scope="session"/>
+    <c:set var="rutactx" value="${pageContext.request.contextPath}/${applicationVersion}" scope="request" />
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <tiles:putAttribute name="title" value="Cargar documentos anexos"/>
+        <tiles:putAttribute name="body">
+            <div id="resizableCargarAnexo" class="ui-widget-content resizable">
+                <div id="treeCargarAnexo" class="tree"><jsp:text/></div>
+            </div>
+            <div class="ui-panel-body" id="envioLst">
+                <div id="divDetalleCargarAnexo"><jsp:text/>
+                </div>
+            </div>
+            <input type="hidden" id="Actual_pkEmiDoc" name="Actual_pkEmiDoc" value=""/>                
+            <input type="hidden" id="Padre_pkEmiDoc" name="Padre_pkEmiDoc" value="${pkEmiDoc}"/>                
+            <script type="text/javascript">
+                    $("#windowConsultaCargarAnexo").hide();
+                    fn_cargarArbolAnexos("${pkEmiDoc}", "treeCargarAnexo", "resizableCargarAnexo");
+                    jQuery(function() {
+                        jQuery(".tree ul.dynatree-container").css('width', '100%').css('width', '-=20px');
+                        jQuery(".tree ul.dynatree-container").css('height', '100%').css('height', '-=20px');
+                    });
+            </script>
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <button title ="Regresar a m&#243;dulo anterior" class="btn btn-default btn-sm" onclick="removeDomId('windowConsultaCargarAnexo');" type="button" value="Salir">
+                <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+</jsp:root>

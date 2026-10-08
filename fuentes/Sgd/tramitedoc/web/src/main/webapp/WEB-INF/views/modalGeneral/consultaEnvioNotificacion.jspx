@@ -1,0 +1,176 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script>
+        fn_activarInter('${psiInter}','${ptiEnv}');
+        $( function() {
+
+       
+        fn_selAccion();
+    } );
+        
+        
+    </script>
+    <c:set var="divId" value="windowConsultaAnexo" scope="request"/>
+    <c:set var="posiciona" value="width:320px;top:77px;" scope="request"/>
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <!--interoperablidad-->
+        <input type="hidden" id="siInter" name="siInter" value="${psiInter}"/> 
+        
+        <c:choose>
+            <c:when test='${psiInter eq "N"}'>
+                <tiles:putAttribute name="title" value="Envío de Documentos"/>
+            </c:when>
+            <c:otherwise>
+                <tiles:putAttribute name="title" value="Envío por Interoperabilidad"/>
+            </c:otherwise>    
+        </c:choose>
+                
+        <!--interoperablidad-->        
+                <tiles:putAttribute name="body">
+<!--interoperablidad--><div id="viewFisico" style="display: none;"><!--interoperablidad-->
+                        <table width="100%">
+                        <tr>
+                            <td width="100">Acción:</td>    
+                            <td>
+                        <c:choose>
+                            <c:when test='${ptiEnv!="1"}'><!--interoperabilidad-->
+                                <select id="ddlAccion" style="width:200px;" onchange="fn_selAccion()">
+                                    <option Value="0" selected="selected">Enviar a Mesa de Partes</option>                        
+                                    <option Value="1">Entrega Directa(*)</option>
+                                </select>
+                            </c:when>
+                            <c:otherwise>
+                                <select id="ddlAccion" style="width:200px;" onchange="fn_selAccion()">
+                                    <option Value="0">Enviar a Mesa de Partes</option>                        
+                                    <option Value="1" selected="selected">Entrega Directa(*)</option>
+                                </select>
+                            </c:otherwise>
+                        </c:choose>
+
+                            </td>
+
+
+                        </tr>
+
+                        <tr id="divUrgencia">
+                            <td>Urgencia:</td>    
+                            <td>
+
+                                <select id="ddlUrgencia" style="width:200px;">
+                                    <option Value="1">Normal</option>
+                                    <option Value="2">Urgente</option>
+                                    <option Value="3">Muy Urgente</option>
+                                </select>
+
+                            </td>
+                        </tr>
+
+
+                        <tr id="divMensajeria">
+                               <td>Mensajería:</td>
+                                <td> 
+                                 <select id="sMensajeria" style="width:200px;">
+                                    <c:forEach var="itemMsj" items="${MensajeriaList}" >
+                                      <option value="${itemMsj.celeDescor}">${itemMsj.celeDesele}</option>
+                                    </c:forEach>
+                                  </select>
+                                   <!--  <select id="sMensajeria" style="width:200px;">
+                                     </select> -->
+                                     <!--  <form:select path="sMensajeria" style="width:180px">
+                                       <form:options items="${MensajeriaList}" itemValue="CELE_DESCOR" itemLabel="CELE_DESELE" />
+                                      </form:select>-->
+
+                                </td>
+                        </tr>
+
+                       </table>
+<!--interoperablidad--></div><!--interoperablidad-->
+                                      
+<!--interoperablidad--><div id="viewInter" style="display: none;">              
+                        <table width="100%">
+                            <tr>
+                                <td width="30%">Acción:</td>    
+                                <td width="70%">
+                                    <h6 style="color: #47a447"><b>Enviar a Mesa de Partes Virtual</b></h6>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td>Dependencia:</td>    
+                                <td>
+                                    <input type="text" data-toggle="tooltip" maxlength="100" name="txtDepDes" id="txtDeDepDes" style="width:100%;text-transform: uppercase;"  value="${pDeDepDes}" title="${pDeDepDes}"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Destinatario:</td>
+                                <td> 
+                                     <input type="text" data-toggle="tooltip" maxlength="100" name="txtNomDes" id="txtDeNomDes" style="width:100%;text-transform: uppercase;" value="${pDeNomDes}" title="${pDeNomDes}"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Cargo:</td>
+                                <td> 
+                                     <input type="text" data-toggle="tooltip" maxlength="50" name="txtCarDes" id="txtDeCarDes" style="width:100%;text-transform: uppercase;" value="${pDeCarDes}" title="${pDeCarDes}"/>
+                                </td>
+                            </tr>
+
+                       </table>           
+                
+                    </div>                       
+                    <div id="viewChkInter" style="display: none;">
+                        <input id="chkviewInter" onchange="fn_changeChkVerInter(this);" type="checkbox"/> Enviar documento a través del modulo de Interoperabilidad   
+                    </div>
+                    
+<!--interoperablidad-->                                       
+                </tiles:putAttribute>
+
+                <tiles:putAttribute name="footer">
+<!--interoperablidad--><div id="viewFisicoF" class="col-md-5" style="display: none;"><!--interoperablidad-->
+                        <button title ="Grabar" class="btn btn-default btn-sm" onclick="fn_grabarEnvioNotificacionObj('${pnuAnn}','${pnuEmi}','${pexisteDoc}','${pexisteAnexo}','${tipoBandeja}');" type="button" value="Grabar">
+                            <span class="glyphicon glyphicon-floppy-disk"><jsp:text/></span> Grabar</button>
+                            
+                        <button title ="Regresar a m&#243;dulo anterior" class="btn btn-default btn-sm" onclick="removeDomId('windowConsultaAnexo');" type="button" value="Salir">
+                            <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>    
+<!--interoperablidad--></div><!--interoperablidad-->
+
+<!--interoperablidad--><div id="viewInterF" class="col-md-5" style="display: none;">
+                        <button title ="Grabar" class="btn btn-default btn-sm" onclick="fn_grabarEnvioMesaVirtual('${pnuAnn}','${pnuEmi}','${pexisteDoc}','${pexisteAnexo}','${tipoBandeja}');" type="button" value="Grabar">
+                            <span class="glyphicon glyphicon-floppy-disk"><jsp:text/></span> Grabar</button>
+                        <button title ="Regresar a m&#243;dulo anterior" class="btn btn-default btn-sm" onclick="removeDomId('windowConsultaAnexo');" type="button" value="Salir">
+                        <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>
+                    </div>
+<!--interoperablidad-->                     
+    
+                </tiles:putAttribute>
+                
+
+
+
+        
+        
+            <style type="text/css">
+               #dragmodal{
+                   background-color: #428BCA;
+                   
+               }
+               h3{
+                    color:white !important;
+                   
+               }
+               .btn_close_modal
+               {color:white !important;
+                   
+               }
+            </style>
+    </tiles:insertTemplate> 
+
+</jsp:root>
+
+
+

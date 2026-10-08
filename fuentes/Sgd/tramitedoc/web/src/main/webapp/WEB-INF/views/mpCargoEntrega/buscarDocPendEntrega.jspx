@@ -1,0 +1,151 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <jsp:scriptlet><![CDATA[response.setHeader("Cache-Control", "max-age=43200");]]></jsp:scriptlet>
+    
+	<script languaje="javascript">jQuery(document).ready(function() {fn_iniBusDocPendEntrega();});</script>  	    
+    <div class="ui-panel ui-corner-all" id="divBuscarDocPendEntrega">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>DOCUMENTOS PENDIENTES DE ENTREGA</span>
+        </div>
+        <div class="ui-panel-body">
+                <input id="txtFechaActual" name="txtFechaActual" type="hidden" value="${fechaActual}"/>
+                <input id="txtAnnioActual" name="txtAnnioActual" type="hidden" value="${annioActual}"/>
+                <fieldset>
+                    <div class="btn-group btn-group-lg">
+                       <button title="Generar Cargo" class="btn btn-primary" onclick="fn_submitAjaxGenerarCargo();" type="button">
+                            <span class="glyphicon glyphicon-list"><jsp:text/></span> Generar Cargo</button>
+                       <button title ="Regresar al M&#243;dulo Anterior" class="btn btn-primary" onclick="regresarLsCargosGenerados();" type="button">
+                            <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>
+                       <button title ="Salir" class="btn btn-primary" onclick="cerrarPantallaMP();" type="button">
+                           <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                    </div>                    
+                    
+                </fieldset>
+                
+            <form:form modelAttribute="buscarDocPendienteEntregaBean">
+            <form:hidden path="tipoBusqueda"/>        
+            <form:hidden path="filtroFecha"/>  
+            <form:hidden path="feEmiIni"/>  
+            <form:hidden path="feEmiFin"/>  
+            <table width="100%">
+                <tr valign="top">
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Búsqueda</legend>
+                            <table width="100%">
+                                <tr>
+                                   <td>N° Registro:</td>
+                                   <td>
+                                       <form:input path="nuCorEmi" maxlength="7" style="width: 60px;"/>
+                                   </td>
+                                   <td>N° Doc:</td>
+                                   <td>
+                                       <form:input path="nuDoc" style="width: 240px;" maxlength="50"/>
+                                   </td>
+                                   <td align="right">
+                                        <button title ="Buscar documentos" class="btn btn-default btn-sm" onclick="fn_PrebuscarDocPendEntrega('1');" type="button">
+                                            <span class="glyphicon glyphicon-search"><jsp:text/></span> Buscar</button>
+                                        <button title ="Limpiar datos de b&#250;squeda" class="btn btn-default btn-sm" onclick="fu_cleanBusDecPendEntrega('1');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                   </td>  
+                               </tr>
+                               <tr>
+                                   <td>Asunto:</td>
+                                   <td colspan="3">
+                                       <form:input path="deAsu" style="width: 360px;"/>
+                                   </td>
+                                   <td align="right">
+                                       <form:checkbox path="esIncluyeFiltro"/><strong>Incluir Filtro</strong>
+                                   </td>                                      
+                               </tr>
+                            </table>
+                        </fieldset>                        
+                    </td>
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Filtro</legend>
+                            <table width="100%">
+                                <tr>
+                                    <td colspan="2">
+                                        <form:hidden path="nuAnn"/>  
+					<div id="fechaCalendar" class="cajaFechas">
+                                            <div class="cajaIcono"><span class="glyphicon glyphicon-calendar fa fa-calendar"><jsp:text/></span></div>
+                                            <div name="labelDate" class="cajaEtiqueta" style="text-align: center;width: 210px;"><jsp:text/></div>
+                                            <div class="cajaTriangulo"><b class="caret"><jsp:text/></b></div>
+                                        </div>                                        
+                                    </td>
+                                    <td>Tipo Doc:</td>
+                                    <td>
+                                        <form:select path="coTipDocAdm" style="width:180px">
+                                            <form:options items="${deTipoDocumentoList}" itemValue="coTipDoc" itemLabel="deTipDoc" />
+                                        </form:select>
+                                    </td>
+                                   <td align="right">
+                                        <button title ="Filtrar documentos" class="btn btn-default btn-sm" onclick="fn_PrebuscarDocPendEntrega('0');" type="button">
+                                            <span class="glyphicon glyphicon-filter"><jsp:text/></span> Filtrar</button>
+                                        <button title ="Limpiar datos de Filtro" class="btn btn-default btn-sm" onclick="fu_cleanBusDecPendEntrega('0');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                   </td>  
+                                </tr>
+                                <tr>    
+                                    <td>Local:</td>
+                                    <td>
+                                        <form:select path="coLocDes" style="width:180px" onchange="fn_changeLocalFiltroDocPendEnrtega();">
+                                            <form:options items="${deLocalesList}" itemValue="coLocal" itemLabel="deLocal" />
+                                        </form:select>
+                                    </td>    
+                                    <td/>
+                                    <td/>
+                                    <td align="right">
+                                        <a href="#" title="Mas datos de Filtro" onclick="mostrarOcultarDivBusqFiltro('1');" class="btn-actdiv">
+                                            <span id="spanDivFiltro" class="glyphicon glyphicon-collapse-down"><jsp:text/></span>
+                                        </a>
+                                    </td>    
+                                </tr>
+                            </table>
+                            <div id="divConfigFiltro" style="display:none;">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="100px">Dependencia:</td>
+                                        <td>
+                                            <form:hidden path="coDepDes"/>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtDependenciaDes" name="txtDependenciaDes" size="50" readonly="true" value=" [TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fu_buscaDependenciaDestinoDocPendEntrega();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>     
+                                    </tr>
+                                    <!--<tr>                                    
+                                        <td>Destinatario:</td>
+                                        <td>
+                                            <form:input path="coEmpDes" type="hidden"/>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtPersonalDes" name="txtPersonalDes" size="50" readonly="true" value="[TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaDestinatarioEmi();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>-->
+                                </table>
+                            </div>
+                        </fieldset>                        
+                    </td>
+                </tr>
+            </table>
+            </form:form>
+                
+                <fieldset>
+                <legend>Detalle</legend>
+                <div id="divTablaDocPendEntrega">
+                    <jsp:directive.include file="tblDocPendEntrega.jspx"/>
+                </div>
+                </fieldset>
+        </div>
+    </div>
+</jsp:root>

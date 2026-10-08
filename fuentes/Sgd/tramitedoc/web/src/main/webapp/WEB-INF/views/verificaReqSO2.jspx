@@ -1,0 +1,41 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <c:set var="divId" value="windowVerificaRequisitosSO" scope="request"/>
+    <c:set var="posiciona" value="width:500px; height:363px;" scope="request"/>
+
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <tiles:putAttribute name="title" value="Información del Equipo"/>
+        <tiles:putAttribute name="body">
+            <div id="divTablaVerificacion" >
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        ini_verReqSO();
+                    });
+                </script>
+
+                <br/>
+                <div id="divNoJava" style="color: #DB9C00;font-size: 1.3em;">
+                    <div id="myDivProgress">
+                        <p><span class="glyphicon glyphicon-warning-sign"><jsp:text/></span>Se requiere instalar Tr&#225;mite Documentario para mostrar este contenido. Si ya instal&#243; por favor espere un momento.</p>
+                        <div class="progress">
+                            <div  id="myProgressBarReq" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                            0%
+                            </div>
+                        </div>
+                    </div>
+                    <div id="myDivInstall" style="display: none;">    
+                        <p><span class="glyphicon glyphicon-warning-sign"><jsp:text/></span>Se requiere instalar Tr&#225;mite Documentario para mostrar este contenido.</p>
+                    </div>
+                </div>                
+            </div>
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <button title ="cerrar la ventana" class="btn btn-default btn-sm" onclick="removeDomId('windowVerificaRequisitosSO');" type="button" value="Salir">
+                <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>
+        </tiles:putAttribute>        
+
+    </tiles:insertTemplate>
+</jsp:root>

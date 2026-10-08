@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" 
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:spring="http://www.springframework.org/tags"
+          xmlns:opm="http://www.onpe.gob.pe/MenuOp_library.tld" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <spring:eval expression="@applicationProps['web_socket_server']" var="wSocketServer" scope="request"/>    
+    <div id="leftPane">
+        <div id="divCajaTexto" class="bigTextClass">
+            <table class="bigText">
+                <tr>
+                    <td>
+                        <textarea id="txtBigText" class="delUpperCase" style="width: 520px; height: 150px;">
+                            <jsp:text/>
+                        </textarea>
+                    </td>
+                </tr>
+                <tr> 
+                    <td align="center">
+                        <div class="btn-group btn-group-xs" style="position: relative">
+                            <button id="BTAceptar" type="button" class="btn btn-default btn-lg">
+                                <span class="glyphicon glyphicon-ok"><jsp:text/></span> Aceptar
+                            </button>
+                            <button id="BTCancelar" type="button" class="btn btn-default btn-lg">
+                                <span class="glyphicon glyphicon-remove"><jsp:text/></span> Cancelar
+                            </button>
+                            <div id="BTLabelCaracteres" style="position:absolute;left: -184px;" >contador 1 de 2</div>
+                        </div>  
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="divSelectFecha" class="datePickerClass"><jsp:text/></div>
+        <div id="divConfirm" style="display: none;" >
+            <table class="confirmClass">
+                <tr>
+                    <td align="center">
+                        Adicionar este documento?
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" style="height: 32px;" >
+                        <div class="btn-group btn-group-sm">
+                            <button id="confirmYes" type="button" class="btn btn-default btn-lg">
+                                <span class="glyphicon glyphicon-ok"><jsp:text/></span> Aceptar
+                            </button>
+                            <button id="confirmNo" type="button" class="btn btn-default btn-lg">
+                                <span class="glyphicon glyphicon-remove"><jsp:text/></span> Cancelar
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <script type="text/javascript">
+            /*userDni = "${usuario.nuDni}";
+            var pRutaEmi="${usuarioConfig.deDirEmi}";
+            $(function() {
+                cargarDatePicker();
+                $("#divDraggableBandeja").draggable({handle: "#divdragmodal", containment: "#divBandejaEntrada", scroll: false});
+                jQuery(document).ajaxStop(jQuery.unblockUI);
+                var codeBase = "${pageContext.request.contextPath}/applet";
+                fn_cargarAppletPincipal(codeBase,pRutaEmi);
+                setJavaApplet();
+            });*/
+            var idChannel = '${pageContext.request.session.id}';            
+            var auxwsServLoc0 = '${wSocketServer}'.substring(0, '${wSocketServer}'.indexOf('://') + 3);
+            var auxwsServLoc1 = '${wSocketServer}'.substring('${wSocketServer}'.indexOf('://') + 3);
+            auxwsServLoc1 = auxwsServLoc1.substring(auxwsServLoc1.indexOf('/'));
+            var wsServiceLocation = auxwsServLoc0+document.location.host+auxwsServLoc1;
+            userDni = "${usuario.nuDni}";
+            var urlBase = document.location.protocol+'//'+document.location.host+'${pageContext.request.contextPath}'+'/';
+            var rutaPri = '${usuarioConfig.deDirEmi}';
+            var nroPestana=${usuarioConfig.nroPestanna};
+            $(function() {
+                /*$("#idTradocDesktop").click(function(e){
+                    if(e.target.id===e.currentTarget.id){
+                        return true;
+                    }else{
+                        e.preventDefault();
+                        return false;
+                    }
+                });                */
+                cargarDatePicker();
+                $("#divDraggableBandeja").draggable({handle: "#divdragmodal", containment: "#divBandejaEntrada", scroll: false});
+                jQuery(document).ajaxStop(jQuery.unblockUI);
+            });
+        </script>
+        <div id="appletDoc" style="Width: 32px; float: left; margin-left:5px;margin-top:10px;visibility: hidden;" ><jsp:text/></div>
+        <div id="appletAux" name="appletDoc" style="margin-left:5px;margin-top:10px;position: absolute;visibility: hidden;"><jsp:text/></div>
+        <div id="appletIco" style="margin-left:5px;margin-top:10px;position: absolute;font-size: 32px;color:#D9534F"><span class="glyphicon glyphicon-ban-circle" ><jsp:text/></span></div>
+        
+         
+        
+        <div id="menu">
+            <ul class="menu">
+            <li><a href="#" class="parent"><span>Configuraci&#243;n</span></a>
+                    <div><ul>
+                            <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0113')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goConfigPersonal', 'POST');"><span>Configuraci&#243;n personal</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0101')}">
+                                <li><a href="#"><span>Grupo Documentos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0102')}">
+                                <li><a href="#"><span>Local Dependencia</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0111')}">
+                                <li><a href="#"><span>Documentos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0106')}">
+                                <li><a href="#"><span>Plantillas de Documentos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0105')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goOtrosOrigenes', 'POST');"><span>Registro de Otros or&#237;genes</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0112')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goRegProveedores', 'POST');"><span>Registro de Persona Jur&#237;dica</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0124')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goRegTupa', 'POST');"><span>Registro TUPA</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0125')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goRegCiudadanos', 'POST');"><span>Registro de Ciudadanos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0109')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goDocsDependencia&amp;idsession=${pageContext.request.session.id}');"><span>Tipos de Documentos por Dependencia</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0116')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goMotDependencia&amp;idsession=${pageContext.request.session.id}');"><span>Motivos por Dependencias</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0115')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goGruposDestinos&amp;idsession=${pageContext.request.session.id}');"><span>Grupos Destinos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0117')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goGruposDestinosVar&amp;idsession=${pageContext.request.session.id}');"><span>Grupos Destinos Externos</span></a></li>
+                                </c:if>                                
+                                
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0131')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goPermisos&amp;idsession=${pageContext.request.session.id}');"><span>Acceso a la Informaci&#243;n</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0132')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goTipoPermisos&amp;idsession=${pageContext.request.session.id}');"><span>Acceso a Permisos</span></a></li>
+                                </c:if>
+                                 <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0133')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goAdmTablaMaestra&amp;idsession=${pageContext.request.session.id}');"><span>Configuración de Tablas Maestras</span></a></li>
+                                </c:if>                                
+                                 <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0134')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goRegCargo', 'POST');"><span>Registro Cargo</span></a></li>
+                                </c:if>
+                                
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0118')}">
+                                <li><a href="#" class="menu_lista" ><span>Configuraci&#243;n General</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0119')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srTablaConfiguracion.do?accion=goAdminUO&amp;idsession=${pageContext.request.session.id}');"><span>Administraci&#243;n de UUOO</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0130')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srAsignacionFuncionario.do?accion=goAsignacionFuncionarios&amp;idsession=${pageContext.request.session.id}');"><span>Administraci&#243;n de Funcionarios</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0122')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srPrueba.do?accion=goInicio&amp;idsession=${pageContext.request.session.id}');"><span>Calendario Laborable</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0126')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/cambiaDepUsu.do?idsession=${pageContext.request.session.id}');"><span>Cambio de Unidad Org&#225;nica</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0123')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srTablaConfiguracion.do?accion=goAdmEmpleado&amp;idsession=${pageContext.request.session.id}');"><span>Administraci&#243;n de Empleado</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0127')}">
+                                <li><a href="#" class="menu_lista" 
+                                       onclick="ejecutaOpcionJsonConfirm(this, '/srTablaConfiguracion.do?accion=goEmptyListMaestro&amp;idsession=${pageContext.request.session.id}', 'POST', fn_rptaEmptyListTupaExpediente);"><span>Actualizar variables de Sistema</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0129')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goChangeImgPortada', 'POST');"><span>Imagen Portada</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0124')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goRegRequisito', 'POST');"><span>Registro Requisito</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0135')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcionModal(this, '/srTablaConfiguracion.do?accion=goRegCredencial', 'POST');"><span>Registro Credencial RENIEC</span></a></li>                                
+                                </c:if>
+                                
+                        </ul></div>
+                </li>
+                
+                <li><a href="#" class="parent"><span>Documentos</span></a>
+                    <div><ul>
+                            <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M020101')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srDocumentoAdmEmision.do?accion=goInicio&amp;estadoDoc=5&amp;coDep=${usuario.coDep}');"><span>Emisi&#243;n de Documentos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M020102')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srDocumentoAdmRecepcion.do?accion=goInicio&amp;estadoDoc=01&amp;coDep=${usuario.coDep}');"><span>Recepci&#243;n de Documentos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M020104')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srDocumentoEmisionPersonal.do?accion=goInicio&amp;estadoDoc=5&amp;coDep=${usuario.coDep}');"><span>Emisi&#243;n del Profesional</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M020105')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srDocumentoEmisionAlta.do?accion=goInicio&amp;estadoDoc=5&amp;coDep=${usuario.coDep}');"><span>Emision Alta Direcci&#243;n</span></a></li>
+                                </c:if>
+                                 
+                        </ul></div>
+                </li>
+
+                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0203')}">
+                    <li><a href="#" class="parent"><span>Mesa de Partes</span></a>
+                        <div><ul>
+                                
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M020301')}">
+                                    <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srMesaPartes.do?accion=goInicio&amp;coDep=${usuarioConfig.coDepMp}');"><span>Registro de Documentos</span></a></li>
+                                    </c:if>
+                                    <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M020302')}">
+                                    <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srCargoEntrega.do?accion=goInicioCargo&amp;coLoc=${usuarioConfig.coLocal}&amp;coDep=${usuarioConfig.coDep}');"><span>Cargo de Entrega</span></a></li>
+                                    </c:if>
+                                    <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030401')}">
+                                    <li><a href="#"  class="menu_lista" onclick="ejecutaOpcion(this, '/srConsultaRecDocExterno.do?accion=goInicio&amp;coDep=${usuarioConfig.coDepMp}');"><span>Consulta <br/> Documentos Externos</span></a></li>
+                                    </c:if>
+                                    <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030402')}">
+                                    <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srSeguiEstRecDocExt.do?accion=goInicio&amp;coDep=${usuarioConfig.coDepMp}');"><span>Seguimiento <br/> Documentos Externos</span></a></li>
+                                    </c:if>   
+                                     <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030403')}">
+                                    <li><a  target="_blank" href="#" class="menu_lista" onclick="window.open('${urlMesaVirtual}' , '_blank');"><span>Mesa de Partes Virtual</span></a></li>
+                                    </c:if>   
+                            </ul></div>        	
+                    </li>	
+                </c:if>
+                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M0401')}">    
+                <li><a href="#" class="parent"><span>Mensajería</span></a>
+                        <div><ul>      
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M040101')}">
+                                    <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srMensajeriaGestion.do?accion=goInicio&amp;coDep=${usuarioConfig.coDep}');"><span>Gestión de Documentos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M040102')}">
+                                    <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srGestionMensajes.do?accion=goInicio&amp;coDep=${usuarioConfig.coDepMp}');"><span>Gestión de Mensajes</span></a></li>
+                                </c:if>
+                                    
+
+                                    
+                            </ul></div>        	
+                </li>
+                </c:if>
+                <li><a href="#" class="parent"><span>Consultas</span></a>
+                    <div><ul>
+                            <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030101')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srConsultaEmisionDoc.do?accion=goInicio&amp;coDep=${usuario.coDep}');"><span>Documentos Emitidos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030102')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srConsultaRecepcionDoc.do?accion=goInicio&amp;estadoDoc=01&amp;coDep=${usuario.coDep}');"><span>Documentos Recibidos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030110')}">
+                                <li><a href="#"  class="menu_lista" onclick="ejecutaOpcion(this, '/srConsultaDocVobo.do?accion=goInicio&amp;coDep=${usuario.coDep}');"><span>Documentos Visto Bueno</span></a></li>
+                                </c:if>                                
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030109')}">
+                                <li><a href="#"  class="menu_lista" onclick="ejecutaOpcion(this, '/srConsultaEmiDocPersonal.do?accion=goInicio&amp;coDep=${usuario.coDep}');"><span>Documentos del Profesional</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030103')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srSeguiEstEmi.do?accion=goInicio&amp;estadoDoc=01&amp;coDep=${usuario.coDep}');" ><span>Seguimiento de Emitidos</span></a></li>
+                                </c:if>
+                                <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030104')}">
+                                <li><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srSeguiEstRecep.do?accion=goInicio&amp;estadoDoc=01&amp;coDep=${usuario.coDep}');"><span>Seguimiento de Recibidos</span></a></li>
+                                </c:if>
+                                <li style="display: none;"><a href="#" class="menu_lista" onclick="ejecutaOpcion(this, '/srFiscalizacion.do?accion=goInicio&amp;coDep=${usuario.coDep}');"><span>Generar Documento Aleatorio</span></a></li>
+                              
+                                 <c:if test="${opm:verificaOpcion(sessionScope.usuario,'M030111')}">
+                                    <li ><a href="#" class="menu_lista" onclick="window.open('${urlConsultaAvanzada}' , '_blank');"><span>Consulta Avanzada</span></a></li>
+                                </c:if>
+                                
+                        </ul></div>        	
+                </li>	
+                <li class="last"><a href="#"></a></li>			
+            </ul>
+        </div>
+        <div id="divBandejaEntrada">
+            <jsp:directive.include file="bandejaEntrada.jspx"/>
+        </div>
+
+        <div id="applicationPanel" style="display:none">
+            <jsp:directive.include file="bienvenida.jspx"/>
+        </div>
+    </div>
+</jsp:root>

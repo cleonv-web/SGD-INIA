@@ -1,0 +1,204 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">jQuery(document).ready(function() {
+            fn_eventEstDocVoBo('${documentoVoBoBean.esDocEmi}','#documentoVoBoBean');
+        });</script>  
+    <div class="ui-panel ui-corner-all"  style="width: 1180px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>DOCUMENTO VISTO BUENO</span>
+        </div>
+        <div class="ui-panel-body">   
+            <fieldset>
+                <div id="divToolBarDocVobo">                
+                    <jsp:text/>
+                </div>
+            </fieldset>
+            <input id="envDocumentoVoboBean" name="envDocumentoVoboBean" type="hidden" value="0"/>
+            <input id="rutaDocFirma" name="rutaDocFirma" type="hidden" value=""/>
+            <input id="inFirmaEmi" name="inFirmaEmi" type="hidden" value="F"/>
+            <input id="noPrefijo" name="noPrefijo" type="hidden" value=""/>
+
+            <form:form modelAttribute="documentoVoBoBean">
+                <form:hidden path="esDocEmi"/>
+                <form:hidden path="tiCap"/>
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <fieldset>
+                                <legend>Expediente</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Número:</td>    
+                                        <td>
+                                            <form:input path="nroExpediente" readonly="true" style="text-align: center;" maxlength="17"/>
+                                        </td>
+                                        <td>Fecha:
+                                            <form:input path="feExpCorta" readonly="true" style="text-align: center;" maxlength="10"/>
+                                        </td>                             
+                                    </tr>
+                                    <tr>
+                                        <td>Proceso:</td>    
+                                        <td colspan="2">
+                                            <form:input path="deProcesoExp" readonly="true" style="text-align: center;width:95%;" size="60" />
+                                        </td>   
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>
+                        <td width="50%">
+                            <fieldset>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Año:</td>    
+                                        <td>
+                                            <form:input path="nuAnn" readonly="true" size="10" style="text-align: center;" maxlength="4"/>
+                                            <form:hidden path="nuEmi"/>
+                                            <form:hidden path="nuSecuenciaFirma"/>
+                                        </td>
+                                        <td rowspan="2" align="right" id="divEnviarDocVoBo" style="display: none;">
+                                            <button class="btn btn-success" type="button">
+                                              <span class="glyphicon glyphicon-ok"/>
+                                              ENVIAR DOC.</button>
+                                        </td>
+                                        <td rowspan="2" align="center">
+                                            <div id="divEstDocVoBo" class="btn-group">
+                                                <button type="button" class="btn btn-danger">
+                                                    <span class="glyphicon glyphicon-ok"/>
+                                                    ENVIAR DOC.
+                                                </button>
+                                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                                                    <span class="caret"></span>&amp;nbsp;
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul id="ullsEstDocVoBo" class="dropdown-menu" role="menu">
+                                                    <li><a href="#" onclick="fn_agregarObsDocVoBo();">OBSERVAR V.B.</a></li>
+                                                </ul>                                            
+                                            </div>                                             
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nro Emisión:</td>    
+                                        <td>
+                                            <form:input path="nuCorEmi" readonly="true" size="10"  style="text-align: center;"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>						
+                    </tr>
+                    <tr>
+                        <td>
+                            <fieldset>
+                                <legend>Remitente</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td width="11%">Dependencia:</td>    
+                                        <td width="65%">
+                                            <form:input path="deDepEmi" readonly="true" style="width:95%;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Firmado Por:</td>    
+                                        <td>
+                                            <form:input path="deEmpEmi" readonly="true" style="width:95%;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Elaborado Por:</td>    
+                                        <td>
+                                            <form:input path="deEmpElabora" readonly="true" style="width:95%;"/>
+                                        </td>  	                                                                                                        
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </td>
+                        <td rowspan="2">
+                            <table width="100%">
+                                <tr>
+                                    <td>
+                                        <fieldset>
+                                            <legend>Vistos Buenos</legend>                        
+                                            <jsp:directive.include file="tablaPersVoBoDocAdm.jspx"/>
+                                        </fieldset>                                    
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <fieldset>
+                                            <legend>Observación Visto Bueno</legend>                        
+                                            <table width="100%">
+                                                <tr>
+                                                    <td>
+                                                        <form:textarea path="deObs" style="height:70px;width:99%;" class="delUpperCase" rows="4" cols="60" maxlength="300"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>                                                                
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <fieldset>
+                                <legend>Documento</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td width="7%">Tipo:</td>    
+                                        <td width="43%">
+                                            <input type="text" readonly="true" value="${fn:escapeXml(documentoVoBoBean.deTipDocAdm)} ${fn:escapeXml(documentoVoBoBean.nuDoc)}" size="30"/>
+                                        </td>
+                                        <td align="center">Fecha:<form:input path="feEmiCorta" style="text-align: center" readonly="true" size="10"/></td>
+                                        <td>Atender en:<form:input path="nuDiaAte" readonly="true" size="2" style="text-align: center"/><jsp:text>días</jsp:text></td>                                                                                   
+                                    </tr>
+                                    <tr>
+                                        <td>Asunto:</td>    
+                                        <td colspan="3">
+                                            <form:textarea path="deAsu" rows="4" cols="60" class="delUpperCase" style="height:90px;width:98%;" readonly="true"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            <fieldset>
+                                                <legend>REFERENCIA</legend>
+                                                <div id="divtablaRefEmiDocAdm">
+                                                    <jsp:directive.include file="tablaRefEmiDocAdm.jspx"/>
+                                                </div>
+                                            </fieldset>		                                                                                                                             
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Destinatario</legend>
+                                <table width="100%">
+                                    <c:if test="${not empty lstDestintarioDocAdmEmi}">
+                                        <tr><td><jsp:directive.include file="tablaDestEmiDocAdmIntitu.jspx"/></td></tr>                                            
+                                    </c:if>
+                                    <c:if test="${not empty lstDestintarioCiudadanoDocAdmEmi}">
+                                        <tr><td><jsp:directive.include file="tablaDestEmiDocAdmCiudadano.jspx"/></td></tr>                                        
+                                    </c:if>
+                                    <c:if test="${not empty lstDestintarioProveedorDocAdmEmi}">
+                                        <tr><td><jsp:directive.include file="tablaDestEmiDocAdmPersJuri.jspx"/></td></tr>                                        
+                                    </c:if>
+                                    <c:if test="${not empty lstDestintarioOtroOrigenDocAdmEmi}">
+                                        <tr><td><jsp:directive.include file="tablaDestEmiDocAdmOtro.jspx"/></td></tr>                                        
+                                    </c:if>
+                                </table>
+                            </fieldset>
+                        </td> 
+                    </tr>
+                </table>
+                <input type="hidden" id="txtValChangeDocEsObsOpc" value="0"/>
+            </form:form>
+        </div>
+    </div>
+</jsp:root>

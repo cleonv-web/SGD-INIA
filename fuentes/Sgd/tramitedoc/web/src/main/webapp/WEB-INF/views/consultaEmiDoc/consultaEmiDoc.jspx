@@ -1,0 +1,257 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <jsp:scriptlet><![CDATA[response.setHeader("Cache-Control", "max-age=43200");]]></jsp:scriptlet>
+    <script languaje="javascript">jQuery(document).ready(function() {fn_inicializaConsulEmiDoc('${buscarDocumentoEmiConsulBean.coAnnio}','${fechaActual}');});</script>  	
+    <div class="ui-panel ui-corner-all" id="divEmiDocumentoAdminConsul" style="min-width: 1500px">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>CONSULTA DE EMISION DE DOCUMENTOS</span>
+        </div>
+        <div class="ui-panel-body">
+            <input id="txtFechaActual" name="txtFechaActual" type="hidden" value="${fechaActual}"/>
+            <input id="txtAnnioActual" name="txtAnnioActual" type="hidden" value="${annioActual}"/>
+            <fieldset>
+                <div class="btn-group btn-group-lg">
+                   <button title ="Detalle Documento" class="btn btn-primary btn-lg" onclick="editarDocumentoEmiConsul();" type="button">
+                       <span class="glyphicon glyphicon-edit"><jsp:text/></span> Detalle</button>
+                   <button title ="Ver Documento" class="btn btn-primary btn-lg" onclick="fn_verDocumentoLista();" type="button">
+                       <span class="glyphicon glyphicon-list-alt"><jsp:text/></span> Ver Documento</button>
+                   <button title ="Ver Documento Anexos - Referencias" class="btn btn-primary btn-lg" onclick="fn_verAnexoEmi();" type="button">
+                       <span class="glyphicon glyphicon-paperclip"><jsp:text/></span> Ver Anexos</button>
+                   <button title ="Seguimiento de Documentos" class="btn btn-primary btn-lg" onclick="fn_verSeguimientoEmi();" type="button">
+                       <span class="glyphicon glyphicon-transfer"><jsp:text/></span> Seguimiento</button>
+                   <div class="btn-group btn-group-lg">
+                       <button title ="Exportar Consulta EXCEL" class="btn btn-primary" onclick="fu_generarReporteEmiConsulXLS();" type="button">
+                        <span class="glyphicon glyphicon-export"><jsp:text/></span> Exportar</button>
+                       <button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown">
+                           <span class="caret"></span>&amp;nbsp;
+                           <span class="sr-only">Toggle Dropdown</span>
+                       </button>
+                       <ul id="ullsAbrirDocumento" class="dropdown-menu" role="menu">
+                           <li><a href="#" onclick="fu_generarReporteEmiConsulPDF();" title ="Exportar Consulta PDF">Exportar PDF</a></li>
+                           <li><a href="#" onclick="fu_generarReporteEmiConsulXLS();" title ="Exportar Consulta Excel">Exportar Excel</a></li>
+                       </ul>
+                   </div>                        
+                   <button title ="Salir Consulta Emisi&#243;n de Documentos" class="btn btn-primary btn-lg" onclick="cerrarPantalla();" type="button">
+                       <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                </div>                    
+
+            </fieldset>
+            <form:form modelAttribute="buscarDocumentoEmiConsulBean">
+            <input id="deDependencia" name="deDependencia" type="hidden" value="${deDepenciaActual}"/>    
+            <form:hidden path="tipoBusqueda"/>        
+            <form:hidden path="coDependencia"/>        
+            <form:hidden path="coEmpleado"/>        
+            <form:hidden path="tiAcceso"/>    
+            <form:hidden path="esFiltroFecha"/>  
+            <form:hidden path="feEmiIni"/>  
+            <form:hidden path="feEmiFin"/>  
+            <table width="100%" >
+                <tr valign="top">
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Búsqueda</legend>
+                            <table width="100%">
+                                <tr>
+                                   <td>Nro Emisión:</td>
+                                   <td>
+                                       <form:input path="busNumEmision" maxlength="6" style="width: 60px;" onkeypress="return fu_onKeyPressFiltrarTecladoNumero(event, false, public_enteros)"/>
+                                   </td>
+                                   <td>Nro Documento:</td>
+                                   <td>
+                                       <form:input path="busNumDoc" style="width: 60px;" maxlength="6"/>
+                                   </td>
+                                   <td>Expediente:</td>
+                                   <td>
+                                       <form:input path="busNumExpediente" style="width: 80px;" maxlength="20"/>
+                                   </td>
+                                   <td align="right">
+                                        <button title ="Buscar documentos" class="btn btn-default btn-sm" onclick="changeTipoBusqEmiDocuAdmConsul('1');" type="button">
+                                            <span class="glyphicon glyphicon-search"><jsp:text/></span> Buscar</button>
+                                        <button title ="Limpiar datos de b&#250;squeda" class="btn btn-default btn-sm" onclick="fu_cleanEmiDocAdmConsul('1');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                   </td>  
+                               </tr>
+                               <tr>
+                                   <td>Asunto:</td>
+                                   <td colspan="5">
+                                       <form:input path="busAsunto" style="width: 360px;" onkeypress="return fu_onKeyPressFiltrarTecladoCadena(event, false, public_letras)" maxlength="100"/>
+                                   </td>
+                                   <td align="right">
+                                       <form:checkbox path="esIncluyeFiltro" style="display:none;"/><strong style="display:none;">Incluir Filtro</strong>
+                                       &amp;nbsp;
+                                       &amp;nbsp;
+                                        <a href="#" title="M&#225;s datos de B&#250;squeda" onclick="mostrarOcultarDivBusqFiltro('2');" class="btn-actdiv">
+                                            <span id="spanDivBusqueda" class="glyphicon glyphicon-collapse-down"><jsp:text/></span>
+                                        </a>
+                                   </td>                                      
+                               </tr>
+                            </table>
+                            <div id="divConfigBusqueda" style="display:none;">
+                                <fieldset>
+                                <legend>Buscar Documento en Referencias</legend>
+                                    <table width="100%">
+                                        <tr>
+                                            <td>Dependencia que Emite:</td>
+                                            <td colspan="4">
+                                                <form:hidden path="busCodDepEmiRef"/> 
+                                                <div class="input-group">
+                                                  <input type="text" class="form-control" id="txtDepEmiteBus" name="txtDepEmiteBus" size="50" value=" [TODOS]" onkeyup="return fu_FiltrarTecladoCadenaFunParamGeneral(event, false, public_apenom,fn_buscaDependenciaEmiConsul,'');"/>
+                                                  <span class="input-group-btn">
+                                                    <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaDependenciaEmiConsul();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                                  </span>
+                                                </div> 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipo Documento:</td>
+                                            <td><form:select path="busCodTipoDocRef">
+                                                    <form:options items="${deTipoDocumentoList}" itemValue="coTipDoc" itemLabel="deTipDoc" />
+                                                </form:select></td>
+                                            <td>Nro Doc.:</td>
+                                            <td><form:input path="busNumDocRef" style="width: 100px;" maxlength="6"/></td>                                            
+                                            <td>Año:</td>
+                                            <td><form:select path="busCoAnnio">
+                                                <form:options items="${deAnnioList}" itemValue="deAnio" itemLabel="cano" />
+                                            </form:select></td>                                            
+                                        </tr>                                
+                                    </table>
+                                </fieldset>
+                            </div>
+                        </fieldset>                        
+                    </td>
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Filtro</legend>
+                            <table width="100%">
+                                <tr>
+                                    <!--<td>Año:</td>-->
+                                    <td colspan="2">
+                                        <form:hidden path="coAnnio"/>  
+                                         <!--<button id="fechaFiltro" style="width: 210px;text-align: center;" class="btn btn-default btn-sm" type="button"/>-->
+					<div id="fechaFiltro" class="cajaFechas">
+                                            <div class="cajaIcono"><span class="glyphicon glyphicon-calendar fa fa-calendar"><jsp:text/></span></div>
+                                            <div name="labelDate" class="cajaEtiqueta" style="text-align: center;width: 210px;"><jsp:text/></div>
+                                            <div class="cajaTriangulo"><b class="caret"><jsp:text/></b></div>
+                                        </div>
+                                    </td>
+                                    <td>Estado:</td>
+                                    <td>
+                                        <form:select path="estadoDoc">
+                                            <form:options items="${deEstadosList}" itemValue="coEst" itemLabel="deEst" />
+                                        </form:select>
+                                    </td>
+                                   <td align="right">
+                                       <button title ="Filtrar documentos" class="btn btn-default btn-sm" onclick="changeTipoBusqEmiDocuAdmConsul('0');" type="button">
+                                            <span class="glyphicon glyphicon-filter"><jsp:text/></span> Filtrar</button>
+                                        <button title ="Limpiar datos de Filtro" class="btn btn-default btn-sm" onclick="fu_cleanEmiDocAdmConsul('0');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                   </td>  
+                                </tr>
+                                <tr>    
+                                    <td>Prioridad:</td>
+                                    <td>
+                                        <form:select path="prioridadDoc">
+                                            <form:options items="${dePrioridadesList}" itemValue="coPri" itemLabel="dePri" />
+                                        </form:select>
+                                    </td>    
+                                    <td>Tipo Doc:</td>
+                                    <td>
+                                        <form:select path="tipoDoc" style="width:180px">
+                                            <form:options items="${deTipoDocumentoList}" itemValue="coTipDoc" itemLabel="deTipDoc" />
+                                        </form:select>
+                                    </td>
+                                    <td align="right">
+                                        <a href="#" title="M&#225;s datos de Filtro" onclick="mostrarOcultarDivBusqFiltro('1');" class="btn-actdiv">
+                                            <span id="spanDivFiltro" class="glyphicon glyphicon-collapse-down"><jsp:text/></span>
+                                        </a>
+                                    </td>    
+                                </tr>
+                            </table>
+                            <div id="divConfigFiltro" style="display:none;">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="100px">Referencia. Origen:</td>
+                                        <td>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtRefOrigen" name="txtRefOrigen" size="50" readonly="true" value="[TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaReferenciaOrigenConsul();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                            <form:input path="coRefOrigen" type="hidden"/>
+                                        </td>                                         
+                                    </tr>
+                                    <tr>
+                                        <td width="100px">Remitente:</td>
+                                        <form:input path="coDepOrigen" type="hidden"/>
+                                        <td>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtDepOrigen" name="txtDepOrigen" size="50" readonly="true" value="${deDepenciaActual}" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaDependenciaOrigenConsulEmi();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>
+                                    <tr>                                    
+                                        <td>Elaborado por:</td>
+                                        <td>
+                                            <form:input path="coEmpElaboro" type="hidden"/>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtElaboradoPor" name="txtElaboradoPor" size="50" readonly="true" value="[TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaElaboradoPorConsul();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>
+                                    <tr>                                    
+                                        <td>Destinatario:</td>
+                                        <td>
+                                            <form:input path="coDepDestino" type="hidden"/>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtDestinatario" name="txtDestinatario" size="50" readonly="true" value="[TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaDestinatarioEmiConsul();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>
+                                    <tr style="display:none">
+                                        <td>Emp destino:</td>
+                                        <td>
+                                            <form:input path="coEmpDestino" type="hidden"/>
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" id="txtEmpDestino" name="txtEmpDestino" size="50" readonly="true" value="[TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaEmpDestino();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>                                            
+                                        </td>
+                                    </tr>
+                                    <!--<tr>                                    
+                                        <td>Tipo Expediente:</td>
+                                        <td>
+                                            <form:select path="coExpediente">
+                                                <form:options items="${deExpedienteList}" itemValue="coExp" itemLabel="deExp" />
+                                            </form:select>
+                                        </td>
+                                    </tr>                                            -->
+                                </table>
+                            </div>
+                        </fieldset>                        
+                    </td>
+                </tr>
+            </table>
+            </form:form>
+            <fieldset>
+                <legend>Detalle</legend>   
+                <div id="divTblConsulDocumentoEmitido">
+                    <jsp:directive.include file="tblDocEmitidos.jspx"/>
+                </div>                
+            </fieldset>
+        </div>
+    </div>
+    <div id="divNewEmiDocumAdminConsul" style="display:none;">&amp;nbsp;</div>                                    
+</jsp:root>	

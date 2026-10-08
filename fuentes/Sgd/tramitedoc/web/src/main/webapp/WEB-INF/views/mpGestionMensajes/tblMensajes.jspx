@@ -1,0 +1,109 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">jQuery(document).ready(function() {fu_eventoTablaMensajes();});</script>
+    <div class="ui-datatable-fixed">
+        <input type="hidden" id="txtpnuAnn" name="txtpnuAnn" value=""/>
+        <input type="hidden" id="txtpnuEmi" name="txtpnuEmi" value=""/>
+        <table id ="myTableFixed" class="display" width="100%">
+            <thead>
+                <tr class="ui-state-default">
+                    <th style="display:none"></th>
+                    <th style="display:none"></th> 
+                    <th width="3%">NRO<br/> ENVÍO</th>                    
+                    <th width="7%">OFICINA</th>
+                    <th width="10%">DOCUMENTO</th>
+                    <th width="10%">ASUNTO</th>
+                    <th width="10%">DESTINARIO</th>
+                    <th width="6%">ÁMBITO</th>
+                    <th width="5%" data-toggle="tooltip" title="DEPARTAMENTO DEL DESTINO">DEPAR.<br/>DESTINO</th>
+                    <th width="5%" data-toggle="tooltip" title="DIRECCIÓN DEL DESTINO">DIREC.<br/>DESTINO</th>
+                    <th width="5%" data-toggle="tooltip" title="TIPO DE MENSAJERO">TIPO<br/>MENS.</th>
+                    <th width="3%">TIPO<br/>ENVIO</th>
+                    <th width="5%" data-toggle="tooltip" title="RESPONSABLE DE ENVÍO">RESP.<br/>ENVÍO</th>
+                    <th width="5%">NRO ORDEN/<br/>GUÍA</th>
+                    <th width="4%" data-toggle="tooltip" title="FECHA DE EMISIÓN">FEC.<br/> EMI.</th>
+                    <th width="4%" data-toggle="tooltip" title="FECHA DE ENVIO DESDE OFICINA">FEC.<br/> ENVI.<br/> OFI.</th>
+                    <th width="4%" data-toggle="tooltip" title="FECHA DE RECEPCIÓN DEL DOCUMENTO">FEC.<br/> REC.<br/> DOC.</th>
+                    <th width="4%" data-toggle="tooltip" title="FECHA DE ENVÍO A MENSAJERÍA">FEC.<br/> ENVI.<br/> MENS.</th>
+                    <th width="4%" data-toggle="tooltip" title="FECHA DE ENTREGA">FEC.<br/>ENTRE.</th>
+                    <th width="4%" data-toggle="tooltip" title="FECHA DE DEVOLUCIÓN">FEC.<br/>DEVOL.</th>   
+                    <th width="4%" data-toggle="tooltip" title="FECHA PLAZO DE ENTREGA">FEC.<br/>PLA.<br/>ENT.</th>
+                    <th width="4%" data-toggle="tooltip" title="FECHA PLAZO DE DEVOLUCIÓN">FEC. <br/>PLA.<br/>DEV.</th> 
+                    <th width="3%" data-toggle="tooltip" title="DÍA(S) TRANSCURRIDOS DESDE LA ENTREGA">DÍA(S) TRAN.</th>
+                    <th width="3%" data-toggle="tooltip" title="DÍA(S) PENDIENTES DESDE LA ENTREGA">DÍA(S) PEND.</th>
+                    <th width="3%" data-toggle="tooltip" title="DÍA(S) VENCIDOS DESDE LA ENTREGA">DÍA(S) VENC.</th>
+                    <th width="3%" data-toggle="tooltip" title="DÍA(S) DE PENALIZACÓN DE ENTREGA">DÍA(S)<br/>PEN.<br/>ENT.</th>
+                    <th width="3%" data-toggle="tooltip" title="DÍA(S) DE PENALIZACÓN DE DEVOLUCIÓN">DÍA(S)<br/>PEN.<br/>DEV.</th>
+                    <th width="5%">ESTADO</th>
+                    <th width="5%">OPERACIÓN</th>
+
+                </tr>
+            </thead>				
+            <tbody>
+                <c:forEach var="docMensaje" items="${docMensajeLst}" varStatus="status">
+                    <tr class="gradeA" tabindex="0">
+                        <td style="display:none">${docMensaje.nu_ann}</td>
+                        <td style="display:none">${docMensaje.nu_emi}</td>   
+                        <td>${docMensaje.nu_msj}</td>                        
+                        <td>${docMensaje.de_dependencia}</td>
+                        <td>${docMensaje.de_tip_doc}</td>
+                        <td>${docMensaje.de_asu}</td>
+                        <td>${docMensaje.destinatario}</td>
+                        <td>${docMensaje.de_ambito}</td>
+                        <td>${docMensaje.departamento}</td>
+                        <td>${docMensaje.direccion}</td>                        
+                        <td>${docMensaje.de_tip_msj}</td>
+                        <td>${docMensaje.de_tip_env}</td>
+                        <td>${docMensaje.re_env_msj}</td>                        
+                        <td>${docMensaje.nu_servicio}</td> 
+                        <td>${docMensaje.fe_emi}</td>
+                        <td>${docMensaje.fe_env_mes}</td>                        
+                        <td>${docMensaje.fec_recepmp}</td> 
+                        <td>${docMensaje.fec_enviomsj}</td> 
+                        <td>${docMensaje.fe_ent_msj}</td>
+                        <td>${docMensaje.fe_dev_msj}</td> 
+                        <td>${docMensaje.fe_pla_msj}</td>
+                        <td>${docMensaje.fe_pla_dev}</td>                        
+                        <td>${docMensaje.dia_tra}</td>
+                        <td>${docMensaje.dia_pen}</td>
+                        <td>${docMensaje.dia_ven}</td> 
+                        <td>${docMensaje.dia_ent}</td>
+                        <td>${docMensaje.dia_dev}</td>
+                        <td>${docMensaje.est_msj}</td> 
+                        <td align="center">
+                            
+                             <c:choose>
+                                <c:when test='${docMensaje.cod_est_msj eq "2"}'>
+                                    <button type="button" onclick="ejecutaOpcionModal(this, '/srGestionMensajes.do?accion=goDescargarMensaje&amp;nu_ann=${docMensaje.nu_ann}&amp;nu_emi=${docMensaje.nu_emi}&amp;nu_des=${docMensaje.nu_des}&amp;nu_msj=${docMensaje.nu_msj}&amp;fec_enviomsj=${docMensaje.fec_enviomsj}&amp;fec_plazo=${docMensaje.fe_pla_msj}', 'POST');" class="btn btn-default btn-xs" title="DESCARGAR"><span class="glyphicon glyphicon-floppy-open"></span></button>&amp;nbsp;
+                                    <button type="button" onclick="fn_eliminarMsj('${docMensaje.nu_ann}','${docMensaje.nu_emi}','${docMensaje.nu_des}','${docMensaje.nu_msj}');" class="btn btn-default btn-xs" title="ELIMINAR" style="color: #ac2925"><span class="glyphicon glyphicon-remove"></span></button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button type="button" onclick="ejecutaOpcionModal(this, '/srGestionMensajes.do?accion=goConsDescargarMensaje&amp;nu_ann=${docMensaje.nu_ann}&amp;nu_emi=${docMensaje.nu_emi}&amp;nu_des=${docMensaje.nu_des}&amp;nu_msj=${docMensaje.nu_msj}&amp;fec_enviomsj=${docMensaje.fec_enviomsj}&amp;fec_plazo=${docMensaje.fe_pla_msj}', 'POST');" class="btn btn-default btn-xs" title="VER CARGO"><span class="glyphicon glyphicon-eye-open"></span></button>
+                                    <c:choose>
+                                        <c:when test='${docMensaje.es_doc_emi!="4"}'>
+                                            &amp;nbsp;
+                                            <button type="button" onclick="fn_revertirMsj('${docMensaje.nu_ann}','${docMensaje.nu_emi}','${docMensaje.nu_des}','${docMensaje.nu_msj}');" class="btn btn-default btn-xs" title="REVERTIR" style="color: #c77405"><span class="glyphicon glyphicon-transfer"></span></button>                                            
+                                        </c:when>
+                                    </c:choose>
+
+                                </c:otherwise>
+
+                            </c:choose>		
+                        </td> 
+
+                    </tr>
+                </c:forEach>
+            </tbody>			
+        </table>
+    </div>
+      
+    <div id="divflotante" class="divTip">&amp;nbsp;</div>   
+    <script>
+        $(document).ready(function(){
+            var idTable="myTableFixed";
+            var col=29;
+            setEtiquetasListaDoc(idTable,col);
+        });
+    </script>    
+</jsp:root>	

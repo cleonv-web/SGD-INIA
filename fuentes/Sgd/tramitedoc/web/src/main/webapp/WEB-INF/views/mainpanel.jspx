@@ -1,0 +1,13 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:jsp="http://java.sun.com/JSP/Page">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes" />
+
+    <tiles:insertTemplate template="/WEB-INF/templates/main.jspx" flush="true">
+        <tiles:putAttribute name="title" value="${usuarioConfig.deSiglasDep}"/>
+        <tiles:putAttribute name="regionTop" value="/WEB-INF/views/mainHeader.jspx"/>
+        <tiles:putAttribute name="regionLeft" value="/WEB-INF/views/mainMenu.jspx"/>
+        <tiles:putAttribute name="regionBottom" value="/WEB-INF/views/mainFooter.jspx"/>
+    </tiles:insertTemplate>
+   
+</jsp:root>
+

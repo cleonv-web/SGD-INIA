@@ -1,0 +1,433 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">jQuery(document).ready(function() {
+         fn_preload();
+        // $("#ddlOrigenOficio").find("option[text='SELECCIONE']").attr("selected", true);
+          
+       
+         //fn_initOrigenEspecial('#coTipDocAdm');
+        
+        //jQuery('#divOrigenOficio').hide(); 
+            fn_eventEstDoc('${sTipoDestEmi}', '${documentoEmiBean.esDocEmi}');
+         //   LoadMensajeria();                          
+        }); </script>  
+    <div class="ui-panel ui-corner-all"  style="width: 1280px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>EMISION DE DOCUMENTOS ADMINISTRATIVOS</span>
+        </div>
+        <div class="ui-panel-body">   
+            <fieldset>
+                <div id="divToolBarEmiAdm">                
+                    <jsp:text/>
+                </div>
+            </fieldset>
+            <input id="txtpdNoFirmaProveido" name="txtpdNoFirmaProveido" type="hidden" value="${pdNoFirmaProveido}"/>
+            <input id="txtpOficinaDestino" name="txtpOficinaDestino" type="hidden" value="${pOficinaDestino}"/>
+            <input id="txtpDesOficinaDestino" name="txtpDesOficinaDestino" type="hidden" value="${pOficinaDesDestino}"/>
+            <input id="txtfechaHoraActual" name="txtfechaHoraActual" type="hidden" value="${pfechaHoraActual}"/>
+            <input id="txtEsNuevoDocAdm" name="txtEsNuevoDocAdm" type="hidden" value="${sEsNuevoDocAdm}"/>
+            <input id="envExpedienteEmiBean" name="envExpedienteEmiBean" type="hidden" value="0"/>
+            <input id="envDocumentoEmiBean" name="envDocumentoEmiBean" type="hidden" value="1"/>
+            <input id="envRemitenteEmiBean" name="envRemitenteEmiBean" type="hidden" value="0"/>
+            <input id="rutaDocFirma" name="rutaDocFirma" type="hidden" value=""/>
+            <input id="inFirmaEmi" name="inFirmaEmi" type="hidden" value="F"/>
+            <input id="inCargar" name="inCargar" type="hidden" value="S"/>
+            <input id="noPrefijo" name="noPrefijo" type="hidden" value=""/>
+            <input id="esActualizadoNuDocEmi" name="esActualizadoNuDocEmi" type="hidden" value="0"/>
+            <input id="inCreaExpediente" name="inCreaExpediente" type="hidden" value="${inCreaExpediente}"/>
+            <input id="DatosOblDesJur" name="DatosOblDesJur" type="hidden" value="${pDatosOblDesJur}"/><!--interoperabilidad-->
+            <input id="siglaDependencia" name="siglaDependencia" type="hidden" value="${siglaDependencia}"/>
+            <input id="txtNuEmiProveido" name="txtNuEmiProveido" type="hidden" />
+            <input id="bFirmaProveido" name="bFirmaProveido" type="hidden"  value="1"/>
+            <form:form modelAttribute="documentoEmiBean">
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <fieldset>
+                                <legend>Expediente</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Número:</td>    
+                                        <td>
+                                            <form:hidden path="nuAnnExp"/>
+                                            <form:hidden path="nuSecExp"/>
+                                            <form:input path="nuExpediente" readonly="true" style="text-align: center" maxlength="17"/>
+                                        </td>
+                                        <td>Fecha:</td>
+                                        <td>
+                                            <form:hidden path="feExp"/>
+                                            <form:input path="feExpCorta" readonly="true" style="text-align: center" maxlength="10"/>
+                                        </td>                             
+                                    </tr>
+                                    <tr>
+                                        <td>Proceso:</td>    
+                                        <td colspan="3">
+                                            <form:hidden path="coProceso"/>
+                                            <form:input path="deProceso" readonly="true" style="text-align: center" size="60"/>
+                                        </td>   
+                                    </tr>
+                                </table>
+                            </fieldset>                          
+                        </td>
+                        <td width="50%">
+                            <fieldset>
+                                <legend>&amp;nbsp;</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Año:</td>    
+                                        <td>
+                                            <form:input path="nuAnn" readonly="true" size="10" style="text-align: center" maxlength="4"/>
+                                            <form:hidden path="nuEmi"/>                                                                                                                                    
+                                            <form:hidden path="nuSecuenciaFirma"/>
+                                                                                       
+                                           
+                                            <input id="docEstadoMsj" name="docEstadoMsj" type="hidden" value="${documentoEmiBean.docEstadoMsj}"/>
+                                            <input id="tiEnvMsj" name="tiEnvMsj" type="hidden" value="${documentoEmiBean.tiEnvMsj}"/> <!--interoperabilidad-->
+                                            <input id="txtesDocEmi" name="txtesDocEmi" type="hidden" value="${documentoEmiBean.esDocEmi}"/>
+                                            <input id="tiDest" name="tiDest" type="hidden" value="${documentoEmiBean.tiDest}"/> 
+                                            
+                                            <input id="sexisteDoc" name="sexisteDoc" type="hidden" value="${sexisteDoc}"/>
+                                            <input id="sexisteAnexo" name="sexisteAnexo" type="hidden" value="${sexisteAnexo}"/>
+                                            
+                                        </td>
+                                        <td rowspan="2" align="left" id="divEmitirDoc" style="display: none;">
+                                            <button class="btn btn-success" type="button">
+                                              <span class="glyphicon glyphicon-ok"/>
+                                              EMITIR DOC.</button>
+                                        </td> 
+                                        <td  rowspan="2" align="center" id="divEmitirMensajeria" style="display: none;">
+                                            <button  title ="Enviar Mensajería" class="btn btn-default"  type="button" ><span class="glyphicon glyphicon-envelope"><jsp:text/></span>Enviar a Mensajería</button>
+                                           <!--  
+                                             <c:choose>
+                                                    <c:when test='${docEstadoMsj eq "-1"  and esDocEmi eq "0" and tiDest!="01"}'>
+                                                     <button id="btnEnvioMensajeria" title ="Enviar Mensajería" class="btn btn-default" onclick="fn_EnviarNotificacion('${snuAnn}', '${snuEmi}','0','${sexisteDoc}','${sexisteAnexo}','EDIT');" type="button" style="color: #ac2925"><span class="glyphicon glyphicon-envelope"><jsp:text/></span>Enviar a Mensajería</button>
+                                                     </c:when>
+                                            </c:choose>
+                                            <c:choose>
+                                                    <c:when test='${docEstadoMsj eq "0"  and esDocEmi eq "0" and tiDest!="01"}'>
+                                                     <button title ="Enviar Mensajería" class="btn btn-default" onclick="fn_EnviarNotificacion('${snuAnn}', '${snuEmi}','${tiEnvMsj}','${sexisteDoc}','${sexisteAnexo}','EDIT');" type="button" style="color: #468847"><span class="glyphicon glyphicon-envelope"><jsp:text/></span>Enviar a Mensajería</button>
+                                                     </c:when>
+                                            </c:choose>-->
+
+                                            
+                                        </td>
+                                        <td rowspan="2" align="center" style="display: none;"></td>
+                                        <td rowspan="2" align="center" style="display: none;">
+                                            <form:hidden path="esDocEmi"/>
+                                            <div id="estDocEmiAdm" class="btn-group">
+                                                <c:choose>
+                                                    <c:when test="${documentoEmiBean.esDocEmi eq '7'}">
+                                                        <button type="button" class="btn btn-danger" onclick="fu_changeEstadoDocEmiAdm('0');">${documentoEmiBean.deEsDocEmi}</button>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button type="button" class="btn btn-danger">${documentoEmiBean.deEsDocEmi}</button>
+                                                    </c:otherwise>
+                                                </c:choose>                                                                                                
+                                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                                                    <span class="caret"></span>&amp;nbsp;
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul id="ullsEstDocEmiAdm" class="dropdown-menu" role="menu"/>
+                                            </div>   
+                                        </td>    
+                                    </tr>
+                                    <tr>
+                                        <td>Nro Emisión:</td>    
+                                        <td>
+                                            <form:input path="nuCorEmi" readonly="true" size="10"  style="text-align: center"/>
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </fieldset>                         
+                        </td>                        
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <table width="100%" style="height: 291px;">
+                                <tr>
+                                    <td>
+                                        <fieldset>
+                                            <legend>Remitente</legend>
+                                            <form:hidden path="coLocEmi"/><!--a eliminar de controller ${lstLocalRemitenteEmi}-->
+                                            <table width="100%">
+                                                <tr>
+                                                    <td>Dependencia:</td>    
+                                                    <td>
+                                                        <form:select path="coDepEmi" onchange="fn_cambiaComboDepEmi();" style="width:95%" >
+                                                            <form:options items="${lstDependenciaRemitenteEmi}" itemValue="coDependencia" itemLabel="deDependencia" />
+                                                        </form:select>	
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Firmado Por:</td>    
+                                                    <td>
+                                                        <form:hidden path="coEmpEmi"/>
+                                                        <div class="input-group" style="width:95%">
+                                                            <form:input path="deEmpEmi" readonly="true" size="40" type="text" class="form-control"/>
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscarFirmadoPor();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                                            </span>
+                                                        </div> 
+                                                    </td>
+                                                </tr>
+                                                <tr>									
+                                                    <td>Elaborado Por:</td>    
+                                                    <td>
+                                                        <form:hidden path="coEmpRes"/>
+                                                        <div class="input-group" style="width:95%">
+                                                            <form:input path="deEmpRes" readonly="true" size="40" type="text" class="form-control"/>
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscarElaboradoPorEdit();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                                            </span>
+                                                        </div> 
+                                                    </td>  									
+                                                </tr>									
+                                            </table>
+                                        </fieldset>                                    
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <fieldset>
+                                            <legend>Documento</legend>
+                                            <form:hidden path="tiEmi"/>
+                                            <input type="hidden" id="inDepSalEsp" value="${inDepSalEsp}"/>
+                                            <table width="100%">
+                                                <tr>
+                                                    <td>Tipo:</td>    
+                                                    <td>
+                                                        <input id="txtcoTipDocAdmAn" name="txtcoTipDocAdmAn" type="hidden" value="${documentoEmiBean.coTipDocAdm}"/>
+                                                        <form:select path="coTipDocAdm" onchange="fn_changeTipoDocEmiAdm(this);" style="width:190px;">
+                                                            <c:if test="${sEsNuevoDocAdm eq '1'}">
+                                                        <option selected="selected" value="-1"/>    
+                                                    </c:if>                                                                                            
+                                                    <form:options items="${lstTipDocDependencia}" itemValue="coTipDoc" itemLabel="deTipDoc" />
+                                                </form:select>	                                                                                         
+                                                </td>
+                                                <td>Número:</td>
+                                                <td><form:hidden path="nuCorDoc"/>
+                                                    <input id="txtnuDocEmiAn" name="txtnuDocEmiAn" type="hidden" value="${documentoEmiBean.nuDocEmi}"/>
+                                                 
+                                                    <form:input path="nuDocEmi" readonly="true" style="text-align: center" size="5" maxlength="6" class="delUpperCase"/>
+                                                    <jsp:text>-</jsp:text>
+                                                    <input type="text" readonly="true" value="${documentoEmiBean.nuAnn}" size="2" maxlength="4"/>
+                                                    <jsp:text>-</jsp:text>
+                                                    <form:input path="deDocSig" readonly="true" size="10" maxlength="50"/>
+                                                </td>
+                                                </tr>
+                                                <tr id="divOrigenOficio" style="display:none;">
+                                                  <td>Ofic. Origen. Solicitante:</td>    
+                                                  <td>
+                                                         <select  onchange="fn_changeOrigenOficio();" style="width:190px;" id="ddlOrigenOficio">
+                                                          <!--  <form:options items="${listaDepOrigenSolicitante}" itemValue="coDependencia" itemLabel="deDependencia" />-->
+                                                            
+                                                         <c:forEach items="${listaDepOrigenSolicitante}" var="item">
+                                                                <option value="${item.deSigla}">
+                                                                    ${item.tituloDep}
+                                                                </option>
+                                                         </c:forEach>
+                                                        </select>	
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Asunto:</td>    
+                                                        <td colspan="3">
+                                                        <form:textarea path="deAsu" rows="4" cols="60" class="delUpperCase" style="height:90px;width:98%;" maxlength="1000"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Fecha:</td>
+                                                    <td>
+                                                        <form:hidden path="feEmi"/>
+                                                        <form:input path="feEmiCorta" readonly="true" style="text-align: center"/>
+                                                    </td>
+                                                    <td>Atender en:</td>
+                                                    <td>
+                                                        <form:input path="nuDiaAte" readonly="true" size="2" maxlength="2" style="text-align: center" onkeypress="return fu_onKeyPressFiltrarTecladoNumero(event, false, public_enteros)"/><jsp:text>días</jsp:text>
+                                                        </td>
+                                                </tr>                                                
+                                            </table>
+                                        </fieldset>                                    
+                                    </td>
+                                </tr>                                
+                            </table>
+                        </td>
+                        <td width="50%">
+                            <table width="100%" style="height: 291px;">
+                                <tr style="display:none;">
+                                    <td>
+                                        <c:if test="${not empty lstEmpVoBoDocAdm}">
+                                            <c:set var="showAccordion" scope="page" value="in"/>
+                                        </c:if> 
+                                        <div class="panel-group" id="accordion" style="margin: 0px 2px;">
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading" style="padding: 5px 15px;">
+                                                    <h4 class="panel-title">
+                                                        <div style="position: relative;height: 21px;">
+                                                            <div style="position: absolute;top: 0px;left: 0px;">
+                                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" style="text-decoration: none;color: #FFF" class="myaccordion-1">
+                                                                <span class="glyphicon glyphicon-chevron-down"><jsp:text/></span> Vistos Buenos
+                                                            </a>
+                                                            </div>
+                                                            <div style="position: absolute;top: 0px;right: 0px;">
+                                                            <input id="txtValcmbVoboGrupo" type="hidden" value="-1"/>
+                                                            <select style="width:260px;" id="cmbAddPerVoboGrup" onchange="onchangeCmbPerVoBoGrupo();">
+                                                                <option selected="selected" value="-1"/>    
+                                                                <c:forEach var="lGrupoDestinatario" items="${lstGrupoDestinatario}" varStatus="status">
+                                                                    <option value="${lGrupoDestinatario.coGrupo}">${lGrupoDestinatario.deGrupo}</option> 
+                                                                </c:forEach>  
+                                                            </select> 
+                                                            <button class="btn btn-default btn-xs" type="button" title="Agregar Grupo" onclick="fn_AddPersVoboGrup();"><span class="glyphicon glyphicon-download-alt"></span></button>                                                                
+                                                            </div>    
+                                                        </div>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseOne" class="panel-collapse collapse ${showAccordion}">
+                                                    <div class="panel-body">
+                                                        <input id="txtIndexFilaPersVoBoDocAdm" name="txtIndexFilaPersVoBoDocAdm" type="hidden" value="-1"/>
+                                                        <div id="divtablaVoBoDocAdm">
+                                                            <jsp:directive.include file="tablaPersVoBoDocAdm.jspx"/>                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>                                    
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <fieldset>
+                                            <legend>Referencias</legend>
+                                            <input id="txtIndexFilaRefEmiDoc" name="txtIndexFilaRefEmiDoc" type="hidden" value="-1"/>
+                                            <div id="divtablaRefEmiDocAdm">
+                                                <jsp:directive.include file="tablaRefEmiDocAdm.jspx"/>
+                                            </div>
+                                        </fieldset>                                    
+                                    </td>
+                                </tr>
+                                <tr style="display:none;">
+                                    <td >
+                                        <fieldset >
+                                            <legend>Observación del Documento</legend>                        
+                                            <table width="100%">
+                                                <tr>
+                                                    <td>
+                                                        <form:textarea path="deObsDoc" style="height:70px;width:99%;" class="delUpperCase" rows="4" cols="60" maxlength="300"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>                                                                
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>						
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Destinatario</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>
+                                            <jsp:text>Tipo:</jsp:text>
+                                                <select id="sTipoDestinatario"  name="sTipoDestinatario" style="width:160px;" onchange="fn_changeTipoDestinatarioDocuEmiAdm(this.value);">
+                                                <c:forEach var="lTipoDestinatarioEmi" items="${lstTipoDestinatarioEmi}" varStatus="status">
+                                                    <c:choose>
+                                                        <c:when test="${lTipoDestinatarioEmi.coDestinatario eq sTipoDestEmi}">
+                                                            <option selected="selected" value="${lTipoDestinatarioEmi.coDestinatario}">${lTipoDestinatarioEmi.deDestinatario}</option> 
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <option value="${lTipoDestinatarioEmi.coDestinatario}">${lTipoDestinatarioEmi.deDestinatario}</option> 
+                                                        </c:otherwise>
+                                                    </c:choose>                                                    
+                                                </c:forEach>                                                                
+                                            </select>	                                                                                         
+                                        </td>
+                                        <td style="width: 80%">
+                                            <div id="divGrupoSalida" style="display: none;" >
+                                                   
+                                                    
+                                                    <div id="divDetalleGrupoDestino"><jsp:text/></div>
+                                                    
+                                            </div>
+                                            
+                                            <div id="divMuestraOpcInstitu">
+                                                <jsp:text>Grupos:</jsp:text>
+                                                    <input id="txtValcmbGrupo" name="txtValcmbGrupo" type="hidden" value="-1"/>
+                                                    <select style="width:180px;" id="cmbGrupo"  name="cmbGrupo" onchange="onchangeCmbGrupo();">
+                                                        <option selected="selected" value="-1"/>    
+                                                    <c:forEach var="lGrupoDestinatario" items="${lstGrupoDestinatario}" varStatus="status">
+                                                        <option value="${lGrupoDestinatario.coGrupo}">${lGrupoDestinatario.deGrupo}</option> 
+                                                    </c:forEach>  
+                                                </select>
+                                                <button class="btn btn-default btn-xs" type="button" title="Agregar Grupo" onclick="fn_agregarDestinatarioIntitucionGrupo();"><span class="glyphicon glyphicon-download-alt"></span></button>
+                                                &amp;nbsp;
+                                                &amp;nbsp;
+                                                <jsp:text>Trámite:</jsp:text>
+                                                    <select id ="cmbTramiteDocEmi" name="cmbTramiteDocEmi" style="width:180px;" onchange="fn_setTramiteTblDestIntitu();">
+                                                        <option selected="selected" value="-1"/>    
+                                                    <c:forEach var="lMotivoDestinatario" items="${lstMotivoDestinatario}" varStatus="status">
+                                                        <option value="${lMotivoDestinatario.coMot}">${lMotivoDestinatario.deMot}</option> 
+                                                    </c:forEach> 
+                                                </select>
+                                                &amp;nbsp;
+                                                &amp;nbsp;
+                                                <jsp:text>Indicaciones:</jsp:text>
+                                                    <textarea id="txtIndicaciones" name="txtIndicaciones" class="delUpperCase" style="height: 17px; width: 150px" maxlength="600"/>
+                                                    <button class="btn btn-default btn-xs" type="button" title="Agregar Indicación" onclick="fn_setIndicacionesTblDestIntitu();"><span class="glyphicon glyphicon-download-alt"><jsp:text></jsp:text></span></button>
+                                                &amp;nbsp;
+                                                &amp;nbsp;
+                                                <jsp:text>Prioridad:</jsp:text>
+                                                <select style="width:120px;" onchange="fn_setPrioridadAllDestinoInstitu(this);" id ="cmbPrdAllDestino">
+                                                        <option selected="selected" value="-1"/>    
+                                                    <c:forEach var="lPrioridad" items="${lstPrioridadDestEmi}" varStatus="status">
+                                                        <option value="${lPrioridad.coPri}">${lPrioridad.dePri}</option> 
+                                                    </c:forEach>  
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            <div id="divActualizaTablasDestintario">
+                                                <div id="divtablaDestEmiDocAdmIntitu" style="display: none">
+                                                    <input id="txtIndexFilaDestEmiDoc" name="txtIndexFilaDestEmiDoc" type="hidden" value="-1"/>
+                                                    <jsp:directive.include file="tablaDestEmiDocAdmIntituProveido.jspx"/>
+                                                </div>
+                                                <div id="divtablaDestEmiDocAdmOtro" style="display: none">
+                                                    <input id="txtIndexFilaDestOtroEmiDoc" name="txtIndexFilaDestOtroEmiDoc" type="hidden" value="-1"/>
+                                                    <jsp:directive.include file="tablaDestEmiDocAdmOtro.jspx"/>
+                                                </div>
+                                                <div id="divtablaDestEmiDocAdmCiudadano" style="display: none">
+                                                    <input id="txtIndexFilaDestCiudadanoEmiDoc" name="txtIndexFilaDestCiudadanoEmiDoc" type="hidden" value="-1"/>
+                                                    <jsp:directive.include file="tablaDestEmiDocAdmCiudadano.jspx"/>
+                                                </div>
+                                                <div id="divtablaDestEmiDocAdmPersJuri" style="display: none">
+                                                    <input id="txtIndexFilaDestPersJuriEmiDoc" name="txtIndexFilaDestPersJuriEmiDoc" type="hidden" value="-1"/>
+                                                    <jsp:directive.include file="tablaDestEmiDocAdmPersJuri.jspx"/>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </td> 
+                    </tr>
+                </table>
+            </form:form>
+        </div>
+    </div>
+    <c:if test="${not empty lstNotiDocAdmEmi}">
+        <div id="notificacion_shadow_content" class="notification_shadow" style="position: absolute; top: 195px;">
+            <c:forEach var="noti" items="${lstNotiDocAdmEmi}">
+                <div id="notificacion_shadow" role="alert" style="margin-bottom:0px; opacity: 0.9;" class="alert alert-warning alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                    <strong>${noti}</strong>
+                </div>
+            </c:forEach>
+        </div>            
+    </c:if>
+</jsp:root>

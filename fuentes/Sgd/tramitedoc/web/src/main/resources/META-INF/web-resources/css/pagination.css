@@ -1,0 +1,66 @@
+/*BPaginacion*/
+#primeraPag {
+	background-image: url(../images/images_paginacion/skip_backward.png);
+	background-repeat: no-repeat;
+	cursor:pointer;
+	height: 30px;
+	width: 30px;
+}
+#atrasPag {
+	background-image: url(../images/images_paginacion/back.png);
+	background-repeat: no-repeat;
+	cursor:pointer;
+	height: 30px;
+	width: 30px;
+}
+#etiquetaPagina {
+	font-family: Arial;
+	font-size: 10px;
+	color: #000066;
+}
+#numeroPaginaActual {
+	font-family: Arial;
+	font-size: 10px;
+	color: #000000;
+}
+#etiquetaDe {
+	font-family: Arial;
+	font-size: 10px;
+	color: #000033;
+}
+#totalPaginas {
+
+	font-family: Arial;
+	font-size: 10px;
+	color: #000000;
+}
+#siguientePag {
+	background-image: url(../images/images_paginacion/play.png);
+	background-repeat: no-repeat;
+	cursor:pointer;
+	height: 30px;
+	width: 30px;
+
+}
+#ultimaPag {
+	background-image: url(../images/images_paginacion/skip_forward.png);
+	background-repeat: no-repeat;
+	cursor:pointer;
+	height: 30px;
+	width: 30px;
+
+}
+#actualizaPag {
+	background-image: url(../images/images_paginacion/refresh.png);
+	background-repeat: no-repeat;
+	cursor:pointer;
+	height: 30px;
+	width: 30px;
+
+}
+
+#registrosMostrados {
+	font-family: Arial;
+	font-size: 10px;
+	color: #000066;
+}

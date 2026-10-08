@@ -1,0 +1,15 @@
+{
+  "base": "idosgd_inia",
+  "modo": "completo",
+  "host_bd": "127.0.0.1",
+  "puerto_bd": 55432,
+  "puerto_http": 8085,
+  "puerto_https": 8185,
+  "puerto_admin": 4855,
+  "url_publica": "http://127.0.0.1:8085",
+  "direccion_http": "0.0.0.0",
+  "entidad": "INIA",
+  "ruc": "20131365994",
+  "anio": "2026",
+  "activar_integraciones": false
+}

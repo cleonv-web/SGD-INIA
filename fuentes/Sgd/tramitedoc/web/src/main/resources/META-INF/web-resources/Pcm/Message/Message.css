@@ -1,0 +1,93 @@
+﻿
+.message-dialog-information {
+}
+
+    .message-dialog-information .ui-dialog-titlebar {
+        display: none;
+    }
+
+    .message-dialog-information .ui-dialog-buttonpane {
+        display: none;
+    }
+
+
+.message-dialog-confirmation .ui-dialog-buttonset .ui-button-text {
+    padding: 5px 12px;
+    background: none;
+    background-image: none;
+}
+
+.message-dialog-confirmation .ui-dialog-buttonset .ui-button-Confirmar {
+    background-color: #ef7d1a;
+    border-color: #ef7d1a;
+    color: white;
+}
+
+    .message-dialog-confirmation .ui-dialog-buttonset .ui-button-Confirmar:hover {
+        background-color: #E4720F;
+        border-color: #DB6E0F;
+    }
+
+.message-dialog-confirmation .ui-dialog-buttonset .ui-button-Cancelar {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+    .message-dialog-confirmation .ui-dialog-buttonset .ui-button-Cancelar:hover {
+        color: #333;
+        background-color: #ebebeb;
+        border-color: #adadad;
+    }
+
+.message-dialog-confirmation .ui-dialog-buttonset .ui-state-focus {
+    background-color: none;
+    border-color: none;
+}
+
+.message-dialog-confirmation .ui-dialog-buttonset .ui-state-hover {
+    background-color: inherit;
+    border-color: inherit;
+}
+
+.message-dialog-confirmation .ui-dialog-buttonset .ui-state-default {
+    background-image: none;
+}
+
+.message-dialog-informationCustom {
+}
+
+    .message-dialog-informationCustom .ui-dialog-titlebar {
+        display: none;
+    }
+
+    .message-dialog-informationCustom .ui-dialog-buttonset .ui-button-text {
+        padding: 5px 12px;
+        background: none;
+        background-image: none;
+    }
+
+    .message-dialog-informationCustom .ui-dialog-buttonset .ui-button-Confirmar {
+        background-color: #ef7d1a;
+        border-color: #ef7d1a;
+        color: white;
+    }
+
+        .message-dialog-informationCustom .ui-dialog-buttonset .ui-button-Confirmar:hover {
+            background-color: #E4720F;
+            border-color: #DB6E0F;
+        }
+
+    .message-dialog-informationCustom .ui-dialog-buttonset .ui-state-focus {
+        background-color: none;
+        border-color: none;
+    }
+
+    .message-dialog-informationCustom .ui-dialog-buttonset .ui-state-hover {
+        background-color: inherit;
+        border-color: inherit;
+    }
+
+    .message-dialog-informationCustom .ui-dialog-buttonset .ui-state-default {
+        background-image: none;
+    }

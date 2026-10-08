@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+        xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+        version="2.2">
+
+    <application>
+        <!-- <locale-config>
+             <default-locale>en</default-locale>
+         </locale-config>-->
+        <message-bundle>
+            pe.gob.segdi.iotramitesgd.messageresource.Validaciones
+        </message-bundle>
+        <resource-bundle>
+            <base-name>pe.gob.segdi.iotramitesgd.messageresource.Ruta</base-name>
+            <var>ruta</var>
+        </resource-bundle>
+        <el-resolver>
+            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerELResolver
+        </el-resolver>
+        <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+    </application>
+
+    <factory>
+        <exception-handler-factory>
+            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory
+        </exception-handler-factory>
+    </factory>
+
+
+</faces-config>

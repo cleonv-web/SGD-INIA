@@ -1,0 +1,117 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">jQuery(document).ready(function() {
+	var nomTbl='#tblEmpleado';
+	var indexAux=-1;
+        var tableaux = $(nomTbl);
+        tableaux.find('tr').each(function(index, row) {
+            if(index == 0){
+                $(this).addClass('row_selected');                        
+                return false;
+            }
+        });
+        var searchOnTable = function(evento) {
+                var table = $(nomTbl);
+                var value = this.value;
+                //alert(evento.which);
+                var isFirst = false;
+                var indexSelect = -1;
+                table.find('tr').each(function(index, row) {
+                        if ( $(this).hasClass('row_selected') ) {
+                            $(this).removeClass('row_selected');
+                        }
+                        //var allCells = $(row).find('td');
+                        var allCells = $(row).find('td:eq(0)');
+                        if(allCells.length > 0) {
+                                var found = false;
+                                allCells.each(function(index, td) {
+                                        var regExp = new RegExp(value, 'i');
+                                        if(regExp.test($(td).text())) {
+                                                found = true;
+                                                return false;
+                                        }
+                                });
+                                if (found == true) {$(row).show(); if(!isFirst){$(this).addClass('row_selected'); isFirst = true; indexSelect = index;}}
+                                else {$(row).hide();}
+                        }
+                });
+                if(evento.which == 13){
+                    if(isFirst){
+                        var pdesDest= $(nomTbl+" tbody tr:eq("+indexSelect+")").find("td:eq(0)").html();
+                        var pcodDest= $(nomTbl+" tbody tr:eq("+indexSelect+")").find("td:eq(1)").html();
+                        fu_setEmpleadoDestinoEmitlb(pcodDest,pdesDest);
+                    }
+                }else if(evento.which==38||evento.which==40){
+                   //$('#txtConsultaFind').blur();
+                   indexAux=-1;
+                   $(nomTbl+' >tbody >tr:visible').first().focus(); 
+                }
+        };
+        $('#txtConsultaFind').keyup(searchOnTable);
+        $(nomTbl+" tbody tr").click(function(e) {
+            var pdesDest= $(this).find("td:eq(0)").html();
+            var pcodDest= $(this).find("td:eq(1)").html();
+            fu_setEmpleadoDestinoEmitlb(pcodDest,pdesDest);
+        });
+        $(nomTbl+' >tbody >tr:visible').keydown(function(evento){
+            if(evento.which==38){//up
+                if ($(nomTbl+" tbody tr:visible").eq(indexAux).prev('tr').length == 0) {
+                    indexAux=$(nomTbl+" tbody tr:visible").length;
+                }
+                $(nomTbl+" tbody tr:visible").eq(indexAux).removeClass('row_selected');
+                indexAux--;
+                $(nomTbl+" tbody tr:visible").eq(indexAux).addClass('row_selected');
+                $(nomTbl+" tbody tr:visible").eq(indexAux).focus();
+            }else if(evento.which==40){//down
+                if ($(nomTbl+" tbody tr:visible").eq(indexAux).next('tr').length == 0){
+                    indexAux=-1;
+                }
+                $(nomTbl+" tbody tr:visible").eq(indexAux).removeClass('row_selected');
+                indexAux++;
+                $(nomTbl+" tbody tr:visible").eq(indexAux).addClass('row_selected');                
+                $(nomTbl+" tbody tr:visible").eq(indexAux).focus();
+            }else if(evento.which==13){
+                var pdesDest= $(this).find("td:eq(0)").html();
+                var pcodDest= $(this).find("td:eq(1)").html();
+                fu_setEmpleadoDestinoEmitlb(pcodDest,pdesDest);             
+            }
+            //console.log(indexAux);
+            evento.preventDefault();
+        });        
+    });</script>  	
+    <fieldset>
+    <legend>Detalle</legend>  
+    <div class="ui-datatable ui-datatable-scrollable">
+        <div class="ui-datatable-scrollable-header">
+               <table width="100%" class="ui-state-default">
+                     <thead>
+                            <tr>
+                                <th width="450">Descripción</th>
+                            </tr>
+                     </thead>
+               </table>
+        </div>
+        <div class="bx_sb ui-datatable-scrollable-body" style='height:200px;'>
+              <table id ="tblEmpleado" width="100%" class="ui-datatable-data">
+                  <tbody>
+                       <c:forEach var="lEmpleado" items="${listaEmpleadoDestEmi}" varStatus="status">
+                          <c:choose>
+                              <c:when test="${status.count % 2 == 0}">
+                                <c:set var="rowStyle" scope="page" value="ui-datatable-even"/>
+                              </c:when>
+                              <c:otherwise>
+                                <c:set var="rowStyle" scope="page" value="ui-datatable-odd"/>
+                              </c:otherwise>
+                          </c:choose>
+                           <tr class="${rowStyle}" tabindex="0">
+                               <td width="450">${lEmpleado.fullName}</td>
+                               <td style="display:none">${lEmpleado.cempCodemp}</td>
+                          </tr>
+                       </c:forEach>
+                  </tbody>
+              </table>
+        </div>
+    </div>
+    </fieldset>
+</jsp:root>

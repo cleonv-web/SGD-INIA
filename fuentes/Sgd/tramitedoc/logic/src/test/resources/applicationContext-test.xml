@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+   <context:component-scan base-package="pe.gob.onpe.tramitedoc"/>
+
+       <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          p:location="classpath:jdbc.properties" />
+<!-- WECM -->
+   <!-- <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="${jdbc.driverClassName}"
+          p:url="${jdbc.url}"
+          p:username="${jdbc.username}"
+          p:password="${jdbc.password}" />
+
+   <bean id="dataSource1"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="${jdbc.sec.driverClassName}"
+          p:url="${jdbc.sec.url}"
+          p:username="${jdbc.sec.username}"
+          p:password="${jdbc.sec.password}" /> -->
+
+   <!--<bean id="dataSource1"-->
+          <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource"-->
+          <!--p:driverClassName="${jdbc.sec.driverClassName}"-->
+          <!--p:url="${jdbc.sec.url}"-->
+          <!--p:username="${jdbc.sec.username}"-->
+          <!--p:password="${jdbc.sec.password}" />-->
+
+    <!--<bean id="applicationProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations" >
+            <list>
+                <value>application.properties</value>
+                <value>version.properties</value>
+            </list>
+        </property>
+    </bean>-->
+
+    <!-- [JNDI]-->
+    <!--bean id="dataSource"  class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="${jndi.app.jndiName}"></property>
+        <property name="lookupOnStartup" value="false"></property>
+        <property name="cache" value="true"></property>
+        <property name="proxyInterface" value="javax.sql.DataSource"></property>
+    </bean-->
+
+     
+  <jee:jndi-lookup id="dataSource" jndi-name="${jndi.main.jndiName}"/>
+    <jee:jndi-lookup id="dataSource1" jndi-name="${jndi.sec.jndiName}"/>
+    <jee:jndi-lookup id="dataSourceQry" jndi-name="${jndi.qry.jndiName}"/>
+ 
+    <!-- [JDBC] -->
+    <!--bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close"
+          p:driverClassName="${jdbc.app.driverClassName}"
+          p:url="${jdbc.app.url}"
+          p:username="${jdbc.app.username}"
+          p:password="${jdbc.app.password}"/-->
+
+    <!-- [SPRING JDBC] -->
+    <!--bean id="dataSource"
+                 class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+         <property name="driverClassName" value="${jdbc.driverClassName}" />
+         <property name="url" value="${jdbc.url}" />
+         <property name="username" value="${jdbc.username}" />
+         <property name="password" value="${jdbc.password}" />
+    </bean-->
+
+
+    <!--bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="${jdbc.driverClassName}"
+          p:url="${jdbc.url}"
+          p:username="${jdbc.username}"
+          p:password="${jdbc.password}" /-->
+
+
+
+    <!-- [JDBC] ORACLE native -->
+<!-- bean id="dataSource"
+        class="oracle.jdbc.pool.OracleDataSource">
+        <property name="driverType" value="${jdbc.main.driverClassName}"/>
+        <property name="URL" value="${jdbc.main.url}"/>
+        <property name="user" value="${jdbc.main.username}"/>
+        <property name="password" value="${jdbc.main.password}"/>
+    </bean>-->
+
+    <!-- [JDBC] GENERICO -->
+    <!--Este tambien funciona lo que es busquedas textuales de oracle 11g, pero hay que agregarlos los commondbcp loggins pool-->
+<!--    <bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close"
+          p:driverClassName="${jdbc.sec.driverClassName}"
+          p:url="${jdbc.sec.url}"
+          p:username="${jdbc.sec.username}"
+          p:password="${jdbc.sec.password}"/>-->
+
+
+    <!-- [SPRING JDBC] -->
+    <!--Con estos tambien funcionan las busquedas textuales de Oracle-->
+<!--    <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.main.driverClassName}" />
+        <property name="url" value="${jdbc.main.url}" />
+        <property name="username" value="${jdbc.main.username}" />
+        <property name="password" value="${jdbc.main.password}" />
+    </bean>-->
+<!--    <bean name="dataSource1" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.sec.driverClassName}" />
+        <property name="url" value="${jdbc.sec.url}" />
+        <property name="username" value="${jdbc.sec.username}" />
+        <property name="password" value="${jdbc.sec.password}" />
+    </bean>-->
+
+   <bean class="pe.gob.onpe.autentica.dao.impl.UsuarioDaoImpl"
+              name="usuarioDao">
+            <constructor-arg index="0" ref="dataSource1" />
+    </bean>
+
+    <bean class="pe.gob.onpe.autentica.service.impl.UsuarioServiceImpl"
+            name="usuarioService"
+            p:usuarioDao-ref="usuarioDao"/>
+
+
+</beans>

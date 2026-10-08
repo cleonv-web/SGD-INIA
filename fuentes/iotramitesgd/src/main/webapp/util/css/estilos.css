@@ -1,0 +1,133 @@
+/* body {font-size:100%;}
+label {font-size: 100%;}
+table {font-size: 100%;}
+
+.alignBottom {vertical-align: bottom; text-align: right; width:30%}
+.alignMiddle{vertical-align: middle; text-align: center;}
+.alingRight{vertical-align: middle; text-align: right;}
+.alingLeft{vertical-align: middle; text-align: left;}
+
+
+
+.alingLeftLg{text-align: right; width:45%}
+.alignCenterLg{text-align: left; width:30%}
+.alingRightLg{text-align: left; width:25%}
+
+.alingLeftLgBtn{text-align: right; width:50%}
+.alingRightLgBtn{text-align: left; width:50%}
+
+.ui-icon-doc{   
+    width: 20px;   
+    height: 20px;  
+	background: url('../images/icon/doc.png') no-repeat top !important;
+	background-position: 0 0 !important;
+	border-style:0px;
+}
+
+.ui-icon-helpp{   
+    width: 20px;   
+    height: 20px;  
+	background: url('../images/icon/help.png') no-repeat top !important;
+	background-position: 0 0 !important;
+	border-style:0px;
+}
+
+TAMA�O DE LETRA DE LOS ITEM DE LOS COMBOS
+.ui-selectonemenu-item{
+font-size:11px;
+}
+
+ELIMINA LOS BORDES DEL PANELGRID TANTO DE LAS FILAS COMO LAS DE LAS COLUMNAS
+.ui-panelgrid tr,td {
+border:0 !important;
+}
+ */
+
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #FFFFFA
+}
+
+header {
+    width: 100%;
+}
+
+header nav {
+    width: 90%;
+    max-width: 1000px;
+    margin: 20px auto;
+    background: #024959;
+
+}
+
+.menu_bar {
+    display: none;
+}
+
+header nav ul {
+    overflow: hidden;
+    list-style: none;
+}
+
+header nav ul li {
+    float: left;
+
+}
+
+header nav ul li a {
+    color: white;
+    padding: 20px;
+    display: block;
+    text-decoration: none;
+}
+
+header nav ul li span {
+    margin-right: 10px;
+}
+
+header nav ul li a:hover {
+    background: #037E8C;
+}
+
+
+@media screen and (max-width: 800px ) {
+    header nav {
+        width: 80%;
+        height: 100%;
+        margin: 0;
+        position: fixed;
+    }
+
+    header nav ul li {
+        display: block;
+        float: none;
+        border-bottom: 1px solid rgba(255, 255, 255, .3);
+    }
+
+    .menu_bar {
+        display: block;
+        width: 100%;
+        background: #ccc;
+    }
+
+    .menu_bar .bt-menu {
+        display: block;
+        padding: 20px;
+        background: #024959;
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 25px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+
+}
+

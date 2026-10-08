@@ -1,0 +1,40 @@
+# Datos y secretos de cada instalación. Respaldar fuera de Git.
+/datos/
+/logs/
+/configuracion.json
+/configuracion.local.json
+/configuracion.*.local.json
+.env
+.env.*
+!.env.example
+
+# Motores y herramientas externos. Conservar el ZIP portable y sus hashes.
+/java/
+/payara/payara5/
+/payara/*.zip
+/bd/postgresql/
+/bd/postgresql-*.zip
+/bd/postgresql-*.tar.gz
+/bd/*.tar
+/bd/original-proveedor.zip
+/herramientas/maven/
+/herramientas/maven-repo/
+/herramientas/python-*/
+/herramientas/*.tar.gz
+/herramientas/*.zip
+
+# Salidas de compilación. Los JAR de proveedor necesarios sí se conservan.
+**/target/
+**/__pycache__/
+*.pyc
+*.class
+*.war
+# Única aplicación sin fuentes: entrada necesaria, no salida de compilación.
+!/binarios/proveedor/wstradoc.war
+
+# Temporales de editores y documentos.
+*.tmp
+*.log
+~$*.docx
+Thumbs.db
+.DS_Store

@@ -1,0 +1,19 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <spring:bind path="*">
+        <c:if test="${not empty status.errorMessages}">
+            <div id="msgs" class="ui-messages ui-widget">
+                <div class="ui-messages-warn ui-corner-all">
+                    <ul>
+                        <c:forEach items="${status.errors.allErrors}" var="errMsgObj">
+                                <li>
+                                    <span class="ui-messages-warn-detail"><c:out value="${errMsgObj.defaultMessage}"/></span>
+                                </li>
+                        </c:forEach>
+                    </ul>
+                </div>
+            </div>
+        </c:if>
+    </spring:bind>
+</jsp:root>

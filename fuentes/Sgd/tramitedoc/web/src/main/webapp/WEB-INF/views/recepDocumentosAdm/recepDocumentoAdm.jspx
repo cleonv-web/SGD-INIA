@@ -1,0 +1,345 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <spring:eval expression="@applicationProps['resources.version']" var="resourceVersion"/>
+    <jsp:output omit-xml-declaration="yes"/>
+     <c:set var="divId" value="divProveedorMain" scope="request"/>
+    <c:set var="posiciona" value="width:1000px; height:750px;" scope="request"/>
+    <c:set var="resourceURL" value="resources-${resourceVersion}" scope="request"/>
+    
+    
+    <jsp:scriptlet><![CDATA[response.setHeader("Cache-Control", "max-age=43200");]]></jsp:scriptlet>
+    <script languaje="javascript">jQuery(document).ready(function() {
+        fn_inicializaRecepDocAdm('${buscarDocumentoRecepBean.sCoAnnio}');
+        loadJs("${resourceURL}/js/controller/RecepDocumAdm.Controller.js");
+        jQuery('#esIncluyeOficina').click(function(){
+            jQuery('#hEsIncluyeOficina').val(jQuery('#esIncluyeOficina').is(':checked'));            
+        });
+        jQuery('#esIncluyeProfesional').click(function(){
+            jQuery('#hEsIncluyeProfesional').val(jQuery('#esIncluyeProfesional').is(':checked'));            
+        });
+        
+        if(jQuery('#sEstadoDoc').val()==0){
+            jQuery('#btnRecDocumentos').show();            
+        }
+        else{  jQuery('#btnRecDocumentos').hide();   }
+       
+        jQuery('#sEstadoDoc').change(function(){
+                 if( jQuery('#sEstadoDoc').val()==0)
+                 { jQuery('#btnRecDocumentos').show();}
+                 else
+                 { jQuery('#btnRecDocumentos').hide();}
+             });
+             
+        $('#btnPendientes').click(function(){          
+            jQuery('#sPrioridadDoc').val('');
+            jQuery('#btn-buscar').click();
+        });
+        $('#btnUrgentes').click(function(){     
+            
+            jQuery('#sPrioridadDoc').val('4');
+            jQuery('#btn-buscar').click();
+        });
+         $('#btnNormal').click(function(){          
+            jQuery('#sPrioridadDoc').val('1');
+            jQuery('#btn-buscar').click();
+        });
+        
+          
+        
+           jQuery('#btn-buscar').click();
+           
+        
+           
+    });</script>
+    <div class="ui-panel ui-corner-all" id="divRecepDocumentoAdmin">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>RECEPCION DE DOCUMENTOS ADMINISTRATIVOS</span>
+        </div>
+        <div class="ui-panel-body">
+                <!--input type="hidden" id="txtTextIndexSelect" name="txtTextIndexSelect" value="-1"/-->
+                <input id="txtFechaActual" name="txtFechaActual" type="hidden" value="${fechaActual}"/>
+                <input id="txtAnnioActual" name="txtAnnioActual" type="hidden" value="${annioActual}"/>
+                <input id="hEsIncluyeOficina" name="hEsIncluyeOficina" type="hidden" value="${buscarDocumentoRecepBean.esIncluyeOficina}"/>
+                <input id="hEsIncluyeProfesional" name="hEsIncluyeProfesional" type="hidden" value="${buscarDocumentoRecepBean.esIncluyeProfesional}"/>
+                <input id="pLenghDatatable" name="pLenghDatatable" type="hidden"/>
+                
+                <fieldset>
+                    <div class="btn-group btn-group-lg">
+                         <button title ="Recibir" class="btn btn-primary btn-lg" id="btnRecDocumentos" type="button">
+                           <span class="glyphicon glyphicon-edit"><jsp:text/></span> Recibir</button>
+                       <button title ="Editar Documento" id="btnEditarDocumentoRecep" class="btn btn-primary btn-lg"  type="button">
+                           <span class="glyphicon glyphicon-edit"><jsp:text/></span> Editar</button>
+                       <button title ="Ver Documento" id="btnVerDocumento" class="btn btn-primary btn-lg" type="button">
+                           <span class="glyphicon glyphicon-list-alt"><jsp:text/></span> Ver Documento</button>
+                       <button title ="Ver Documento Anexos - Referencias" id="btnVerAnexo" class="btn btn-primary btn-lg"  type="button">
+                           <span class="glyphicon glyphicon-paperclip"><jsp:text/></span> Ver Anexos</button>
+                       <button title ="Seguimiento de Documentos" id="btnVerSeguimiento" class="btn btn-primary btn-lg" type="button">
+                           <span class="glyphicon glyphicon-transfer"><jsp:text/></span> Seguimiento</button>
+                              <button title ="Vincular Tema" id="btnVincularTema" class="btn btn-primary btn-lg"  type="button">
+                           <span class="glyphicon glyphicon-indent-left"><jsp:text/></span>Vincular Tema</button>
+                           <button title ="Avances" id="btnVerAvanceRecepcion" class="btn btn-primary btn-lg"  type="button">
+                           <span class="glyphicon glyphicon-list"><jsp:text/></span> Avance</button>
+                           <c:if test="${not empty recepDocProveido}">
+                             <div class="btn-group btn-group-lg">
+                                <button title ="Generar Documento Proveido" class="btn btn-primary" onclick="" type="button">
+                                 <span class="glyphicon glyphicon-edit"><jsp:text/></span>Proveido</button>
+                                <button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>&amp;nbsp;
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul id="ullsAbrirDocumentoProve" class="dropdown-menu" role="menu">
+                                     <c:forEach var="recepDocumAdmProveido" items="${recepDocProveido}"  varStatus="status" >
+                                        <li><a href="#" onclick="ejecutaOpcionModalProveido(this)" codigo="${recepDocumAdmProveido.coDependencia}" title ="${recepDocumAdmProveido.deDependencia}">${recepDocumAdmProveido.deCortaDepen}</a></li> 
+                                     </c:forEach>                                    
+                                </ul>
+                            </div> 
+                           </c:if> 
+                          
+                       <button title ="Salir Recepci&#243;n de Documentos Administrativos" class="btn btn-primary btn-lg" onclick="cerrarPantalla();" type="button">
+                           <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                    </div>
+                </fieldset>
+                <!--jsp:include page="../toolbar/toolbar.jspx"/-->
+            <form:form modelAttribute="buscarDocumentoRecepBean">
+            <form:hidden path="sTipoBusqueda"/>    
+            <form:hidden path="esFiltroFecha"/>  
+            <input id="esRecibido" name="esRecibido" type="hidden" value="${esRecibido}"/>
+            <input id="sCoDependencia" name="sCoDependencia" type="hidden" value="${buscarDocumentoRecepBean.sCoDependencia}"/>
+            <form:hidden path="sFeEmiIni"/>  
+            <form:hidden path="sFeEmiFin"/>                
+            <table width="100%">
+                <tr valign="top">
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Búsqueda</legend>
+                            <table width="100%">
+                                <tr>
+                                   <td>Nro Documento:</td>
+                                   <td>
+                                       <form:input path="sNroDocumento" style="width: 100px;" maxlength="20"/>
+                                   </td>
+                                   <td align="right">Nro Expediente:</td>
+                                   <td>
+                                       <form:input path="sBuscNroExpediente" style="width: 100px;" maxlength="20"/>
+                                   </td>
+                                   <td align="right">
+                                       <!--YUAL onclick="changeTipoBusqRecepDocuAdm('1');"
+                                       <button title ="Buscar documentos" class="btn btn-default btn-sm" id="btn-buscar"  type="button">
+                                            <span class="glyphicon glyphicon-search"></span> Buscar</button>
+                                        <button title ="Limpiar datos de b&#250;squeda" class="btn btn-default btn-sm" onclick="fu_cleanRecepDocAdm('1');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>-->
+                                   </td>  
+                               </tr>
+                               <tr>
+                                   <td>Asunto:</td>
+                                   <td>
+                                       <form:input path="sBuscAsunto" style="width: 350px;"/>
+                                   </td>
+                                   <td align="right">Remitente:</td>
+                                   <td>
+                                       <form:input path="sBusRemitente" style="width: 350px;"/>
+                                   </td>
+                                   <td align="right">
+                                      <!-- <form:checkbox path="esIncluyeFiltro"/><strong>Incluir Filtro</strong>-->
+                                       &amp;nbsp;
+                                       &amp;nbsp;                                       
+                                       <a href="#" title="M&#225;s datos de B&#250;squeda" onclick="mostrarOcultarDivBusqFiltro('2');" class="btn-actdiv">
+                                           <span id="spanDivBusqueda" class="glyphicon glyphicon-collapse-down"><jsp:text/></span>
+                                       </a>
+                                   </td>                                      
+                               </tr>
+                               <tr style="display:none;">
+                                   <td><button type="button" class="btn btn-warning" id="btnPendientes">Pendientes: ${iCantPendientes}</button></td>
+                                   <td><button type="button" class="btn btn-danger" id="btnUrgentes">Urgentes: ${iCantUrgentes} </button>
+                                   <button type="button" class="btn btn-info" id="btnNormal">  Normal: ${iCantNormal} </button></td>
+                                                             
+                               </tr>
+                            </table>
+                            <div id="divConfigBusqueda" style="display:none;">
+                                <fieldset>
+                                <legend>Buscar Documento en Referencias</legend>
+                                    <table width="100%">
+                                        <tr>
+                                            <td>Dependencia que Emite:</td>
+                                            <td colspan="5">
+                                                <form:hidden path="sBuscDestinatario"/> 
+                                                <div class="input-group">
+                                                  <input type="text" class="form-control" id="txtDepEmiteBus" name="txtDepEmiteBus" size="50" value=" [TODOS]" onkeyup="return fu_FiltrarTecladoCadenaFunParamGeneral(event, false, public_apenom,fn_buscaDependenciaEmi,'');"/>
+                                                  <span class="input-group-btn">
+                                                    <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaDependenciaEmi();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                                  </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipo Documento.:</td>
+                                            <td><form:select path="sDeTipoDocAdm">
+                                                    <form:options items="${deTipoDocumentoList}" itemValue="coTipDoc" itemLabel="deTipDoc" />
+                                                </form:select></td>                                            
+                                            <td>Nro Doc.:</td>
+                                            <td><form:input path="sNumDocRef" style="width: 100px;" maxlength="6"/></td>
+                                            <td>Año:</td>
+                                            <td>
+                                                <form:select path="sCoAnnioBus">
+                                                    <form:options items="${deAnnioList}" itemValue="deAnio" itemLabel="cano" />
+                                                </form:select>
+                                            </td>
+                                        </tr>                                
+                                    </table>
+                                </fieldset>
+                            </div>
+                        </fieldset>                        
+                    </td>
+                    <td width="50%">
+                        <fieldset>
+                        <legend>Configuración Filtro</legend>
+                            <table width="100%">
+                                <tr>
+                                    <td colspan="2" >
+                                       <form:hidden path="sCoAnnio"/>
+                                       <!--<button id="fechaFiltro" style="width: 210px;text-align: center;" class="btn btn-default btn-sm" type="button"/>-->
+					<div id="fechaFiltro" class="cajaFechas">
+                                            <div class="cajaIcono"><span class="glyphicon glyphicon-calendar fa fa-calendar"><jsp:text/></span></div>
+                                            <div name="labelDate" class="cajaEtiqueta" ><jsp:text/></div>
+                                            <div class="cajaTriangulo"><b class="caret"><jsp:text/></b></div>
+                                        </div>                                       
+                                    </td>                                    
+                                    <td>Estado:</td>
+                                    <td>
+                                        <form:select path="sEstadoDoc">
+                                            <form:options items="${deEstadosList}" itemValue="coEst" itemLabel="deEst" />
+                                        </form:select>
+                                    </td>
+                                    <td align="right">
+                                        <!--onclick="changeTipoBusqRecepDocuAdm('0');"-->
+                                        <button title ="Buscar documentos" class="btn btn-default btn-sm" id="btn-buscar"  type="button">
+                                            <span class="glyphicon glyphicon-search"></span> Buscar</button>
+                                        <button title ="Filtrar documentos" style="display:none;" class="btn btn-default btn-sm" id="btnFiltroBusqRecepDocuAdm"  type="button">
+                                            <span class="glyphicon glyphicon-filter"></span> Filtrar</button>
+                                        <button title ="Limpiar datos de Filtro" class="btn btn-default btn-sm" onclick="fu_cleanRecepDocAdm('0');" type="button">
+                                            <span class="glyphicon glyphicon-remove"><jsp:text/></span></button>
+                                    </td>                                        
+                                </tr>
+                                <tr>    
+                                    <td>Prioridad:</td>
+                                    <td>
+                                        <form:select path="sPrioridadDoc">
+                                            <form:options items="${dePrioridadesList}" itemValue="coPri" itemLabel="dePri" />
+                                        </form:select>
+                                    </td>    
+                                    <td>Tipo Doc.:</td>
+                                    <td>
+                                        <form:select path="sTipoDoc" style="width:180px">
+                                            <form:options items="${deTipoDocumentoList}" itemValue="coTipDoc" itemLabel="deTipDoc" />
+                                        </form:select>
+                                    </td>
+                                    <td align="right">
+                                        <a href="#" title="M&#225;s datos de Filtro" onclick="mostrarOcultarDivBusqFiltro('1');" class="btn-actdiv">
+                                            <span id="spanDivFiltro" class="glyphicon glyphicon-collapse-down"><jsp:text/></span>
+                                        </a>
+                                    </td>    
+                                </tr>
+                                
+                                 <tr>  
+                                     <td><input type="checkbox" id="esIncluyeOficina"></input><strong style="font-weight: 100;">Solo Documentos de Oficina</strong> </td>
+                                    <td>
+                                    <input type="checkbox" id="esIncluyeProfesional" ></input><strong style="font-weight: 100;">Solo Documentos de Profesionales</strong>
+                                    </td>    
+                                   <td>Doc. en Proyecto:</td>
+                                    <td>
+                                        <form:select path="sTipoProyDoc" style="width:180px">
+                                            <form:options items="${deTipoProyDocList}" itemValue="celeCodele" itemLabel="celeDesele" />
+                                        </form:select>
+                                    </td>
+                                    <td>
+                                       
+                                    </td>
+                                    <td align="right">
+                                        
+                                    </td>    
+                                </tr>
+                                
+                                
+                            </table>
+                            <div id="divConfigFiltro" style="display:none;">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="100px">Remitente:</td>
+                                        <td colspan="3">
+                                            <form:input path="sRemitente" type="hidden"/>  
+                                            <div class="input-group" style="width: 100%;">
+                                              <input type="text" class="form-control" id="txtRemitente" name="txtRemitente" size="50" readonly="true" value="[TODOS]" />
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaRemitente();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>
+                                        </td>     
+                                    </tr>
+                                    <tr>                                    
+                                        <td>Destinatario:</td>
+                                        <td colspan="3">
+                                            <form:input path="sDestinatario" type="hidden"/>
+                                            <div class="input-group" style="    width: 100%;">
+                                              <input type="text" class="form-control" id="txtDestinatario" name="txtDestinatario" readonly="true" value="[TODOS]"/>
+                                              <span class="input-group-btn">
+                                                <button class="btn btn-default btn-xs-bus" type="button" onclick="fn_buscaDestinatario();"><span class="glyphicon glyphicon-search"><jsp:text/></span></button>
+                                              </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>                                    
+                                        <!--<td>Tipo de Expediente:</td>
+                                        <td style="width:33%;">
+                                            <form:select path="sExpediente" >
+                                                <form:options items="${deExpedienteList}" itemValue="coExp" itemLabel="deExp" />
+                                            </form:select>
+                                        </td>-->
+                                        <td style="width:77px;">Etiqueta Doc:</td>
+                                        <td>
+                                            <form:select path="idEtiqueta" style="    width: 100%;">
+                                                <form:options items="${deEtiquetasList}" itemValue="coEst" itemLabel="deEst" />
+                                            </form:select>
+                                        </td>
+                                    </tr>   
+                                      <tr> 
+                                    <td style="width:77px;">Tema:</td>
+                                        <td>
+                                            <form:select path="coTema" style="width: 100%;">
+                                                <option  value="">[TODOS]</option>
+                                                <form:options items="${deListTema}" itemValue="coTema" itemLabel="deTema" />
+                                            </form:select>
+                                        </td>
+                                    </tr> 
+                                    
+                                </table>
+                            </div>
+                        </fieldset>                        
+                    </td>
+                </tr>
+            </table>                                
+                
+               
+            </form:form>
+                <fieldset>
+                <legend>Detalle</legend>
+              <!-- <div id="divTablaRecepDocumenAdm">-->
+                    <jsp:text/>
+                <!--</div>-->
+                        <input type="hidden" id="txtpnuAnn" name="txtpnuAnn" value=""/>
+                        <input type="hidden" id="txtpnuEmi" name="txtnuEmi" value=""/>
+                        <input type="hidden" id="txtpnuDes" name="txtpnuDes" value=""/>
+                        <input type="hidden" id="txtptiCap" name="txtptiCap" value=""/>
+                        <input type="hidden" id="txtpcoPri" name="txtpcoPri" value=""/>
+
+                  <div id="divListaRecepDocumAdm">
+                       <div id="divGrdLstDocRecepResult">
+                    </div>
+                </div>
+                </fieldset>
+        </div>
+    </div>
+    <div id="divWorkPlaceRecepDocumAdmin" style="display:none;">&amp;nbsp;</div>          
+
+</jsp:root>

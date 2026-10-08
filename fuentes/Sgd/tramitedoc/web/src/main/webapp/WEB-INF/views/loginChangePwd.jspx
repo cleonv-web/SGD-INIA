@@ -1,0 +1,149 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+<jsp:directive.page contentType="text/html;charset=UTF-8"/>
+<jsp:output omit-xml-declaration="yes"/>
+    <c:set var="divId" value="windowChangePwd" scope="request"/>
+    <c:set var="posiciona" value="width:500px; height:363px;" scope="request"/>
+
+    <tiles:insertTemplate template="/WEB-INF/templates/windowmodaldraggable.jspx" flush="true">
+        <tiles:putAttribute name="title" value="Cambiar Contraseña"/>
+        <tiles:putAttribute name="body">
+            <script languaje="javascript">jQuery(document).ready(function() {
+                    fn_password();
+                   
+                    if($('#hinAD').val()=='1')
+                    {                        
+                        $('#dlgchange').hide();
+                        $('#divValidaAD').show();
+                        $('#cmdCambiar').hide(); 
+                        $('#divPolitica').hide(); 
+                        
+                    }
+                    else{
+                        $('#dlgchange').show();
+                        $('#divValidaAD').hide();
+                        $('#cmdCambiar').show();
+                        $('#divPolitica').show(); 
+                    }
+                    if(${usuario.inAccesoLocal}=='0' )
+                    {
+                        $('#divCaptcha2').show();
+                        $('#divCaptcha2').attr("required","true");
+                        $('#hinAccesoLocalC').val('0');
+                    }
+                    else
+                    {
+                        $('#divCaptcha2').hide();
+                         $('#divCaptcha2').attr("required");
+                        $('#hinAccesoLocalC').val('1');
+                    }
+                });</script>
+        <div id="dlgchange">
+             <input id="hinAccesoLocalC" name="hinAccesoLocalC" type="hidden"  value=""/>
+                <div>
+                    <table width="100%" class="tlb">
+                        <tr>
+                            <td class="right subti_noti" width="35%" >Usuario: (*)</td>
+                            <td width="15%">
+                                <input type="text"
+                                       maxlength="20"
+                                       id="txtUsuario"
+                                       class="input ui-corner-all"
+                                       onkeypress="return filtrarTeclado(event, false, public_letras);"
+                                       value="${usuario.coUsuario}"                                       
+                                       tabindex="6"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="right subti_noti">Contraseña: (*)</td>
+                            <td>
+                                <input type="password"
+                                       maxlength="20"
+                                       id="txtClaveOriginal"
+                                       class="input ui-corner-all"
+                                       onkeypress="return filtrarTeclado(event, false);"
+                                       data-toggle="tooltip" data-trigger="manual" data-title="Bloque mayúscula activado"
+                                       tabindex="7" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="right subti_noti">Nueva Contraseña: (*)</td>
+                            <td>
+                                <input type="password"
+                                       maxlength="20"
+                                       id="txtClaveNew1"
+                                       class="input ui-corner-all"
+                                       onkeypress="return filtrarTeclado(event, false);"
+                                       data-toggle="tooltip" data-trigger="manual" data-title="Bloque mayúscula activado"
+                                       tabindex="8"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="right subti_noti">Repita Nueva Contraseña: (*)</td>
+                            <td>
+                                <input type="password"
+                                       maxlength="20"
+                                       id="txtClaveNew2"
+                                       class="input ui-corner-all"
+                                       onkeypress="return filtrarTeclado(event, false,0,'cmdCambiar');"
+                                       data-toggle="tooltip" data-trigger="manual" data-title="Bloque mayúscula activado"
+                                       tabindex="9"/>
+                           </td>
+                        </tr>
+                           <tr display="none" id="divCaptcha2">
+                                <td align="left" ></td>
+                                <td align="left" style="float:left;" >
+                                                                <div class="input-group">
+                                                                <img id="captcha_id2" name="imgCaptcha" src="captcha" 
+                                                                     style="float:left; border:1px solid #AAA; border-radius: 6px 0px 0px 0px; vertical-align: "/>
+                                                                <button class="btn btn-default btn-xs-bus" style="height:52px; float:left;" 
+                                                                        type="button" title ="Cambiar Codigo" 
+                                                                        onclick="document.getElementById('captcha_id2').src = 'captcha?' + Math.random();  return false">
+                                                                    <span class="glyphicon glyphicon-refresh"><jsp:text/></span></button>
+                                                                
+                                                             </div>
+                                                      <!--  <spring:bind path="captcha">-->
+                                                           <input type="text"
+                                                                           maxlength="10"
+                                                                           title ="Ingrese el texto de la imagen"
+                                                                           id = "captcha2"
+                                                                           name = "captcha"
+                                                                            style=" width:206px; height:25px; float:left; border:1px solid #AAA; border-radius: 0px 0px 0px 0px; vertical-align: "
+                                                                           tabindex="3"/>
+                                                          
+                                                        <!--</spring:bind>-->
+                                 </td>
+                           </tr>
+                                                        
+                        <tr id="msgChange" style="display:none">
+                            <td colspan="2">
+                                <div class="ui-messages ui-widget error">
+                                    <div class="ui-messages-warn ui-corner-all">
+                                        <ul><li id="errorChange">${error}</li></ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+        </div>
+        
+         <div class="alert alert-success alert-dismissible" role="alert" style="margin-bottom:0px" id="divValidaAD">
+            <h5 style="margin-bottom:0px;"><strong>Este usuario utiliza la contraseña de su cuenta de la PC, Para cambiar su contraseña, presione Ctrl+Alt+Supr y haga clic en "Cambiar una contraseña" </strong></h5>
+        </div>
+            
+        <div class="alert alert-success alert-dismissible" role="alert" style="margin-bottom:0px" id="divPolitica">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
+          <h5 style="margin-bottom:0px;"><strong>Por Políticas de Seguridad la Contraseña será Compuesta por Mayúsculas, Minúsculas y Números como Mínimo 8 Caracteres.</strong></h5>
+        </div>
+        <script type="text/javascript">jQuery('#txtUsuario').focus();</script>                                    
+        </tiles:putAttribute>
+        <tiles:putAttribute name="footer">
+            <button id="cmdCancelar" type="button" class="btn btn-default btn-lg" onclick="cancelChangePwd();" value="Salir" tabindex="11">
+                <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cancelar</button>
+            <button id="cmdCambiar" type="button" class="btn btn-default btn-lg" onclick="goChangePwd();" tabindex="10">
+                <span class="glyphicon glyphicon-check"><jsp:text/></span> Cambiar</button>
+        </tiles:putAttribute>
+    </tiles:insertTemplate>
+</jsp:root>

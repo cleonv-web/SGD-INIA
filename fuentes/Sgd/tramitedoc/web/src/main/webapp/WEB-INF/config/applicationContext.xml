@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    #############################################################################################################################
+
+        applicationContext.xml
+        ==========================
+
+        Contenido:      Configuracion de la capa de .
+        Comentarios:    Utilice este archivo para configurar todo lo concerniente a la regla de negocios
+                        No incluya en este archivo la declaracion de Daos y Services.
+
+    #############################################################################################################################
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+		default-autowire="byName">
+
+ <context:component-scan base-package="pe.gob.onpe.tramitedoc"/>  
+ <context:component-scan base-package="pe.gob.onpe.tramiteconv.dao.impl.postgresql" /> 
+<!-- ################################## -->
+<!-- #           RECURSOS             # -->
+<!-- ################################## -->
+
+    <!--  Carga el archivo de configuración para el acceso a la base de datos  -->
+    <context:property-placeholder location="/WEB-INF/config/jdbc.properties"/>
+
+    <bean id="applicationProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations" >
+            <list>
+                <!--catalina.base
+                crear la carpeta sgdproperties en:
+                GLASSFISH=(catalina.base) glassfish\glassfish\domains\domain1\
+                TOMACT=(catalina.base) apache-tomcat-7.0.42\
+                WEBLOGIC=DOMAIN_HOME-->
+                
+                 <value>file:///${catalina.base}/sgdproperties/application.properties</value>
+                <!--
+                
+               <value>/WEB-INF/i18n/application.properties</value>
+                <value>/WEB-INF/i18n/version.properties</value>-->
+            </list>
+        </property>
+    </bean>
+
+<!-- ################################## -->
+<!-- #        PERSISTENCIA            # -->
+<!-- ################################## -->
+
+    <!-- [iBATIS] -->
+<!--
+    <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+        <property name="configLocation" value="WEB-INF/config/application-SqlMapConfig.xml"></property>
+        <property name="dataSource"><ref bean="dataSource"/></property>
+    </bean>
+-->
+
+
+    <!-- [HIBERNATE] -->
+<!--     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"
+                        p:dataSource-ref="dataSource" >
+                <property name="hibernateProperties">
+                        <props>
+                                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                        </props>
+                </property>
+                <property name="mappingDirectoryLocations">
+                        <list>
+                                <value>classpath:/pe/gob/reniec/application/repository/hibernate/map</value>
+                        </list>
+                </property>
+        </bean>    
+-->
+<!-- ################################## -->
+<!-- #        TRANSACCIONES           # -->
+<!-- ################################## -->
+
+    <!--<bean id="transactionManager"-->
+            <!--class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >-->
+        <!--<property name="dataSource" ref="dataSource" />-->
+    <!--</bean>-->
+
+    <!-- [ Transacciones por anotaciones ]
+         Al activar esta linea, indicas al spring que configure la administraciones de transacciones
+         segun las anotaciones @Transactional en las clases o en los métodos
+    -->
+    <!--<tx:annotation-driven/>-->
+
+    <!-- Activación del uso de anotaciones como @Required y @Autowired -->
+    <!-- Esta linea es necesario para la autoinyeccion de dependencias -->
+    <!--<context:annotation-config />-->
+
+ </beans>

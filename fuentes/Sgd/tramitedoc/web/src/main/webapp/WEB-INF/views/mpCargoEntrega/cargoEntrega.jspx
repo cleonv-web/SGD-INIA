@@ -1,0 +1,144 @@
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags"
+          xmlns:form="http://www.springframework.org/tags/form">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <script languaje="javascript">jQuery(document).ready(function() {fn_iniCargoEntrega();});</script>  
+    <div class="ui-panel ui-corner-all"  style="width: 1180px; margin: 0px auto">
+        <div class="ui-panel-titlebar ui-widget-header ui-corner-all">
+            <span>CARGO DE ENTREGA</span>
+        </div>
+        <div class="ui-panel-body">   
+            <fieldset>
+                    <div class="btn-group btn-group-lg">
+                       <button title ="Grabar Documento" class="btn btn-primary" onclick="fn_goGrabarCargoEntrega();" type="button">
+                           <span class="glyphicon glyphicon-floppy-disk"><jsp:text/></span> Grabar</button>
+                       <button title ="Imprimir Cargo" class="btn btn-primary" onclick="fn_imprimirCargoEntrega()" type="button">
+                           <span class="glyphicon glyphicon-print"><jsp:text/></span> Imprimir</button>
+                       <button title ="Anular Cargo" class="btn btn-primary" onclick="fn_anularCargoEntregaMp();" type="button">
+                           <span class="glyphicon glyphicon-remove"><jsp:text/></span> Anular</button> 
+                       <button title ="Regresar al M&#243;dulo Anterior" class="btn btn-primary" onclick="fn_backCargoEntrega()" type="button">
+                            <span class="glyphicon glyphicon-arrow-left"><jsp:text/></span> Cerrar</button>                           
+                       <button title ="Salir" class="btn btn-primary" onclick="cerrarPantallaMP();" type="button">
+                           <span class="glyphicon glyphicon-log-out"><jsp:text/></span> Salir</button>
+                    </div>  
+            </fieldset>
+            <form:form modelAttribute="guiaMesaPartesBean">
+                <input type="hidden" id="envGuiaMp" name="envGuiaMp" value="0"/>
+                <input type="hidden" id="whoCalled" name="whoCalled" value="${tblDetCarga}"/>
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <fieldset>
+                                <legend>Origen</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Local:</td>    
+                                        <td>
+                                            <form:hidden path="coLocOri"/>
+                                            <form:input path="deLocOri" readonly="true" size="60"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dependencia:</td>    
+                                        <td>
+                                            <form:hidden path="coDepOri"/>
+                                            <form:input path="deDepOri" readonly="true" size="60"/>
+                                        </td>   
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>
+                        <td width="50%">
+                            <fieldset>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Año:</td>    
+                                        <td>
+                                            <form:input path="nuAnn" readonly="true" style="text-align: center"/>
+                                        </td>
+                                        <td rowspan="2" align="center">
+                                            <form:hidden path="estadoGuia"/>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-danger">${guiaMesaPartesBean.deEstadoGuia}</button>
+                                            </div>   
+                                        </td>    
+                                    </tr>
+                                    <tr>
+                                        <td>Nro Guia:</td>    
+                                        <td>
+                                            <form:hidden path="nuGuia"/>
+                                            <form:input path="nuCorGui" readonly="true" style="text-align: center"/>
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>						
+                    </tr>
+                    <tr>
+                        <td width="50%" valign="top">
+                            <fieldset>
+                                <legend>Destinatario</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Local:</td>    
+                                        <td>
+                                            <form:hidden path="coLocDes"/>
+                                            <form:input path="deLocDes" readonly="true"  size="60"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dependencia:</td>    
+                                        <td>
+                                            <form:hidden path="coDepDes"/>
+                                            <form:input path="deDepDes" readonly="true"  size="60"/>
+                                        </td>
+                                    </tr>                                                        
+                                </table>
+                            </fieldset>
+                        </td>
+                        <td width="50%">
+                            <fieldset>
+                                <table width="100%">
+                                    <tr>
+                                        <td>Fecha:</td>    
+                                        <td>
+                                            <form:input path="feGuiMp" style="text-align: center" readonly="true"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Observación:</td>    
+                                        <td>
+                                            <form:textarea path="deObs" rows="2" cols="60" class="delUpperCase" maxlength="200" style="width:98%;"/>
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </fieldset>							
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <fieldset>
+                                <legend>Detalle</legend>
+                                <table width="100%">
+                                    <tr>
+                                        <td>
+                                        <c:choose>
+                                            <c:when test="${tblDetCarga eq '1'}">
+                                              <jsp:directive.include file="tblDetGuiaMesaPartesEdit.jspx"/>
+                                            </c:when>
+                                            <c:otherwise>
+                                              <jsp:directive.include file="tblDetGuiaMesaPartes.jspx"/>
+                                            </c:otherwise>                                    
+                                        </c:choose> 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </td> 
+                    </tr>
+                </table>
+            </form:form>
+        </div>
+    </div>
+</jsp:root>
