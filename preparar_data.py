@@ -82,7 +82,7 @@ def prepare(source,destination):
             usuario=worker['cUsuario'],nombres=worker['cNombresTrabajador'],
             apellido_paterno=worker['cApellidosTrabajador'],apellido_materno='',
             dni=worker['cNumDocIdentidad'],email=worker['cMailTrabajador'],
-            cargo_codigo='',cargo_nombre=worker['cCargo'],perfil='',verificado='NO'))
+            cargo_codigo='',cargo_nombre=worker['cCargo'],perfil='',verificado='NO',incluir_sgd='1'))
         tasks=['Separar/confirmar apellidos paterno y materno','Asignar cargo_codigo de cuatro dígitos',
                'Elegir perfil SGD en area.json',
                'Confirmar vínculo laboral vigente y autorización; excluir cesados y cuentas genéricas antes de marcar SI']
@@ -104,10 +104,11 @@ def prepare(source,destination):
 3. Confirmar DNI real, cargo_codigo (4 dígitos), cargo_nombre y perfil de cada usuario.
    Perfiles disponibles de ejemplo: USUARIO_AREA, SOPORTE_UTI, MESA_PARTES.
    Los perfiles del sistema anterior se muestran en pendientes.csv; no se tradujeron automáticamente.
-4. Retirar las filas completas de cesados, cuentas genéricas y personas que no participarán.
+4. En incluir_sgd poner 0 para excluir cesados, cuentas genéricas y personas que no participarán.
+   Poner 1 para incluir a una persona. Las filas con 0 se omiten, pueden conservar verificado=NO.
    Estado 1 en el origen no demuestra vínculo laboral vigente. Confirmarlo personalmente.
    Marcar verificado=SI sólo para personas vigentes, identificadas y autorizadas después de revisar.
-   Una fila con NO bloquea toda la carga: no significa que esa fila se omita automáticamente.
+   Una fila incluida (1) con verificado=NO bloquea la carga hasta completar su revisión.
 5. Revisar area.json: nombre_corto, sigla, padre y nivel, titular_empleado, sede y dirección,
    tipos documentales y permisos. Mantener el código de empleado de cada persona entre áreas.
    Los códigos propuestos se obtienen de los IDs del origen, rellenando ceros; no se comprobaron

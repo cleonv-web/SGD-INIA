@@ -1,6 +1,6 @@
 {
   "fecha": "2026-10-08",
-  "pruebas_offline": 18,
+  "pruebas_offline": 21,
   "sintaxis_postgresql_y_plpgsql": true,
   "comparacion_columnas_y_claves_con_modelo_local": true,
   "cifrado_java_incluido_windows": true,
@@ -12,7 +12,9 @@
   "consultas_registros_sqlserver_durante_preparacion": false,
   "word_paginas_revisadas": 12,
   "preparador_csv_codificaciones_separadores_y_aprobacion": true,
-  "exportador_lista_obligatoria_aprobados": true,
+  "exportador_lista_obligatoria_aprobados": false,
   "exportador_actualizado_ejecutado_en_sqlserver": false,
-  "word_actualizado": "Manual-Instalacion-SGD-INIA-PG-Actualizado.docx"
+  "word_actualizado": "Manual-Instalacion-SGD-INIA-PG-Actualizado.docx",
+  "selector_incluir_sgd_cero_uno": true,
+  "compatibilidad_csv_anteriores_y_huella": true
 }

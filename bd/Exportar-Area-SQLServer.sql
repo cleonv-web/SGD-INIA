@@ -1,7 +1,8 @@
 /* Extracción para revisión y preparación; NO es un script de carga PostgreSQL.
    Ejecutar después de Revisar-Area-SQLServer.sql. Cambiar @Oficina.
-   Incluir en @Aprobados sólo IDs de personas vigentes autorizadas para el piloto.
-   Estado 1 NO demuestra vínculo laboral vigente. Excluir cesados y cuentas genéricas.
+   Cambiar únicamente @Oficina. La selección final se realiza en el CSV preparado:
+   incluir_sgd=1 para cargar, incluir_sgd=0 para excluir.
+   Estado 1 NO demuestra vínculo laboral vigente. Revisar cesados y cuentas genéricas.
    Exportar cada resultado por separado como CSV UTF-8 con encabezados.
    Guardarlos en datos (excluido de Git); no exportar claves ni hashes.
    Sólo una oficina: no incorpora automáticamente sus subáreas ni sus usuarios.
@@ -14,21 +15,6 @@ IF @Oficina IS NULL
     THROW 50001,'Indicar @Oficina antes de exportar. Consultar Revisar-Area-SQLServer.sql.',1;
 IF NOT EXISTS(SELECT 1 FROM dbo.Tra_M_Oficinas WHERE iCodOficina=@Oficina)
     THROW 50002,'El codigo de oficina no existe.',1;
-
--- LISTA OBLIGATORIA DE PERSONAS APROBADAS POR TI. No modifica el origen.
--- Descomentar la siguiente línea y sustituir los IDs del ejemplo por IDs reales revisados.
--- No copiar los nombres de usuario ni códigos de perfil: usar iCodTrabajador.
-DECLARE @Aprobados TABLE(iCodTrabajador int PRIMARY KEY);
--- INSERT INTO @Aprobados(iCodTrabajador) VALUES (101),(102); -- IDs ficticios de ejemplo.
-IF NOT EXISTS(SELECT 1 FROM @Aprobados)
-    THROW 50006,'Completar @Aprobados con iCodTrabajador de personas verificadas. No se exportaran todos automaticamente.',1;
-IF EXISTS(SELECT 1 FROM @Aprobados e
-          WHERE NOT EXISTS(SELECT 1 FROM dbo.Tra_M_Trabajadores t
-            WHERE t.iCodTrabajador=e.iCodTrabajador
-              AND (@SoloEstado1=0 OR t.nFlgEstado=1)
-              AND (t.iCodOficina=@Oficina OR EXISTS(SELECT 1 FROM dbo.Tra_M_Perfil_Ususario a
-                   WHERE a.iCodTrabajador=t.iCodTrabajador AND a.iCodOficina=@Oficina))))
-    THROW 50007,'Un ID aprobado no existe, no pertenece al area o esta fuera del filtro de estado. Revisar la lista.',1;
 
 DECLARE @Oficinas TABLE(iCodOficina int PRIMARY KEY);
 DECLARE @Cadena TABLE(iCodOficina int,idPadre int,ciclo int,profundidad int);
@@ -57,8 +43,7 @@ INSERT INTO @Oficinas SELECT DISTINCT iCodOficina FROM @Cadena;
 DECLARE @Personal TABLE(iCodTrabajador int PRIMARY KEY);
 INSERT INTO @Personal
 SELECT t.iCodTrabajador FROM dbo.Tra_M_Trabajadores t
-WHERE EXISTS(SELECT 1 FROM @Aprobados e WHERE e.iCodTrabajador=t.iCodTrabajador)
- AND (@SoloEstado1=0 OR t.nFlgEstado=1)
+WHERE (@SoloEstado1=0 OR t.nFlgEstado=1)
  AND (t.iCodOficina=@Oficina OR EXISTS(SELECT 1 FROM dbo.Tra_M_Perfil_Ususario a
       WHERE a.iCodTrabajador=t.iCodTrabajador AND a.iCodOficina=@Oficina));
 

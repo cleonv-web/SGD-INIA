@@ -18,7 +18,7 @@ TABLES = ['si_mae_local', 'rhtm_cargos', 'rhtm_dependencia', 'rhtm_per_empleados
           'sitm_doc_dependencia', 'tdtr_dependencia_mp', 'tdtr_permiso_mp', 'tdtr_mot_dependencia']
 KEEP = ['si_mae_local', 'rhtm_cargos']
 FIELDS = ['origen_id', 'codigo_empleado', 'usuario', 'nombres', 'apellido_paterno',
-          'apellido_materno', 'dni', 'email', 'cargo_codigo', 'cargo_nombre', 'perfil', 'verificado']
+          'apellido_materno', 'dni', 'email', 'cargo_codigo', 'cargo_nombre', 'perfil', 'verificado', 'incluir_sgd']
 RESERVED = {'00000', '49001', '49002', '49003'}
 
 
@@ -129,16 +129,26 @@ def read_bundle(folder):
             'Definir tipos_documento válidos y sin duplicados')
     with (folder / 'usuarios-verificados.csv').open(encoding='utf-8-sig', newline='') as f:
         reader = csv.DictReader(f)
-        require(reader.fieldnames == FIELDS, 'Encabezados CSV inválidos. Usar la plantilla, separador coma')
-        users = list(reader)
-    require(users, 'El CSV no contiene usuarios verificados')
+        require(reader.fieldnames in [FIELDS,FIELDS[:-1]], 'Encabezados CSV inválidos. Usar la plantilla, separador coma')
+        rows = list(reader)
+    users = []; row_numbers = []
+    for number,user in enumerate(rows,2):
+        label = 'Fila ' + str(number)
+        require(None not in user and all(v is not None for v in user.values()), label + ': número de columnas incorrecto')
+        flag = user.get('incluir_sgd','1').strip()
+        require(flag in ['0','1'],label + ': incluir_sgd debe ser 0 o 1')
+        if flag == '0':
+            continue
+        user['incluir_sgd'] = '1'
+        users.append(user);row_numbers.append(number)
+    require(users, 'El CSV no contiene usuarios seleccionados con incluir_sgd=1')
     require(len(users) <= 500, 'Máximo 500 usuarios por carga de área del piloto')
     identifiers = {k: set() for k in ['origen_id', 'codigo_empleado', 'usuario', 'dni']}
     cargos = {}
-    for number, user in enumerate(users, 2):
+    for number, user in zip(row_numbers,users):
         label = 'Fila ' + str(number)
         require(None not in user and all(v is not None for v in user.values()), label + ': número de columnas incorrecto')
-        require(user['verificado'].strip().upper() == 'SI', label + ': usuario no verificado; retirar filas pendientes')
+        require(user['verificado'].strip().upper() == 'SI', label + ': usuario no verificado; revisar o marcar incluir_sgd=0')
         require(re.fullmatch(r'[1-9][0-9]*', user['origen_id']), label + ': origen_id inválido')
         code(user['codigo_empleado'], label + ': codigo_empleado', 5)
         require(user['codigo_empleado'] not in RESERVED, label + ': código reservado de laboratorio')
@@ -168,7 +178,10 @@ def read_bundle(folder):
             'titular_empleado debe corresponder a un usuario verificado de esta carga')
     document_path = (DATA / 'documentos').as_posix()
     require(len(document_path) <= 200, 'Ruta datos/documentos supera 200 caracteres')
-    canonical = json.dumps({'area': manifest, 'usuarios': users}, ensure_ascii=False, sort_keys=True)
+    # El selector no es un dato del empleado; mantener la huella de CSV anteriores.
+    canonical = json.dumps({'area': manifest, 'usuarios':
+                           [{k:v for k,v in u.items() if k!='incluir_sgd'} for u in users]},
+                           ensure_ascii=False, sort_keys=True)
     return manifest, users, hashlib.sha256(canonical.encode()).hexdigest()
 
 

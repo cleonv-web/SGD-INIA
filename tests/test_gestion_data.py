@@ -13,7 +13,7 @@ class CargaTests(unittest.TestCase):
         self.area['aprobado']='SI'; self.area['verificado_por']='OPERADOR QA'
         self.area['nombre']='UTI QA';self.area['sede'].update(nombre='SEDE QA',direccion='DIRECCION QA')
         self.user=dict(zip(g.FIELDS,['1','52001','qa.uno',"José O'Prueba",'Pérez','García',
-                                   '12345678','qa@ejemplo.invalid','1001','ANALISTA','USUARIO_AREA','SI']))
+                                   '12345678','qa@ejemplo.invalid','1001','ANALISTA','USUARIO_AREA','SI','1']))
         self.write()
 
     def tearDown(self): self.tmp.cleanup()
@@ -31,6 +31,29 @@ class CargaTests(unittest.TestCase):
     def test_aprobacion_del_area_obligatoria(self):
         self.area['aprobado']='NO';self.write()
         with self.assertRaisesRegex(ValueError,'aprobado'):g.read_bundle(self.folder)
+
+    def test_incluir_cero_no_genera_empleado_cuenta_ni_clave(self):
+        excluded={k:'' for k in g.FIELDS}
+        excluded.update(origen_id='999',usuario='cuenta.excluida',incluir_sgd='0',verificado='NO')
+        self.write([self.user,excluded])
+        area,users,fingerprint=g.read_bundle(self.folder)
+        self.assertEqual([x['usuario'] for x in users],['qa.uno'])
+        self.assertNotIn('cuenta.excluida',g.load_sql(area,users,fingerprint))
+
+    def test_incluir_solo_admite_cero_o_uno_y_no_carga_lista_vacia(self):
+        for value in ['','SI','2']:
+            self.user['incluir_sgd']=value;self.write()
+            with self.assertRaisesRegex(ValueError,'0 o 1'):g.read_bundle(self.folder)
+        self.user['incluir_sgd']='0';self.write()
+        with self.assertRaisesRegex(ValueError,'seleccionados'):g.read_bundle(self.folder)
+
+    def test_csv_previo_sin_campo_sigue_compatible(self):
+        previous=g.read_bundle(self.folder)[2]
+        with (self.folder/'usuarios-verificados.csv').open('w',encoding='utf-8',newline='') as f:
+            writer=csv.DictWriter(f,fieldnames=g.FIELDS[:-1]);writer.writeheader()
+            writer.writerow({k:v for k,v in self.user.items() if k!='incluir_sgd'})
+        self.assertEqual(g.read_bundle(self.folder)[1][0]['incluir_sgd'],'1')
+        self.assertEqual(g.read_bundle(self.folder)[2],previous)
 
     def test_identidad_limites_y_menus(self):
         for field,value in [('dni','AB-000001'),('dni','00000000'),('usuario','x'*21),
