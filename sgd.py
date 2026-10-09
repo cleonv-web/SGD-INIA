@@ -468,7 +468,7 @@ def empaquetar():
                 if f.suffix in ['.log','.tmp'] or f.name in ['domain.xml.bak','pid']:continue
                 if f.name=='domain.xml' and domain_xml:
                     z.writestr(ROOT.name+'/'+rel.as_posix(),domain_xml);count+=1;continue
-            if f.name.endswith(('.lastUpdated','.lock')):continue
+            if f.name.startswith('~$') or f.name.endswith(('.lastUpdated','.lock')):continue
             z.write(f,ROOT.name+'/'+rel.as_posix());count+=1
         # Payara necesita estos directorios antes de configurar el dominio prearmado.
         for name in ['datos','logs','payara/payara5/glassfish/domains/sgd/lib','payara/payara5/glassfish/domains/sgd/docroot','payara/payara5/glassfish/domains/sgd/logs','payara/payara5/glassfish/domains/sgd/autodeploy','payara/payara5/glassfish/domains/sgd/applications']:

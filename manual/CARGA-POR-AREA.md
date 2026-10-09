@@ -61,19 +61,21 @@ Los códigos propuestos de área, sede y empleado proceden de los IDs del origen
 
 Antes de validar, completar los campos pendientes: en area.json, nombre_corto (UTI), titular_empleado (codigo_empleado del responsable incluido), sede.direccion, verificado_por y aprobado=SI al terminar de revisar. El padre 00000 es provisional del laboratorio y requiere aprobar esa organización. En el CSV, sólo para filas con incluir_sgd=1, confirmar DNI real de ocho dígitos, separar apellidos, completar cargo_codigo de cuatro dígitos, cargo_nombre y perfil. USUARIO_AREA es la propuesta básica; SOPORTE_UTI concede administrador y sólo corresponde al soporte autorizado. Consultar personalmente los cargos existentes con el resultado 3 de Consultar-Catalogos-Piloto-PostgreSQL.sql. Nunca inventar DNI o cargos. Las filas con 0 se omiten.
 
-9. Consultar los permisos locales y validar la preparación, todavía sin aplicar:
+9. Validar la preparación con el utilitario específico, todavía sin aplicar:
 
 ```powershell
-.\Cargar-Area.bat --catalogos
-.\Cargar-Area.bat --carpeta datos\carga-uti-preparada
+.\Validar-Carga.bat
 ```
 
 ```bash
-bash Cargar-Area.sh --catalogos
-bash Cargar-Area.sh --carpeta datos/carga-uti-preparada
+bash Validar-Carga.sh
 ```
 
-El resultado offline genera el plan para tu revisión, no carga usuarios. La aplicación real se explica en la siguiente sección.
+Sin argumentos revisa `datos/carga-uti-preparada`; también puedes hacer doble clic en Windows. Para otra área añadir `--carpeta datos/carga-otra-preparada`. Reutiliza las reglas de Cargar-Area, cuenta incluidos y excluidos, revisa encabezados, aprobación, titular incluido, DNI en formato válido, duplicados, cargos, perfiles y menús, tipos documentales y sede. Compara las tablas, columnas y claves de la carga con el modelo incluido y comprueba configuración, credenciales existentes y archivos de Java/cifrado/PostgreSQL. No comprueba identidad ni vínculo laboral: siguen siendo responsabilidad del operador.
+
+Sólo continuar si muestra **VALIDACION CORRECTA** y todas las comprobaciones indican OK. Si aparece ERROR, corregir el campo indicado y repetir este mismo comando. Guarda el último informe en `datos/validacion-carga/resultado.json`, sin DNI, nombres de personas, usuarios, claves ni SQL ejecutable. Incluye huellas de los archivos revisados. No modifica los CSV/JSON ni conecta a SQL Server o PostgreSQL. La conectividad, permisos, padre activo y colisiones con registros actuales se comprueban en la carga real; una validación offline correcta no certifica esos puntos. La aplicación real se explica a continuación.
+
+Para consultar opciones locales se conserva `Cargar-Area.bat --catalogos` o `bash Cargar-Area.sh --catalogos`. La revisión anterior de Cargar-Area sin --aplicar también sigue disponible para generar un plan; no hace falta ejecutarla adicionalmente después de Validar-Carga.
 
 ### Alternativa manual con plantillas vacías
 
@@ -123,19 +125,19 @@ Esta primera etapa del piloto será sin firma obligatoria. Mantener `firma=false
 
 ## Revisar y aplicar una carga
 
-Primero revisar sin tocar ninguna base:
+Primero validar los archivos sin tocar ninguna base:
 
 ```powershell
-.\Cargar-Area.bat --carpeta datos\carga-uti-preparada
+.\Validar-Carga.bat --carpeta datos\carga-uti-preparada
 ```
 
 ```bash
-bash Cargar-Area.sh --carpeta datos/carga-uti-preparada
+bash Validar-Carga.sh --carpeta datos/carga-uti-preparada
 ```
 
-La herramienta valida los archivos y genera `revision.json` y `plan.sql` en una carpeta privada dentro de `datos`. El plan offline no comprueba colisiones ni referencias actuales del destino; esas comprobaciones se realizan en la transacción al aplicar. No ejecutar el plan SQL manualmente: contiene un marcador de cifrado pendiente.
+El informe queda en `datos/validacion-carga/resultado.json`. Para UTI, el código aprobado actual es `00217`. Los comandos siguientes usan ese código; para otra área sustituirlo por el código de su `area.json`. Si generaste un plan con Cargar-Area, no ejecutarlo manualmente: contiene un marcador de cifrado pendiente.
 
-Después de tu revisión, con PostgreSQL iniciado y en una ventana de mantenimiento del SGD, aplicar. Sustituir 51001 por el código que figura en tu `area.json`:
+Después de tu revisión y de VALIDACION CORRECTA, con PostgreSQL iniciado y en una ventana de mantenimiento del SGD, aplicar. Ejecutar los comandos uno por uno y no continuar si alguno falla:
 
 Para una instalación completa en un mismo equipo, detener la aplicación y arrancar sólo PostgreSQL antes de aplicar:
 
@@ -152,11 +154,11 @@ bash SGD.sh base
 En servidores separados coordinar también la parada de la aplicación remota. Después de la operación arrancar la aplicación con `SGD.bat iniciar` o `bash SGD.sh iniciar`.
 
 ```powershell
-.\Cargar-Area.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar CARGAR:51001
+.\Cargar-Area.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar CARGAR:00217
 ```
 
 ```bash
-bash Cargar-Area.sh --carpeta datos/carga-uti-preparada --aplicar --confirmar CARGAR:51001
+bash Cargar-Area.sh --carpeta datos/carga-uti-preparada --aplicar --confirmar CARGAR:00217
 ```
 
 La operación exige credenciales existentes de esta instalación y la librería Java compilada; si falta la librería, ejecutar primero `SGD.bat compilar` o `bash SGD.sh compilar`. No instala Docker ni descarga dependencias de ejecución. Funciona con los runtimes x64 incluidos; otros procesadores o sistemas requieren su paquete compatible.
@@ -197,6 +199,6 @@ No emplea TRUNCATE ni borrado CASCADE. Las validaciones y eliminaciones están e
 
 ## Pruebas y límites
 
-Se probaron offline la exclusión con incluir_sgd=0, compatibilidad con CSV anteriores y rechazo de valores distintos de 0/1, además de validaciones de identidad, duplicados, confirmaciones, respaldo y claves existentes. Se verificaron tablas y columnas contra el modelo incluido, así como sintaxis SQL y PL/pgSQL. No se conectó a tus bases durante la elaboración de estos utilitarios y no se ha probado una carga/retirada real en PostgreSQL. La primera ejecución supervisada por ti en el laboratorio es necesaria antes de usarlos con datos de calidad o producción.
+Se probaron offline la exclusión con incluir_sgd=0, compatibilidad con CSV anteriores y rechazo de valores distintos de 0/1, además de validaciones de identidad, duplicados, confirmaciones, respaldo y claves existentes. Se verificaron tablas y columnas contra el modelo incluido, así como sintaxis SQL y PL/pgSQL. Pasan 33 pruebas offline, incluidas 8 del validador. Se conservan 7 pruebas previas de instalación, carga y retiro en PostgreSQL 17.11 temporal con datos ficticios. La actualización del validador no repitió esas 7 pruebas ni consultó o cargó tus bases reales. Se verificó el lanzador Windows con los archivos actuales y la sintaxis del lanzador Linux; la ejecución nativa Linux del validador sigue pendiente. La primera ejecución supervisada por ti en el laboratorio es necesaria antes de usarlos con datos de calidad o producción.
 
 Los CSV anteriores sin incluir_sgd siguen siendo compatibles: todas sus filas se consideran incluidas y requieren verificado=SI. Para excluir sin borrar filas, añadir incluir_sgd al final del encabezado y 1 o 0 al final de cada fila. El preparador y las plantillas nuevas ya generan esta columna.

@@ -1,6 +1,6 @@
 # SGD INIA · PostgreSQL portable
 
-Leer manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Para otro equipo, extraer SGD-INIA-INSTALL_PG-PORTABLE.zip y ejecutar **Instalar-SGD.bat** en Windows/Windows Server o **bash Instalar-SGD.sh** en Linux x64. **No requiere Docker en los destinos.**
+Leer manual/Manual-Instalacion-SGD-INIA-PG-Validacion.docx, edición vigente con el validador y comandos de UTI 00217. Para otro equipo, extraer SGD-INIA-INSTALL_PG-PORTABLE.zip y ejecutar **Instalar-SGD.bat** en Windows/Windows Server o **bash Instalar-SGD.sh** en Linux x64. **No requiere Docker en los destinos.**
 
 PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, código fuente y WAR están incluidos. Windows x64 y Linux x64 con glibc >=2.31; Linux necesita Bash, tar y bibliotecas de fuentes/JDK indicadas en el manual. Usar una cuenta normal en Linux. No instalar la base activa en OneDrive ni en una carpeta sincronizada.
 
@@ -15,6 +15,7 @@ PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, 
 | Compilar | SGD.bat compilar | bash SGD.sh compilar |
 | Desplegar | SGD.bat desplegar | bash SGD.sh desplegar |
 | Verificar | SGD.bat verificar | bash SGD.sh verificar |
+| Validar archivos de una carga | Validar-Carga.bat | bash Validar-Carga.sh |
 | Respaldar | SGD.bat respaldar | bash SGD.sh respaldar |
 | Empaquetar sin datos ni claves | SGD.bat empaquetar | bash SGD.sh empaquetar |
 
@@ -56,4 +57,6 @@ Referencias: [binarios PostgreSQL Windows](https://www.enterprisedb.com/download
 
 ## Carga de datos por área
 
-Exportar-Area-SQLServer.sql sólo requiere elegir @Oficina; en el CSV preparado incluir_sgd=1 incluye a una persona e incluir_sgd=0 la omite; estado 1 no demuestra vínculo laboral vigente. Preparar-Carga.bat y Preparar-Carga.sh convierten sus cinco CSV, con o sin encabezados, a un borrador pendiente de revisión, sin consultar bases. Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD.bat y Limpiar-BD.sh retiran exclusivamente un área rastreada por el utilitario, conservando catálogos y objetos compartidos. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 a 13 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Pasan 25 pruebas offline y 7 pruebas reales en PostgreSQL 17.11 temporal con datos ficticios, incluyendo actualización de sede, carga, reversión, repetición y retiro protegido. Tus CSV aún no se han cargado.
+Antes de cargar, ejecutar **Validar-Carga.bat** en Windows (admite doble clic) o **bash Validar-Carga.sh** en Linux. Sin argumentos revisa datos/carga-uti-preparada; para otra carpeta usar --carpeta RUTA. Comprueba la selección 0/1, las reglas del cargador, las relaciones del área, columnas y claves del modelo local, configuración y archivos necesarios. El resultado queda en datos/validacion-carga/resultado.json, sin publicar identidades ni contraseñas. Sólo continuar si indica VALIDACION CORRECTA. No conecta a ninguna base ni garantiza ausencia de colisiones actuales: esas comprobaciones y el respaldo se realizan al aplicar la carga. La validación usa exactamente las mismas reglas que Cargar-Area; no sustituye la revisión humana.
+
+Exportar-Area-SQLServer.sql sólo requiere elegir @Oficina; en el CSV preparado incluir_sgd=1 incluye a una persona e incluir_sgd=0 la omite; estado 1 no demuestra vínculo laboral vigente. Preparar-Carga.bat y Preparar-Carga.sh convierten sus cinco CSV, con o sin encabezados, a un borrador pendiente de revisión, sin consultar bases. Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD.bat y Limpiar-BD.sh retiran exclusivamente un área rastreada por el utilitario, conservando catálogos y objetos compartidos. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 a 13 de manual/Manual-Instalacion-SGD-INIA-PG-Validacion.docx. Pasan 33 pruebas offline (8 del validador); se conservan 7 pruebas previas en PostgreSQL 17.11 temporal con datos ficticios, incluyendo actualización de sede, carga, reversión, repetición y retiro protegido. Tus CSV aún no se han cargado.

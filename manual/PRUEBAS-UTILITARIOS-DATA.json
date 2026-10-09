@@ -1,6 +1,6 @@
 {
   "fecha": "2026-10-08",
-  "pruebas_offline": 25,
+  "pruebas_offline": 33,
   "sintaxis_postgresql_y_plpgsql": true,
   "comparacion_columnas_y_claves_con_modelo_local": true,
   "cifrado_java_incluido_windows": true,
@@ -14,14 +14,14 @@
   "preparador_csv_codificaciones_separadores_y_aprobacion": true,
   "exportador_lista_obligatoria_aprobados": false,
   "exportador_actualizado_ejecutado_en_sqlserver": false,
-  "word_actualizado": "Manual-Instalacion-SGD-INIA-PG-Actualizado.docx",
+  "word_actualizado": "Manual-Instalacion-SGD-INIA-PG-Validacion.docx",
   "selector_incluir_sgd_cero_uno": true,
   "compatibilidad_csv_anteriores_y_huella": true,
   "csv_origen_con_y_sin_encabezados": true,
   "preparacion_csv_local_completada": true,
   "usuarios_preparados_pendientes": 15,
   "pruebas_postgresql_aislado": 7,
-  "pruebas_total": 32,
+  "pruebas_total": 40,
   "instalacion_nueva_sede_central_integrada": true,
   "actualizacion_sede_provisional_en_transaccion": true,
   "rollback_sede_ante_error_carga": true,
@@ -31,5 +31,12 @@
   "retiro_no_confunde_vistas_con_referencias": true,
   "carga_postgresql_temporal_datos_ficticios": true,
   "retiro_postgresql_temporal_datos_ficticios": true,
-  "consulta_autorizada_postgresql_local": "Sólo sede y cargos; sin modificaciones"
+  "consulta_autorizada_postgresql_local": "Sólo sede y cargos; sin modificaciones",
+  "pruebas_validador_offline": 8,
+  "validador_windows_csv_actuales": true,
+  "validador_no_conecta_bases": true,
+  "validador_modelo_columnas_claves": true,
+  "validador_informe_sin_datos_personales": true,
+  "validador_lanzador_linux_sintaxis": true,
+  "pruebas_postgresql_repetidas_esta_actualizacion": false
 }
