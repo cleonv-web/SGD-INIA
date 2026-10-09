@@ -468,6 +468,15 @@ function fn_generaDocDesktop(urlDoc, rutaDoc,nuAnn, nuEmi, tieneWord, callback) 
 
 function fn_generaDocDesktop(urlDoc, rutaDoc,nuAnn, nuEmi, tieneWord, callback) {
     
+       // La generación requiere el cliente conectado en la PC del navegador.
+       // Sin él, NO no significa que el archivo no exista: no se pudo verificar.
+       if (tipoEjecucionAppDesktop.value !== tipoEjecucionAppDesktop.ejeAppDesktopModoNormal ||
+               !_wsocket || _wsocket.readyState !== _wsocket.OPEN) {
+           loadding(false);
+           callback("El cliente Tramitedoc no está conectado en esta PC. Instale o repare el cliente, permita abrir Tramitedoc en el navegador y vuelva a ingresar al SGD.");
+           return;
+       }
+
        if (tieneWord==="SI") {
                 
                     var pAbreWord = "&pAbreWord="+tieneWord;
@@ -510,6 +519,11 @@ function fn_generaDocDesktop(urlDoc, rutaDoc,nuAnn, nuEmi, tieneWord, callback) 
                 var param = {rutaDoc: rutaDoc, verBloqueo: false};
                 runOnDesktop(accionOnDesktopTramiteDoc.verificaSiExisteDoc, param, function(data){
                     retval = data;
+                    if (retval !== "SI" && retval !== "NO") {
+                        loadding(false);
+                        callback("No se pudo verificar el archivo con el cliente Tramitedoc. Compruebe su conexión antes de generar el documento.");
+                        return;
+                    }
                     var param = {urlDoc: urlDoc, rutaDoc: rutaDoc, remplazaArchivo: false};
 
                     if (retval === "SI") {
@@ -521,10 +535,17 @@ function fn_generaDocDesktop(urlDoc, rutaDoc,nuAnn, nuEmi, tieneWord, callback) 
                             });
                         });               
                     }else{
-                    //alert_Danger("!Repositorio : ", docs.retval);
-                    fn_genDocDesktop(param, function(data){
-                    callback(data);
-                    });   
+                        // El cliente original oculta el aviso del servidor cuando no hay plantilla.
+                        // Comprobarla antes de solicitar una descarga de un archivo nuevo.
+                        var p = "accion=goValidarPlantillaDocx&nuAnn=" + encodeURIComponent(nuAnn) + "&nuEmi=" + encodeURIComponent(nuEmi);
+                        ajaxCall("/srDocObjeto.do", p, function(respuesta) {
+                            if (!respuesta || respuesta.retval !== "OK") {
+                                loadding(false);
+                                callback(respuesta && typeof respuesta.retval === "string" && respuesta.retval ? respuesta.retval : "No se pudo comprobar la plantilla DOCX.");
+                                return;
+                            }
+                            fn_genDocDesktop(param, callback);
+                        }, 'json', false, false, "POST");
                     
                     }
                 }); 

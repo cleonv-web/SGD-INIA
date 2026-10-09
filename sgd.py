@@ -258,11 +258,59 @@ ALTER ROLE sgd_app IN DATABASE %s SET search_path=idosgd,public;
         tail+='UPDATE idosgd.tdtr_parametros SET de_par='+quote(value)+' WHERE co_par='+quote(k)+';\n'
     (ROOT/'datos/documentos').mkdir(exist_ok=True)
     # Una única transacción: esquema + catálogos + ficticios + permisos + marca.
-    sql=header+schema+'\n'+seed+'\n'+tail
+    sql=header+schema+'\n'+seed+'\n'+sql_plantillas()+'\n'+tail
     f=DATA/'INSTALACION-MANUAL-PRIVADA.sql';f.write_text(sql,encoding='utf-8')
     if os.name!='nt':f.chmod(0o600)
     print('SQL de recuperación generado en datos/INSTALACION-MANUAL-PRIVADA.sql. Contiene claves privadas.',flush=True)
     return sql
+
+def comprobar_plantillas():
+    folder=ROOT/'plantillas-docx'
+    manifest=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
+    entries=manifest['plantillas']
+    if manifest.get('dependencia_predeterminada')!='00000' or sorted(e['tipo'] for e in entries)!=['001','003']:
+        raise RuntimeError('El paquete requiere las plantillas base OFICIO 001 e INFORME 003.')
+    result=[]
+    for entry in entries:
+        name=entry['archivo']
+        if name!={'001':'OFICIO-INIA.docx','003':'INFORME-INIA.docx'}[entry['tipo']]:raise RuntimeError('El archivo no corresponde al tipo documental de la plantilla.')
+        content=(folder/name).read_bytes()
+        if hashlib.sha256(content).hexdigest()!=entry['sha256']:raise RuntimeError('Hash de plantilla no coincide: '+name)
+        with zipfile.ZipFile(folder/name) as doc:
+            if doc.testzip() or 'word/document.xml' not in doc.namelist():raise RuntimeError('DOCX de plantilla no válido: '+name)
+            if any(n.lower().endswith('vbaproject.bin') for n in doc.namelist()):raise RuntimeError('La plantilla no debe incluir macros.')
+        result.append((entry['tipo'],name,content))
+    return result
+
+def sql_plantillas():
+    # Se inserta solo la alternativa global; nunca se reemplaza un formato existente.
+    sql="SELECT pg_advisory_xact_lock(hashtext('sgd-plantillas-inia-00000'));\n"
+    for code,name,content in comprobar_plantillas():
+        blob="decode("+quote(content.hex())+",'hex')"
+        sql+=("INSERT INTO idosgd.tdtr_plantilla_docx(co_tipo_doc,co_dep,bl_doc,nom_archivo,es_doc,fe_crea,us_crea) VALUES ("+
+              quote(code)+",'00000',"+blob+","+quote(name)+",'1',now(),'SGD_PORTABLE') ON CONFLICT(co_dep,co_tipo_doc) DO NOTHING;\n")
+        sql+=("DO $plantilla$ BEGIN IF NOT EXISTS(SELECT 1 FROM idosgd.tdtr_plantilla_docx WHERE co_dep='00000' AND co_tipo_doc="+
+              quote(code)+" AND es_doc='1' AND bl_doc="+blob+") THEN RAISE EXCEPTION 'La plantilla global del tipo "+code+
+              " ya existe y es distinta o inactiva. No se reemplazo; revise el formato institucional.'; END IF; END $plantilla$;\n")
+    return sql
+
+def plantillas(aplicar=False,confirmar=None):
+    if confirmar and not aplicar:raise RuntimeError('--confirmar requiere --aplicar.')
+    if aplicar and confirmar!='PLANTILLAS:INIA':raise RuntimeError('Para aplicar las plantillas use --aplicar --confirmar PLANTILLAS:INIA.')
+    sql=sql_plantillas()
+    plan=DATA/'plantillas-INIA.sql';plan.write_text(sql,encoding='utf-8')
+    if not aplicar:
+        print('Plantillas OFICIO e INFORME verificadas sin consultar BD. Plan: '+str(plan),flush=True)
+        print('Para una instalación existente, revisar los DOCX y ejecutar Plantillas-SGD con --aplicar --confirmar PLANTILLAS:INIA. La BD debe estar iniciada.',flush=True)
+        return
+    if C.get('modo')=='solo_payara':raise RuntimeError('Aplicar desde el equipo que administra PostgreSQL, con su configuración y runtimes.')
+    if not (DATA/'credenciales.json').is_file():raise RuntimeError('Faltan las credenciales de esta instalación. No se crea otra base ni nuevas claves.')
+    backup=DATA/('respaldo-antes-plantillas-'+time.strftime('%Y%m%dT%H%M%S')+'-'+secrets.token_hex(3)+'.dump')
+    pg_tool('pg_dump',[*connection(),'-Fc','--file',backup],log='plantillas-respaldo.log')
+    with backup.open('rb') as saved:backup_hash=hashlib.file_digest(saved,'sha256').hexdigest()
+    backup.with_suffix('.dump.sha256').write_text(backup_hash+'  '+backup.name+'\n',encoding='utf-8')
+    psql(sql,transaction=True,log='plantillas-aplicar.log')
+    print('Plantillas globales INIA confirmadas en una transacción. Respaldo: '+str(backup),flush=True)
 
 def domain_properties():
     for folder in (ROOT/'payara/plantillas').iterdir():
@@ -448,6 +496,8 @@ def detener():
 
 def empaquetar():
     """ZIP para instalación nueva: fuentes y runtimes, sin la base ni claves locales."""
+    comprobar_paquete_cliente()
+    comprobar_plantillas()
     target=ROOT.parent/'SGD-INIA-INSTALL_PG-PORTABLE.zip'
     domain_xml=None
     if (DOMAIN/'config/domain.xml').exists():
@@ -462,6 +512,8 @@ def empaquetar():
             if not f.is_file():continue
             rel=f.relative_to(ROOT);parts=rel.parts
             if parts[0] in ['datos','.git'] or 'target' in parts or '__pycache__' in parts or f.suffix in ['.class','.tmp']:continue
+            if f.name in ['configuracion.json','configuracion.local.json'] or re.fullmatch(r'configuracion\..*\.local\.json',f.name):continue
+            if f.name=='.env' or (f.name.startswith('.env.') and f.name!='.env.example'):continue
             if parts[0]=='logs' and f.name not in ['compilacion.json','pruebas-funcionales.json','qa-rollback.json']:continue
             if parts[:4]==('payara','payara5','glassfish','domains'):
                 if len(parts)<6 or parts[4]!='sgd' or parts[5]!='config':continue
@@ -470,18 +522,105 @@ def empaquetar():
                     z.writestr(ROOT.name+'/'+rel.as_posix(),domain_xml);count+=1;continue
             if f.name.startswith('~$') or f.name.endswith(('.lastUpdated','.lock')):continue
             z.write(f,ROOT.name+'/'+rel.as_posix());count+=1
+        # El destino empieza con el ejemplo público, nunca con ajustes privados locales.
+        z.writestr(ROOT.name+'/configuracion.json',(ROOT/'configuracion.ejemplo.json').read_bytes());count+=1
         # Payara necesita estos directorios antes de configurar el dominio prearmado.
         for name in ['datos','logs','payara/payara5/glassfish/domains/sgd/lib','payara/payara5/glassfish/domains/sgd/docroot','payara/payara5/glassfish/domains/sgd/logs','payara/payara5/glassfish/domains/sgd/autodeploy','payara/payara5/glassfish/domains/sgd/applications']:
             z.writestr(ROOT.name+'/'+name+'/',b'')
     target.with_suffix('.tmp').replace(target)
-    digest=hashlib.file_digest(target.open('rb'),'sha256').hexdigest()
+    with target.open('rb') as archive:digest=hashlib.file_digest(archive,'sha256').hexdigest()
     target.with_suffix('.zip.sha256').write_text(digest+'  '+target.name+'\n',encoding='ascii')
     print('Paquete limpio creado: '+str(target)+' ('+str(count)+' archivos).',flush=True)
 
+def comprobar_paquete_cliente():
+    """Valida el instalador externo sin ejecutarlo ni consultar bases."""
+    folder=ROOT/'cliente-windows'
+    msi=folder/'InstallerTramiteDoc.msi'
+    metadata=folder/'PROCEDENCIA.json'
+    if not msi.is_file() or not metadata.is_file():
+        raise RuntimeError('Falta el cliente original en cliente-windows. Copiar el paquete portable completo; Git no incluye el MSI externo.')
+    expected=json.loads(metadata.read_text(encoding='utf-8'))['sha256']
+    with msi.open('rb') as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()
+    if actual!=expected:
+        raise RuntimeError('El SHA256 de InstallerTramiteDoc.msi no coincide con PROCEDENCIA.json. No se ejecutó el instalador.')
+    return msi
+
+def estado_cliente_windows():
+    """Lee protocolo y editor de esta cuenta Windows; no abre aplicaciones."""
+    import winreg
+    def value(root,key,name=''):
+        try:
+            with winreg.OpenKey(root,key) as handle:return winreg.QueryValueEx(handle,name)[0]
+        except OSError:return None
+    command=value(winreg.HKEY_CLASSES_ROOT,r'Tramitedoc\shell\open\command')
+    protocol=value(winreg.HKEY_CLASSES_ROOT,'Tramitedoc','URL Protocol')
+    match=re.fullmatch(r'"([^"\r\n]+)"\s+"?%1"?',command or '',re.IGNORECASE)
+    executable=Path(os.path.expandvars(match.group(1))) if match else None
+    registered=(protocol is not None and executable is not None and
+                executable.name.lower()=='tramitedoc.exe' and executable.is_file())
+    word_paths=[value(root,r'Software\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE')
+                for root in [winreg.HKEY_CURRENT_USER,winreg.HKEY_LOCAL_MACHINE]]
+    word=any(path and Path(os.path.expandvars(path.strip('"'))).is_file() for path in word_paths)
+    return {'protocolo':registered,'word':word}
+
+def verificar_cliente():
+    comprobar_paquete_cliente()
+    if os.name!='nt':
+        raise RuntimeError('El cliente suministrado es para Windows. Preparar la PC Windows que usa el navegador con Cliente-SGD.bat. El servidor Linux no instala ese MSI.')
+    state=estado_cliente_windows()
+    if not state['protocolo']:
+        raise RuntimeError('Tramitedoc no está correctamente registrado en esta PC. Ejecutar Cliente-SGD.bat instalar desde la cuenta que usa el navegador.')
+    if not state['word']:
+        raise RuntimeError('No se encontró WINWORD.EXE registrado. Preparar Microsoft Word en este puesto y repetir Cliente-SGD.bat verificar. No se instala Office automáticamente.')
+    print('Requisitos del puesto verificados: protocolo Tramitedoc con ejecutable existente y Word registrado.',flush=True)
+    print('Ingresar al SGD, permitir abrir Tramitedoc y comprobar el indicador verde. Esta verificación no certifica APPCLIENT ni genera documentos.',flush=True)
+
+def instalar_cliente():
+    msi=comprobar_paquete_cliente()
+    if os.name!='nt':
+        raise RuntimeError('El MSI Tramitedoc requiere Windows. En cada puesto Windows ejecutar Cliente-SGD.bat; el servidor Linux se instala con Instalar-SGD.sh.')
+    if not estado_cliente_windows()['protocolo']:
+        print('Abriendo el asistente original Tramitedoc. Completarlo y aceptar la elevación de Windows si la solicita.',flush=True)
+        result=subprocess.run(['msiexec.exe','/i',str(msi),'/norestart'],cwd=ROOT)
+        if result.returncode==3010:
+            raise RuntimeError('Tramitedoc requiere reiniciar Windows. Reiniciar y repetir Cliente-SGD.bat verificar antes de usar Generar Doc.')
+        if result.returncode==1602:
+            raise RuntimeError('Se canceló el asistente Tramitedoc. El puesto todavía no está preparado para Generar Doc.')
+        if result.returncode!=0:
+            raise RuntimeError('El instalador Tramitedoc terminó con código '+str(result.returncode)+'. El puesto no se declara preparado.')
+    else:
+        print('Tramitedoc ya está registrado: se conserva la instalación existente.',flush=True)
+    verificar_cliente()
+
+def instalar(equipo=None):
+    """Instalación guiada: separa el servidor de la estación del navegador."""
+    comprobar_paquete_cliente()
+    if equipo is None:
+        print('Seleccione el uso de ESTE equipo:',flush=True)
+        print('1. Solo servidor PostgreSQL/Payara (los puestos se preparan por separado).',flush=True)
+        if os.name=='nt':
+            print('2. Servidor y puesto de trabajo en esta PC Windows.',flush=True)
+            print('3. Solo puesto de trabajo Windows, sin instalar servidor ni BD.',flush=True)
+        try:choice=input('Opción: ').strip()
+        except EOFError:raise RuntimeError('Falta seleccionar el uso del equipo. Usar Instalar-SGD servidor, completo o puesto según corresponda.')
+        equipo={'1':'servidor','2':'completo','3':'puesto'}.get(choice)
+        if equipo is None:raise RuntimeError('Opción de equipo inválida; no se inició la instalación.')
+    if equipo not in ['servidor','completo','puesto']:
+        raise RuntimeError('Uso del equipo inválido: servidor, completo o puesto.')
+    if os.name!='nt' and equipo!='servidor':
+        raise RuntimeError('Este paquete prepara puestos con Windows. En Linux elegir servidor y ejecutar Cliente-SGD.bat en la estación Windows.')
+    if equipo in ['completo','puesto']:instalar_cliente()
+    if equipo in ['servidor','completo']:todo()
+    if equipo=='puesto':
+        print('Puesto preparado: no se instalaron ni modificaron PostgreSQL, Payara ni usuarios. Pendiente comprobar conexión y ciclo documental en el navegador.',flush=True)
+
 def todo():
+    comprobar_paquete_cliente()
+    comprobar_plantillas()
     diagnosticar();compilar()
     if C.get('modo')=='solo_payara':
         configurar();desplegar();verificar()
+        print('Servidor preparado. Antes de Generar Doc, ejecutar Cliente-SGD.bat en cada estación Windows y comprobar conexión verde.',flush=True)
         print('SGD disponible: '+C['url_publica']+'/sisdoc/login.do',flush=True);return
     base()
     if (DATA/'respaldo-portable.dump').exists() and scalar("SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname='idosgd')")=='f':restaurar()
@@ -490,13 +629,22 @@ def todo():
         psql((ROOT/'bd/03-validar.sql').read_text(encoding='utf-8'),transaction=True,log='bd-validacion.log')
         print('Base nativa lista. Si Payara está en otro equipo, copiar datos/credenciales.json. No repetir la carga SQL.',flush=True);return
     configurar();desplegar();verificar()
+    print('Servidor preparado. Antes de Generar Doc, ejecutar Cliente-SGD.bat en cada estación Windows y comprobar conexión verde.',flush=True)
     print('SGD disponible: '+C['url_publica']+'/sisdoc/login.do\nClaves: datos/ACCESOS-LABORATORIO.txt',flush=True)
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('accion',choices=['todo','diagnosticar','compilar','base','datos','configurar','desplegar','verificar','iniciar','detener','respaldar','restaurar','generar_sql','empaquetar'])
+    parser.add_argument('accion',choices=['instalar','instalar_cliente','verificar_cliente','plantillas','todo','diagnosticar','compilar','base','datos','configurar','desplegar','verificar','iniciar','detener','respaldar','restaurar','generar_sql','empaquetar'])
+    parser.add_argument('--equipo',choices=['servidor','completo','puesto'],help='Uso de este equipo; solo para la acción instalar.')
+    parser.add_argument('--aplicar',action='store_true',help='Aplicar plantillas en una instalación existente; solo para plantillas.')
+    parser.add_argument('--confirmar',help='Confirmación explícita; solo para plantillas.')
     args=parser.parse_args()
-    try:globals()[args.accion]()
+    try:
+        if args.equipo and args.accion!='instalar':raise RuntimeError('--equipo solo corresponde a la acción instalar.')
+        if (args.aplicar or args.confirmar) and args.accion!='plantillas':raise RuntimeError('--aplicar y --confirmar solo corresponden a plantillas.')
+        if args.accion=='instalar':instalar(args.equipo)
+        elif args.accion=='plantillas':plantillas(args.aplicar,args.confirmar)
+        else:globals()[args.accion]()
     except Exception as e:
         message=redact(str(e));(LOG/'ULTIMO-ERROR.txt').write_text(message,encoding='utf-8')
         print('ERROR: '+message,file=sys.stderr);sys.exit(1)

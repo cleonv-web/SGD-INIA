@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "origen": "Diseño adaptado del memorando INIA suministrado por el operador",
+  "dependencia_predeterminada": "00000",
+  "plantillas": [
+    {
+      "tipo": "003",
+      "archivo": "INFORME-INIA.docx",
+      "sha256": "b25b4e1154385d3b8b86dce582d7e806cf173d39e1d449326da5cceffca67847",
+      "campos": [
+        "ASUNTO",
+        "CARGO_EMP_DESTINO",
+        "CARGO_EMP_EMITE",
+        "COPIA",
+        "DEPENDENCIA_DESTINO",
+        "DEPENDENCIA_EMITE",
+        "DEPENDENCIA_TITULO",
+        "EMPLEADO_DESTINO",
+        "EMPLEADO_EMITE",
+        "FECHA_DOC",
+        "INICIALES_EMP",
+        "NOMBRE_ANIO",
+        "NOMBRE_ANIO2",
+        "NRO_EXPEDIENTE",
+        "NUMERO_DOC",
+        "REFERENCIA"
+      ]
+    },
+    {
+      "tipo": "001",
+      "archivo": "OFICIO-INIA.docx",
+      "sha256": "a41dd3275c0ff645b4af98b03838052b9a558a385cabc7830efdaa126b99aedf",
+      "campos": [
+        "ASUNTO",
+        "CARGO",
+        "CARGO_EMP_DESTINO",
+        "CARGO_EMP_EMITE",
+        "COPIA",
+        "DEPENDENCIA_DESTINO",
+        "DEPENDENCIA_EMITE",
+        "DEPENDENCIA_TITULO",
+        "DIRECCION_DESTINATARIO",
+        "EMPLEADO_DESTINO",
+        "EMPLEADO_EMITE",
+        "ENTIDAD_PRIVADA_DESTINATARIO",
+        "FECHA_DOC",
+        "INICIALES_EMP",
+        "NOMBRE_ANIO",
+        "NOMBRE_ANIO2",
+        "NOMBRE_DESTINATARIO",
+        "NRO_EXPEDIENTE",
+        "NUMERO_DOC",
+        "REFERENCIA"
+      ]
+    }
+  ]
+}

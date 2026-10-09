@@ -1,0 +1,13 @@
+{
+  "archivo": "InstallerTramiteDoc.msi",
+  "origen": "ONPE_PCM.zip suministrado por el operador",
+  "entrada_zip": "ONPE_PCM/SGD + MPV/e) Complementos/Cliente - Firma ONPE/InstallerTramiteDoc.msi",
+  "fabricante_msi": "ONPE",
+  "producto_msi": "Tramitedoc",
+  "version_msi": "1.0.4.0",
+  "sha256": "07f3b0372f2f73ee42ca8d6233a85b210c9a665a352e56bb220aff2155676bb6",
+  "firma_authenticode": "NotSigned",
+  "protocolo_msi": "Tramitedoc",
+  "comando_msi": "\"C:\\Tramitedoc\\Tramitedoc.exe\" \"%1\"",
+  "validacion": "Metadatos y hash comprobados. Instalación, conexión del cliente y generación real pendientes."
+}

@@ -189,6 +189,20 @@ public class DocumentoObjetoController {
     }
 
     
+    @RequestMapping(method = RequestMethod.POST, params = "accion=goValidarPlantillaDocx")
+    private @ResponseBody Map<String, String> goValidarPlantillaDocx(HttpServletRequest request) {
+        Map<String, String> resultado = new HashMap<String, String>();
+        Usuario usuario = Utilidades.getInstancia().loadUserFromSession(request);
+        String nuAnn = ServletUtility.getInstancia().loadRequestParameter(request, "nuAnn");
+        String nuEmi = ServletUtility.getInstancia().loadRequestParameter(request, "nuEmi");
+        if (usuario == null || nuAnn == null || nuAnn.length() == 0 || nuEmi == null || nuEmi.length() == 0) {
+            resultado.put("retval", "Sesión o datos del documento no válidos. Vuelva a ingresar al SGD.");
+        } else {
+            resultado.put("retval", documentoObjService.validarPlantillaDocx(nuAnn, nuEmi));
+        }
+        return resultado;
+    }
+
     @RequestMapping(method = RequestMethod.POST, params = "accion=goRutaGeneraDocx")
     private @ResponseBody String goRutaGeneraDocx(HttpServletRequest request, Model model) throws Exception {
         String retval = "";

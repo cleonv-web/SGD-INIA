@@ -24,6 +24,7 @@ import pe.gob.onpe.libreria.exception.validarDatoException;
 import pe.gob.onpe.libreria.util.Utility;
 import pe.gob.onpe.tramitedoc.bean.BuscarDocumentoEmiConsulBean;
 import pe.gob.onpe.tramitedoc.bean.DocumentoDatoBean;
+import pe.gob.onpe.tramitedoc.bean.PlantillaDocx;
 import pe.gob.onpe.tramitedoc.bean.DocumentoObjBean;
 import pe.gob.onpe.tramitedoc.bean.DocumentoObjBlock;
 import pe.gob.onpe.tramitedoc.bean.DocumentoVerBean;
@@ -35,12 +36,14 @@ import pe.gob.onpe.tramitedoc.dao.DocumentoObjDao;
 import pe.gob.onpe.tramitedoc.service.AnexoDocumentoService;
 import pe.gob.onpe.tramitedoc.service.CommonQryService;
 import pe.gob.onpe.tramitedoc.service.DocumentoObjService;
+import pe.gob.onpe.tramitedoc.service.DatosPlantillaService;
 import pe.gob.onpe.tramitedoc.service.DocumentoVoBoService;
 import pe.gob.onpe.tramitedoc.service.DocumentoXmlService;
 import pe.gob.onpe.tramitedoc.service.EmiDocumentoAdmService;
 import pe.gob.onpe.tramitedoc.service.EmiDocumentoPersonalService;
 import pe.gob.onpe.tramitedoc.util.ArchivoTemporal;
 import pe.gob.onpe.tramitedoc.util.Constantes;
+import pe.gob.onpe.tramitedoc.util.NombreArchivoDocumento;
 import pe.gob.onpe.tramitedoc.util.LsAleatorioViewDoc;
 import pe.gob.onpe.tramitedoc.web.util.ApplicationProperties;
 import pe.gob.onpe.tramitedoc.web.util.Utilidades;
@@ -52,6 +55,9 @@ public class DocumentoObjServiceImp implements DocumentoObjService{
     
     @Autowired
     private DocumentoObjDao documentoObjDao;
+
+    @Autowired
+    private DatosPlantillaService datosPlantillaService;
 
      @Autowired
     private DocumentoBasicoDao documentoBasicoDao;
@@ -201,20 +207,20 @@ public class DocumentoObjServiceImp implements DocumentoObjService{
                 //Nombre de los archivos
                 if(ptiOpe.equals("0")){
                     if(docDatoBean.getNumeroDoc()!=null&&docDatoBean.getNumeroDoc().trim().length()>0){
-                        nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-"+docDatoBean.getNumeroDoc()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                        nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-"+docDatoBean.getNumeroDoc()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                     }else{
-                        nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                        nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                     }
                 }else if(ptiOpe.equals("1") || ptiOpe.equals("2") ){
-                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }else if(ptiOpe.equals("3")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
                 }else if(ptiOpe.equals("4")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                 }else if(ptiOpe.equals("5")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }else{
-                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }
                 
             }else{ /*archivo viene de mesa de partes*/
@@ -272,7 +278,7 @@ public class DocumentoObjServiceImp implements DocumentoObjService{
             if(docDatoBean.getTiEmi().equals("01")){
                 //Nombre de los archivos
              
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                
                 
             }else{ /*archivo viene de mesa de partes*/
@@ -316,7 +322,7 @@ public class DocumentoObjServiceImp implements DocumentoObjService{
             //verificamos si el documento es generado en la institucion
             // NOTA controlar en caso de TI_EMI <> 01
             if(docDatoBean.getTiEmi().equals("01") || docDatoBean.getTiEmi().equals("05")){
-               nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+               nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
             }
             docVerBean.setUrlDocumento(urlDoc);
             docVerBean.setNoDocumento(nombreDoc);
@@ -325,6 +331,29 @@ public class DocumentoObjServiceImp implements DocumentoObjService{
         }
         return(docVerBean);
    }
+
+    @Override
+    public String validarPlantillaDocx(String pnuAnn, String pnuEmi) {
+        DocumentoDatoBean datos = getDatosDoc(pnuAnn, pnuEmi);
+        if (datos == null) {
+            return "No se pudieron obtener los datos para comprobar la plantilla.";
+        }
+        try {
+            List<PlantillaDocx> plantillas = datosPlantillaService.getLstPlantillasDocx(datos.getCoDepEmi(), datos.getCoDoc());
+            if (plantillas == null) {
+                return "No se pudo comprobar la plantilla DOCX. Solicite la revisión de su configuración.";
+            }
+            if (plantillas.isEmpty()) {
+                return "No hay una plantilla DOCX configurada para este tipo de documento y dependencia. Solicite al responsable del SGD registrar la plantilla institucional antes de usar Generar Doc.";
+            }
+            if (plantillas.get(0) == null || plantillas.get(0).getTemplate() == null) {
+                return "La plantilla DOCX configurada no se pudo cargar. Solicite al responsable del SGD revisar el archivo de la plantilla.";
+            }
+            return "OK";
+        } catch (Exception ex) {
+            return "No se pudo comprobar la plantilla DOCX. Solicite la revisión de su configuración.";
+        }
+    }
     
 
     @Override
@@ -466,10 +495,10 @@ public class DocumentoObjServiceImp implements DocumentoObjService{
                String vnumDoc="";
                 
                if(ptiOpe.equals("3")){
-                   vnumDoc = "R"+docDatoBean.getNuCorEmi()+"-"+docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+                   vnumDoc = "R"+docDatoBean.getNuCorEmi()+"-"+docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-"+vnumDoc;
                }else if(ptiOpe.equals("4")){
-                   vnumDoc = "R"+docDatoBean.getNuCorEmi()+"-"+docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                   vnumDoc = "R"+docDatoBean.getNuCorEmi()+"-"+docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-"+vnumDoc;
                }else{
                    nombreDoc = null;
@@ -837,13 +866,13 @@ public class DocumentoObjServiceImp implements DocumentoObjService{
             if(docDatoBean.getTiEmi().equals("01")||docDatoBean.getTiEmi().equals("05")){
                 //Nombre de los archivos
                 if(ptiOpe.equals("3")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
                 }else if(ptiOpe.equals("4")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                 }else if(ptiOpe.equals("5")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }else{
-                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }
                 
             }else{ /*archivo viene de mesa de partes*/
@@ -1396,13 +1425,13 @@ public class DocumentoObjServiceImp implements DocumentoObjService{
             if(docDatoBean.getTiEmi().equals("01")||docDatoBean.getTiEmi().equals("05")){
                 //Nombre de los archivos
                 if(ptiOpe.equals("3")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
                 }else if(ptiOpe.equals("4")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                 }else if(ptiOpe.equals("5")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }else{
-                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-R"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }
                 
             }else{ /*archivo viene de mesa de partes*/

@@ -122,6 +122,52 @@ Ante un error revisar logs/ULTIMO-ERROR.txt y el log del paso indicado. Los erro
 
 Puerto ocupado: detener esta instancia con su lanzador o elegir otros puertos; los scripts no detienen motores ajenos. Dependencia o ejecutable ausente: copiar nuevamente el paquete completo y comprobar SHA256. PostgreSQL no inicia: revisar permisos, cuenta no root en Linux y versión de datos 17. Login fallido: utilizar las claves de esa misma instalación y revisar logs/login-fallido.html. El cifrado no se sustituye por una contraseña escrita en SQL.
 
+### Cliente Tramitedoc y Generar Doc
+
+La generación y apertura mediante el escritorio requieren Tramitedoc en **la PC que usa el navegador**, aunque Payara y PostgreSQL estén en servidores separados o en Linux. El WAR `wstradoc` comunica BROWSER con APPCLIENT; una prueba WebSocket 101 del servidor no confirma que el cliente de escritorio esté conectado.
+
+En la revisión local se comprobó que Windows no tenía registrado el protocolo `tramitedoc:` y Chrome informó que no existía un controlador. También se reprodujo el error JavaScript `Please specify a message`: el flujo antiguo intentaba continuar sin cliente y pasaba `false` a Bootbox. La excepción impedía cerrar PROCESANDO. La corrección detiene ese flujo, cierra la espera y muestra un mensaje de conexión; una verificación de archivo inválida tampoco continúa con la generación. No se consultaron ni modificaron datos de la BD.
+
+El paquete incluye `cliente-windows/InstallerTramiteDoc.msi`, producto ONPE Tramitedoc 1.0.4.0, recuperado del ZIP original del operador. `PROCEDENCIA.json` registra origen y hash. Tramitedoc conecta el navegador con los archivos y programas de la PC para generar, abrir y cargar documentos. Instalar-SGD.bat solicita elegir solo servidor, servidor y puesto Windows, o solo puesto Windows. Las opciones de puesto instalan o verifican el cliente. Instalar-SGD.sh prepara el servidor Linux; sus puestos Windows se preparan por separado. Actualizar-SGD conserva el flujo de actualización del servidor.
+
+Para una instalación nueva se puede elegir el uso al ejecutar Instalar-SGD o indicarlo directamente:
+
+```powershell
+.\Instalar-SGD.bat servidor
+.\Instalar-SGD.bat completo
+.\Instalar-SGD.bat puesto
+```
+
+Ejecutar solo la opción que corresponda. `completo` prepara servidor y puesto en la misma PC; `puesto` no instala servidor ni BD. En Linux, `bash Instalar-SGD.sh servidor` instala el servidor. `Cliente-SGD.sh` informa que el MSI suministrado es para Windows y devuelve error al intentar preparar un puesto Linux, sin instalarlo ni simular éxito.
+
+Preparar cada estación Windows:
+
+1. Conservar cualquier edición pendiente antes de actualizar el servidor o recargar el navegador. Para incorporar la corrección del código usar Actualizar-SGD, sin reinstalar el SGD ni repetir cargas.
+2. En la PC que usa Chrome, preparar el cliente desde la raíz del portable completo:
+
+   ```powershell
+   .\Cliente-SGD.bat instalar
+   ```
+
+   Comprueba el SHA256 antes de ejecutar el MSI. Si el protocolo ya apunta al ejecutable existente, conserva la instalación; de lo contrario abre el asistente original. Completarlo y aceptar la elevación si Windows la solicita. No instala Office.
+
+3. Verificar los requisitos con la misma cuenta Windows que usa Chrome:
+
+   ```powershell
+   .\Cliente-SGD.bat verificar
+   ```
+
+   Comprueba el protocolo, el ejecutable existente, el argumento `%1` y la presencia de Word registrado. Una cancelación, error del MSI, reinicio pendiente o requisito ausente detiene el paso. Si faltan, reparar la instalación; no crear una clave que apunte a un archivo inexistente. La comprobación real en esta PC aprobó protocolo y presencia de Word; no demuestra conexión ni generación.
+
+4. Volver a ingresar al SGD y permitir la apertura de Tramitedoc cuando Chrome lo solicite. Confirmar el indicador verde de conexión del cliente y la ruta de documentos de esa estación. Su cuenta Windows debe poder escribir en la ruta. Si el indicador continúa rojo, revisar la ejecución del cliente y su conexión al WebSocket del mismo servidor y canal del navegador.
+5. Con indicación del operador, probar Generar Doc con un documento de prueba autorizado, comprobar su apertura en el editor y después probar la carga y reapertura desde el repositorio. Este diagnóstico no ejecutó generación, carga, emisión ni firma de documentos reales.
+
+El manual original ONPE de requisitos, sección 4.1, especifica Microsoft Word y describe Office desde 2010; es una referencia histórica, no una certificación de compatibilidad de todas las versiones actuales. En esta PC se encontró `WINWORD.EXE`; no se ha probado su apertura desde Tramitedoc. No se consultaron plantillas de la BD activa. El SQL original de estructura trae cero filas de tdtr_plantilla_docx; el instalador actualizado incorpora las dos plantillas INIA al generar la carga inicial. Las instrucciones antiguas sobre Java en el navegador o firmas no se aplican automáticamente a este diagnóstico; el piloto conserva la firma opcional.
+
+Validación de la corrección: 17 escenarios JavaScript offline con respuestas ficticias cubren cliente ausente, socket cerrado, verificación inválida, generación con respuesta falsa/vacía, archivo nuevo, archivo existente y apertura de Word del repositorio. Se prueban las funciones reales sin HTTP, BD ni documentos reales. Ejecutar `node tests/test_generar_documento.js` cuando Node.js esté disponible para desarrollo. Esto no certifica la instalación del MSI, la comunicación con APPCLIENT ni el ciclo documental completo.
+
+Integración del cliente: 18 pruebas offline aprobadas en `tests/test_instalacion_cliente.py` cubren hash, errores, cancelación, reinicio pendiente, instalación existente, Word ausente y separación de servidor/puesto. Simulan las respuestas del MSI; no ejecutan un instalador real ni certifican una instalación completa en otra PC.
+
 ## 8. Copiar a otro equipo y respaldar
 Para una instalación nueva utilizar el ZIP limpio entregado. Para generar otro ZIP tras cambios de fuentes, ejecutar SGD.bat empaquetar o bash SGD.sh empaquetar. Se crea SGD-INIA-INSTALL_PG-PORTABLE.zip junto a la carpeta, con archivo SHA256. Excluye base activa, claves, documentos, target y despliegues antiguos. El destino recompila y crea nuevas claves.
 
@@ -149,4 +195,40 @@ La instalación en un Windows Server físico diferente todavía requiere ejecuta
 
 ## 10. Carga y retiro por área
 
-Procedimiento, formatos, comandos Windows/Linux y propuesta de piloto en manual/CARGA-POR-AREA.md; también en las secciones 10 a 13 de manual/Manual-Instalacion-SGD-INIA-PG-Validacion.docx. Cargar-Area exige usuarios verificados; Limpiar-BD retira sólo un área rastreada, conservando catálogos e historia. Su preparación no ejecutó operaciones contra las bases.
+Procedimiento, formatos, comandos Windows/Linux y propuesta de piloto en manual/CARGA-POR-AREA.md; también en las secciones 10 a 13 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Cargar-Area exige usuarios verificados; Limpiar-BD retira sólo un área rastreada, conservando catálogos e historia. Su preparación no ejecutó operaciones contra las bases.
+
+### Plantillas y nombres de archivo
+
+El portable incluye `plantillas-docx/INFORME-INIA.docx` (003) y `OFICIO-INIA.docx` (001), adaptados al memorando suministrado: cabecera MIDAGRI e INIA, dependencia emisora, denominaciones anuales y pie institucional. INFORME organiza antecedentes, análisis, conclusiones y recomendaciones; OFICIO contiene destinatario, asunto, referencia, fecha y cuerpo editable. Los campos reciben los datos del SGD. OFICIO usa el destinatario externo cuando está informado y, en su ausencia, los datos internos. No se copiaron los nombres, número, asunto, texto, firma, QR ni código de verificación del ejemplo. La plantilla no afirma que el documento esté firmado.
+
+La carga inicial del instalador incorpora ambos formatos activos en `tdtr_plantilla_docx`, dependencia global `00000`, dentro de la misma transacción de instalación. El DAO conserva la selección de formatos por área y utiliza la alternativa global cuando corresponde. Una restauración conserva el contenido del respaldo y no ejecuta una segunda carga inicial. Para una base existente o restaurada sin estos formatos, seguir el procedimiento siguiente; no reinstalar ni repetir la carga de UTI.
+
+1. Revisar las dos plantillas DOCX y, desde la raíz del portable completo, ejecutar una de estas opciones. Solo verifica hashes y DOCX y genera `datos/plantillas-INIA.sql`; no consulta la BD:
+
+   ```powershell
+   .\Plantillas-SGD.bat
+   ```
+
+   ```bash
+   bash Plantillas-SGD.sh
+   ```
+
+2. Con PostgreSQL ya iniciado y las credenciales de esa instalación presentes, el operador aplica desde el equipo que administra la BD, usando una sola opción:
+
+   ```powershell
+   .\Plantillas-SGD.bat --aplicar --confirmar PLANTILLAS:INIA
+   ```
+
+   ```bash
+   bash Plantillas-SGD.sh --aplicar --confirmar PLANTILLAS:INIA
+   ```
+
+   Alternativa PowerShell: `powershell -NoProfile -ExecutionPolicy Bypass -File .\SGD.ps1 plantillas -Aplicar -Confirmar PLANTILLAS:INIA`. El utilitario crea `datos/respaldo-antes-plantillas-FECHA-ID.dump` y su SHA256 antes de aplicar. Si falla el respaldo no carga nada. Si ya existe exactamente el mismo formato activo no lo duplica; si existe otro formato global o está inactivo, rechaza y revierte toda la transacción. No reemplaza formatos por área ni modifica usuarios, expedientes o documentos.
+
+3. Para incorporar las correcciones de Java y JavaScript usar Actualizar-SGD y recargar el navegador, conservando antes cualquier edición pendiente. Confirmar la conexión verde de Tramitedoc y probar el ciclo con un documento autorizado. Estas plantillas fueron procesadas con datos ficticios; no se aplicaron en la BD real durante su preparación.
+
+Para generar un archivo nuevo, el servidor comprueba que exista una plantilla cargable para el tipo y dependencia. Si falta o no se puede cargar, informa la causa y cierra PROCESANDO antes de pedir la descarga a Tramitedoc. Una copia local o un Word del repositorio puede abrirse sin regenerar la plantilla.
+
+Validación de plantillas: 14 pruebas offline del utilitario y seis DOCX ficticios procesados por XDocReport/FreeMarker del paquete, con destinatarios internos, externos y campos vacíos. Una prueba PostgreSQL aislada comprueba los blobs completos, repetición sin duplicados, reversión por conflicto y conservación de formatos por área. Se revisó visualmente cada plantilla y los resultados ficticios. Las pruebas de Docker se ejecutan solo en esta PC de laboratorio; los utilitarios de instalación BAT/SH usan PostgreSQL nativo.
+
+Las barras / y \ de las siglas se sustituyen por guiones únicamente en los nombres de archivo. Generar, abrir y cargar usan el mismo nombre; las siglas del contenido y de los datos no se modifican. No se renombraron archivos existentes. La prueba tests/test_nombres_documento.py ejecuta servicios Java con datos y dependencias ficticias, sin BD ni generación de documentos; requiere compilar primero.

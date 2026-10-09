@@ -28,6 +28,7 @@ public interface DocumentoObjService {
     DocumentoVerBean getNombreDoc(String pnuAnn, String pnuEmi,String ptiOpe,Usuario usuario);
     DocumentoVerBean getNombreDocInicial(String pnuAnn, String pnuEmi);
     DocumentoVerBean getNombreGeneraDocx(String pnuAnn, String pnuEmi,String ptiOpe);
+    String validarPlantillaDocx(String pnuAnn, String pnuEmi);
 
     DocumentoObjBean getNombreArchivoAnexo(String pnuAnn, String pnuEmi, String pnuAnexo);
     String CopiarAnexo(String pnuAnn, String pnuEmi, String pnuAnexo,String pNuAnnDocProyecto, String pnuEmiDocProyecto);

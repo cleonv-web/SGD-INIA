@@ -35,6 +35,7 @@ import pe.gob.onpe.tramitedoc.service.EmiDocumentoAdmService;
 import pe.gob.onpe.tramitedoc.service.EmiDocumentoInteroperabilidadService;
 import pe.gob.onpe.tramitedoc.service.EmiDocumentoPersonalService;
 import pe.gob.onpe.tramitedoc.util.ArchivoTemporal;
+import pe.gob.onpe.tramitedoc.util.NombreArchivoDocumento;
 import pe.gob.onpe.tramitedoc.util.LsAleatorioViewDoc;
 import pe.gob.onpe.tramitedoc.web.util.ApplicationProperties;
 import pe.gob.onpe.tramitedoc.web.util.Utilidades;
@@ -172,20 +173,20 @@ public class DocumentoObjInterServiceImp implements DocumentoObjInterService{
                 //Nombre de los archivos
                 if(ptiOpe.equals("0")){
                     if(docDatoBean.getNumeroDoc()!=null&&docDatoBean.getNumeroDoc().trim().length()>0){
-                        nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-"+docDatoBean.getNumeroDoc()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                        nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-"+docDatoBean.getNumeroDoc()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                     }else{
-                        nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                        nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                     }
                 }else if(ptiOpe.equals("1") || ptiOpe.equals("2") ){
-                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }else if(ptiOpe.equals("3")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
                 }else if(ptiOpe.equals("4")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                 }else if(ptiOpe.equals("5")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }else{
-                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }
                 
             }else{ 
@@ -230,7 +231,7 @@ public class DocumentoObjInterServiceImp implements DocumentoObjInterService{
             //verificamos si el documento es generado en la institucion
             // NOTA controlar en caso de TI_EMI <> 01
             if(docDatoBean.getTiEmi().equals("06")){
-               nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+               nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
             }
             docVerBean.setUrlDocumento(urlDoc);
             docVerBean.setNoDocumento(nombreDoc);
@@ -338,10 +339,10 @@ public class DocumentoObjInterServiceImp implements DocumentoObjInterService{
                     String vnumDoc="";
 
                  if(ptiOpe.equals("3")){
-                        vnumDoc = "I"+docDatoBean.getNuCorEmi()+"-"+docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+                        vnumDoc = "I"+docDatoBean.getNuCorEmi()+"-"+docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
                         nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-"+vnumDoc;
                     }else if(ptiOpe.equals("4")){
-                        vnumDoc = "I"+docDatoBean.getNuCorEmi()+"-"+docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                        vnumDoc = "I"+docDatoBean.getNuCorEmi()+"-"+docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                         nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-"+vnumDoc;
                     }else{
                         nombreDoc = null;
@@ -713,13 +714,13 @@ public class DocumentoObjInterServiceImp implements DocumentoObjInterService{
             if(docDatoBean.getTiEmi().equals("06")){
                 //Nombre de los archivos
                 if(ptiOpe.equals("3")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
                 }else if(ptiOpe.equals("4")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                 }else if(ptiOpe.equals("5")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }else{
-                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }
                 
             }else{ /*archivo viene de mesa de partes*/
@@ -1271,13 +1272,13 @@ public class DocumentoObjInterServiceImp implements DocumentoObjInterService{
             if(docDatoBean.getTiEmi().equals("06")){
                 //Nombre de los archivos
                 if(ptiOpe.equals("3")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".docx";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".docx";
                 }else if(ptiOpe.equals("4")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+".pdf";
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+".pdf";
                 }else if(ptiOpe.equals("5")){
-                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = docDatoBean.getNuAnn()+"|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }else{
-                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+docDatoBean.getSiglasDoc()/*.replaceAll("/", "-")*/+"."+docObjBean.getTipoDoc();
+                    nombreDoc = "TEMP|"+docDatoBean.getTipoDoc()+"-I"+docDatoBean.getNuCorEmi()+"-"+ docDatoBean.getNuAnn()+"-"+NombreArchivoDocumento.siglas(docDatoBean.getSiglasDoc())+"."+docObjBean.getTipoDoc();
                 }
                 
             }else{ /*archivo viene de mesa de partes*/

@@ -23,6 +23,9 @@
 /herramientas/*.tar.gz
 /herramientas/*.zip
 
+# Instalador externo del cliente: incluido en el portable, fuera de Git.
+/cliente-windows/*.msi
+
 # Salidas de compilación. Los JAR de proveedor necesarios sí se conservan.
 **/target/
 **/__pycache__/

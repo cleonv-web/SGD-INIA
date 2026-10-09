@@ -9,4 +9,7 @@ if [[ ! -x "$SGD_PYTHON" ]]; then
   tar -xzf "$SGD_ROOT/herramientas/python-linux.tar.gz" -C "$SGD_ROOT/herramientas/python-linux" --strip-components=1
   chmod +x "$SGD_PYTHON"
 fi
-exec "$SGD_PYTHON" "$SGD_ROOT/sgd.py" "${1:-todo}"
+if [[ $# -eq 0 ]]; then
+  set -- todo
+fi
+exec "$SGD_PYTHON" "$SGD_ROOT/sgd.py" "$@"

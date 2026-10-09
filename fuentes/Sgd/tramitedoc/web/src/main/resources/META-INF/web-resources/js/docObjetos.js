@@ -821,7 +821,8 @@ function fn_generaDocx() {
                                 fn_generaDocDesktop(docs.noUrl, docs.noDoc, docs.nuAnn, docs.nuEmi, docs.tieneWord, function(data) {
                                     result = data;
                                     if (result !== "OK") {
-                                       bootbox.alert(result);
+                                       loadding(false);
+                                       bootbox.alert(typeof result === "string" && result.length > 0 ? result : "El cliente Tramitedoc no pudo generar el documento. Compruebe su conexión en esta PC.");
                                     }
                                 });
                             } else {
