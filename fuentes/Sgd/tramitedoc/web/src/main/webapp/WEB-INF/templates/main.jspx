@@ -22,7 +22,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-                <link rel="shortcut icon" type="image/x-icon" href="${resourceURL}/images/favicon.ico" />
+                <link rel="icon" type="image/svg+xml" href="${resourceURL}/images/favicon-inia.svg" />
         <util:load-scripts-ini/>
 
 		<spring:message code="application_name" var="app_name" htmlEscape="true"/>

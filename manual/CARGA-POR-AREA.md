@@ -153,6 +153,8 @@ bash SGD.sh base
 
 En servidores separados coordinar también la parada de la aplicación remota. Después de la operación arrancar la aplicación con `SGD.bat iniciar` o `bash SGD.sh iniciar`.
 
+**Qué hace iniciar:** en el paquete completo arranca PostgreSQL si está detenido, prepara la conexión y arranca Payara, que ejecuta el SGD. Si los servicios ya están funcionando, no los duplica. No recompila, no despliega cambios, no repite la carga de usuarios ni cambia contraseñas. Una vez que la carga indique «Operación terminada», iniciar y entrar con los usuarios y claves del archivo `CLAVES-GENERADAS-PRIVADAS.json` de esa ejecución confirmada. La carga y el arranque son operaciones distintas.
+
 ```powershell
 .\Cargar-Area.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar CARGAR:00217
 ```

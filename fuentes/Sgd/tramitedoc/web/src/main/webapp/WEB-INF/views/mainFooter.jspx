@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:jsp="http://java.sun.com/JSP/Page">
+<jsp:root xmlns:tiles="http://tiles.apache.org/tags-tiles" version="2.0" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
+    <spring:eval expression="@applicationProps['staticResourcesUrl']" var="iniaFooterResourcesURL"/>
 
     <!--<div id="bottomPanel" dojotype="dijit.layout.ContentPane" region="bottom" widgetid="bottomPanel" role="group">-->
     <div id="bottomPanel">
@@ -28,8 +29,10 @@
             </form>                    
         </div>
      
-        <div style="width:25%; float:right;">
-            <img src="data:image/png;base64,${b64ImgFoot}" title="SGD"/>
+        <div style="width:25%; float:right; text-align:right; box-sizing:border-box; padding:7px 12px;">
+            <img src="${iniaFooterResourcesURL}/images/logo-inia.png" width="220" height="66"
+                 style="max-width:100%; height:auto; vertical-align:middle;"
+                 title="Instituto Nacional de Innovación Agraria" alt="INIA Instituto Nacional de Innovación Agraria"/>
         </div>
       <!-- no mostrar logo -->
         <!--<table width="100%">-->

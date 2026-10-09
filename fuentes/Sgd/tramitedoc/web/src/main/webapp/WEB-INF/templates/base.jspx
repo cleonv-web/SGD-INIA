@@ -17,6 +17,8 @@ xmlns:spring="http://www.springframework.org/tags" xmlns:util="urn:jsptagdir:/WE
         <spring:eval expression="@applicationProps['resources.version']" var="resourceVersion"/>
         <c:set var="resourceURL" value="${ctx}/resources-${resourceVersion}" scope="request" />
 
+        <link rel="icon" type="image/svg+xml" href="${resourceURL}/images/favicon-inia.svg" />
+
         <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/default.css" />
         <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/themes/custom-theme/skin.css" />
         <script src="${resourceURL}/js/default.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
