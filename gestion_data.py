@@ -320,6 +320,17 @@ IF EXISTS(SELECT 1 FROM idosgd.rhtm_per_empleados WHERE cemp_nu_dni=%s AND cemp_
             (q(user['usuario']),q(user['usuario']),q(user['codigo_empleado']),q(user['dni']),q(user['codigo_empleado'])))
     parent_check = '' if area['padre'] is None else '''IF NOT EXISTS(SELECT 1 FROM idosgd.rhtm_dependencia
  WHERE co_dependencia=%s AND in_baja='0') THEN RAISE EXCEPTION 'Padre no existe o esta inactivo'; END IF;''' % q(area['padre'])
+    # Instalaciones anteriores: resolver sólo la sede temporal reconocida.
+    # Usa los datos aprobados del área y comparte la transacción de su carga.
+    # Las demás sedes y los valores institucionales existentes no se sobrescriben.
+    site_upgrade = ''
+    if loc == '001':
+        site_upgrade = '''UPDATE idosgd.si_mae_local
+ SET de_nombre_local=%s, de_direccion_local=%s
+ WHERE ccod_local='001' AND de_nombre_local='INSTALACION LOCAL INIA'
+ AND de_direccion_local='PENDIENTE' AND es_local='1' AND user_creator='admin';
+ IF FOUND THEN RAISE NOTICE 'Sede provisional 001 actualizada con los datos aprobados del area'; END IF;
+''' % (q(sede['nombre']), q(sede['direccion']))
     # No adoptar una dependencia ya existente: no hay limpieza fiable sin procedencia.
     return 'BEGIN;\nSET LOCAL standard_conforming_strings=on;\nSET LOCAL lock_timeout=\'15s\';\n' + LEDGER + \
         'LOCK TABLE ' + ','.join('idosgd.'+t for t in TABLES + ['piloto_areas','piloto_objetos','piloto_usos']) + \
@@ -344,7 +355,7 @@ SELECT '__PILOTO_RESULTADO__' || json_build_object('cuentas_nuevas',coalesce(jso
 FROM pg_temp.nuevas_cuentas;
 COMMIT;
 ''' % (q(dep),q(fingerprint),q(dep),parent_check,'\n'.join(checks),q(dep),q(fingerprint),
-       q(area['nombre']),q(area['verificado_por']),'\n'.join(statements))
+       q(area['nombre']),q(area['verificado_por']),site_upgrade+'\n'.join(statements))
 
 
 def clean_sql(dep):
@@ -387,8 +398,10 @@ BEGIN
    IF item.tabla IN ('rhtm_dependencia','rhtm_per_empleados','seg_usuarios1') THEN
      valor := CASE item.tabla WHEN 'rhtm_dependencia' THEN item.clave->>'co_dependencia'
               WHEN 'rhtm_per_empleados' THEN item.clave->>'cemp_codemp' ELSE item.clave->>'cod_user' END;
+     -- Las vistas proyectan las mismas filas, no son referencias independientes.
      FOR col IN SELECT table_name,column_name FROM information_schema.columns
-       WHERE table_schema='idosgd' AND table_name NOT LIKE 'piloto_%%'
+       JOIN information_schema.tables USING(table_schema,table_name)
+       WHERE table_type='BASE TABLE' AND table_schema='idosgd' AND table_name NOT LIKE 'piloto_%%'
          AND table_name NOT IN ('seg_usuarios_acceso','seg_usuarios_log')
          AND (CASE item.tabla
           WHEN 'rhtm_dependencia' THEN column_name ~ '^(co_dep|cod_dep|cemp_co_depend)' AND character_maximum_length=5

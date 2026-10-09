@@ -24,6 +24,8 @@ Después de modificar fuentes, ejecutar Actualizar-SGD.bat (Windows) o bash Actu
 
 Editar configuracion.json antes de instalar. URL inicial: http://127.0.0.1:8085/sisdoc/login.do. Usuarios ficticios: admin, mesa_demo, area_demo y jefe_demo. Claves por instalación en datos/ACCESOS-LABORATORIO.txt. Puertos: BD 55432, HTTP 8085, HTTPS 8185, administración 4855; auxiliares Payara HTTP+1000 hasta HTTP+1004.
 
+La instalación nueva crea la sede central 001 con sus datos reales. En instalaciones anteriores, la carga por área actualiza automáticamente sólo la sede provisional reconocida (INSTALACION LOCAL INIA / PENDIENTE), usando los datos aprobados del área y la misma transacción. No requiere un SQL adicional; otras sedes existentes se conservan y los conflictos se rechazan.
+
 ## Carpetas
 
 | Carpeta | Contenido |
@@ -54,4 +56,4 @@ Referencias: [binarios PostgreSQL Windows](https://www.enterprisedb.com/download
 
 ## Carga de datos por área
 
-Exportar-Area-SQLServer.sql sólo requiere elegir @Oficina; en el CSV preparado incluir_sgd=1 incluye a una persona e incluir_sgd=0 la omite; estado 1 no demuestra vínculo laboral vigente. Preparar-Carga.bat y Preparar-Carga.sh convierten sus cinco CSV a un borrador pendiente de revisión, sin consultar bases. Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD.bat y Limpiar-BD.sh retiran exclusivamente un área rastreada por el utilitario, conservando catálogos y objetos compartidos. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 a 12 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. No se ha probado todavía una carga o retirada real con estos utilitarios.
+Exportar-Area-SQLServer.sql sólo requiere elegir @Oficina; en el CSV preparado incluir_sgd=1 incluye a una persona e incluir_sgd=0 la omite; estado 1 no demuestra vínculo laboral vigente. Preparar-Carga.bat y Preparar-Carga.sh convierten sus cinco CSV, con o sin encabezados, a un borrador pendiente de revisión, sin consultar bases. Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD.bat y Limpiar-BD.sh retiran exclusivamente un área rastreada por el utilitario, conservando catálogos y objetos compartidos. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 a 13 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Pasan 25 pruebas offline y 7 pruebas reales en PostgreSQL 17.11 temporal con datos ficticios, incluyendo actualización de sede, carga, reversión, repetición y retiro protegido. Tus CSV aún no se han cargado.

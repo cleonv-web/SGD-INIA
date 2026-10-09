@@ -5,6 +5,19 @@ ROOT=Path(__file__).resolve().parent
 if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
 from gestion_data import FIELDS, RESERVED, require, private_folder, private_write
 
+# Orden exacto de los cinco SELECT de Exportar-Area-SQLServer.sql.
+SOURCE_FIELDS={
+    'ubicaciones':['iCodUbicacion','cNomUbicacion','cNomDistrito','nFlagEstado'],
+    'oficinas':['iCodOficina','cNomOficina','cSiglaOficina','iCodUbicacion','idPadre',
+        'iFlgEstado','iCodTipoOficina','iCodCategoriaOficina','iFlgRof','esArea','es_area_piloto'],
+    'trabajadores':['iCodTrabajador','iCodOficina','iCodPerfil','cNombresTrabajador',
+        'cApellidosTrabajador','cTipoDocIdentidad','cNumDocIdentidad','cMailTrabajador','cCargo',
+        'cUsuario','nFlgEstado','ES_EXTERNO','CODIGO_SEDE','encargado','nFirmaDigital',
+        'oficina_piloto_seleccionada'],
+    'perfiles':['iCodPerfil','cDescPerfil','cDescripcion'],
+    'asignaciones':['iCodPerfilUsuario','iCodTrabajador','iCodOficina','iCodPerfil']
+}
+
 
 def read_csv(folder,prefix,required):
     files=list(folder.glob(prefix+'*.csv'))
@@ -14,19 +27,36 @@ def read_csv(folder,prefix,required):
         source=raw.decode('utf-16' if raw.startswith((b'\xff\xfe',b'\xfe\xff')) else 'utf-8-sig')
     except UnicodeDecodeError:
         source=raw.decode('cp1252')
-    # SSMS y editores pueden guardar coma, punto y coma o tabulador.
-    first=source.splitlines()[0] if source.splitlines() else ''
-    delimiters=[d for d in [',',';','\t'] if set(required)<=set(next(csv.reader([first],delimiter=d),[]))]
-    require(len(delimiters)==1,'Encabezados ausentes o separador incorrecto en '+files[0].name+
-            '. Guardar el resultado con encabezados, no sólo las filas.')
-    reader=csv.DictReader(io.StringIO(source),delimiter=delimiters[0])
-    require(len(set(reader.fieldnames))==len(reader.fieldnames),'Encabezados repetidos en '+files[0].name)
-    require(not any(re.search('password|clave|firma',h,re.I) for h in reader.fieldnames
-                    if h not in ['nFirmaDigital']), 'El CSV contiene campos privados fuera de la exportación prevista')
-    rows=list(reader)
-    require(all(None not in row and all(v is not None for v in row.values()) for row in rows),
-            'CSV con columnas incompletas o comas sin comillas: '+files[0].name)
-    return [{k:('' if v.strip().upper()=='NULL' else v.strip()) for k,v in row.items()} for row in rows]
+    if not source.strip():return []
+    # SSMS y editores pueden guardar coma, punto y coma o tabulador, con o sin encabezados.
+    parsed=[]
+    for delimiter in [',',';','\t']:
+        try:
+            records=[r for r in csv.reader(io.StringIO(source),delimiter=delimiter,strict=True) if r]
+        except csv.Error:continue
+        if records:parsed.append(records)
+    headed=[r for r in parsed if set(required)<=set(h.strip() for h in r[0])]
+    if headed:
+        require(len(headed)==1,'Separador ambiguo en '+files[0].name)
+        headers=[h.strip() for h in headed[0][0]];records=headed[0][1:]
+        require(len(set(headers))==len(headers),'Encabezados repetidos en '+files[0].name)
+        require(not any(re.search('password|clave|firma',h,re.I) for h in headers
+                        if h!='nFirmaDigital'),'El CSV contiene campos privados fuera de la exportación prevista')
+    else:
+        headers=SOURCE_FIELDS[prefix]
+        known={h for fields in SOURCE_FIELDS.values() for h in fields}
+        require(not any(known & {h.strip() for h in r[0]} for r in parsed),
+                'Encabezados incompletos o resultado incorrecto en '+files[0].name)
+        candidates=[r for r in parsed if all(len(row)==len(headers) for row in r)]
+        require(len(candidates)==1,files[0].name+': sin encabezados se esperan '+str(len(headers))+
+                ' columnas del resultado '+str(list(SOURCE_FIELDS).index(prefix)+1)+
+                ' de Exportar-Area-SQLServer.sql. Revisar el nombre del archivo y el resultado guardado.')
+        records=candidates[0]
+        require(all(re.fullmatch('[0-9]+',r[0].strip()) for r in records),
+                'CSV sin encabezados incompatible: la primera columna debe ser el ID numérico en '+files[0].name)
+    require(all(len(row)==len(headers) for row in records),
+            'CSV con columnas incompletas o separadores sin comillas: '+files[0].name)
+    return [{k:('' if v.strip().upper()=='NULL' else v.strip()) for k,v in zip(headers,row)} for row in records]
 
 
 def numeric(value,size,label):

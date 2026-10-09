@@ -17,7 +17,7 @@ La prueba mínima es registrar un PDF en Mesa de Partes, derivarlo a la unidad u
 3. En el resultado de **personal candidato** revisar `iCodTrabajador`, nombres, documento y `cUsuario`. Confirmar vínculo laboral vigente y participación en el piloto con el responsable del área. Excluir cesados, cuentas genéricas, duplicados y personas sin autorización. Estado 1 por sí solo no demuestra que alguien siga laborando. La consulta de `Tra_M_Perfil` devuelve perfiles, no el listado de personas.
 4. Abrir `bd/Exportar-Area-SQLServer.sql` y elegir el mismo `@Oficina`. Éste es el único dato que debes cambiar en el exportador; no hay listas de IDs que completar. Ejecutar el archivo completo. La selección final se hace después con `incluir_sgd` en el CSV preparado. Ninguna consulta modifica el origen.
 
-5. Crear `datos/exportacion-uti`. Ejecutar la exportación con resultados en cuadrícula. Ejecutar una consulta sólo muestra resultados; todavía no crea los CSV. Guardar cada cuadrícula por separado con clic derecho, **Guardar resultados como**, tipo CSV, incluyendo los encabezados. En las opciones de resultados a cuadrícula de SSMS activar la inclusión de encabezados al copiar o guardar; abrir una ventana nueva si el cambio no se refleja. Comprobar que la primera línea contiene nombres de columnas.
+5. Crear `datos/exportacion-uti`. Ejecutar la exportación con resultados en cuadrícula. Ejecutar una consulta sólo muestra resultados; todavía no crea los CSV. Guardar cada cuadrícula por separado con clic derecho, **Guardar resultados como**, tipo CSV. Se admiten archivos sin encabezados: no hace falta copiar y pegar ni cambiar las opciones de SSMS. Mantener el orden de columnas del tercer script y los nombres de archivo de la tabla. El preparador identifica coma, punto y coma o tabulador y asigna los encabezados automáticamente según ese orden.
 
 | Resultado | Archivo en datos/exportacion-uti |
 |---|---|
@@ -27,9 +27,9 @@ La prueba mínima es registrar un PDF en Mesa de Partes, derivarlo a la unidad u
 | 4 Perfiles utilizados | perfiles.csv |
 | 5 Asignaciones del área | asignaciones.csv |
 
-Conservar los cinco archivos originales y no publicarlos en Git. Se admiten también nombres con sufijo `-CODIGO`, pero sólo un archivo por cada categoría. No exportar contraseñas, hashes, firmas ni fotografías. Referencia: [exportación de resultados en SSMS](https://learn.microsoft.com/en-us/ssms/quickstarts/work-with-query-results).
+Conservar los cinco archivos originales y no publicarlos en Git. La preparación no los modifica; el CSV preparado sí lleva encabezados e incluir_sgd. Se admiten también nombres con sufijo `-CODIGO`, pero sólo un archivo por cada categoría. No exportar contraseñas, hashes, firmas ni fotografías. Referencia: [exportación de resultados en SSMS](https://learn.microsoft.com/en-us/ssms/quickstarts/work-with-query-results).
 
-6. Desde la raíz del paquete ejecutar el preparador. Convierte los cinco CSV a un borrador normalizado, sin consultar bases. Admite coma, punto y coma o tabulador; UTF-8, UTF-16 con BOM y Windows-1252. No sobrescribe una revisión anterior.
+6. Desde la raíz del paquete ejecutar el preparador. Convierte los cinco CSV a un borrador normalizado, sin consultar bases. Admite CSV con o sin encabezados; sin encabezados exige exactamente las columnas de cada resultado del tercer SQL (ubicaciones 4, oficinas 11, trabajadores 16, perfiles 3 y asignaciones 4). Admite coma, punto y coma o tabulador; UTF-8, UTF-16 con BOM y Windows-1252. No sobrescribe una revisión anterior.
 
 Windows:
 
@@ -58,6 +58,8 @@ bash Preparar-Carga.sh --origen datos/exportacion-otra --carpeta datos/carga-otr
 Los códigos propuestos de área, sede y empleado proceden de los IDs del origen rellenados con ceros. No se comprobaron contra PostgreSQL; aprobar su equivalencia o corregirlos después de revisar personalmente el catálogo del destino. Los permisos y tipos documentales de la plantilla siguen siendo propuestas. El padre 00000 sigue siendo provisional.
 
 8. En `usuarios-verificados.csv`, el campo **`incluir_sgd`** controla la selección: **1 = incluir; 0 = excluir**. Poner 0 para cesados, cuentas genéricas y personas que no participarán; esas filas se omiten aunque tengan datos pendientes o `verificado=NO`. No modificar ni eliminar registros del origen. Para las filas con 1, confirmar identidad, DNI real, apellidos, cargo y perfil y marcar `verificado=SI` después de revisar. Una fila con 1 y verificado=NO bloquea la carga. Completar también el área y marcar `aprobado=SI` e indicar `verificado_por` al terminar su revisión.
+
+Antes de validar, completar los campos pendientes: en area.json, nombre_corto (UTI), titular_empleado (codigo_empleado del responsable incluido), sede.direccion, verificado_por y aprobado=SI al terminar de revisar. El padre 00000 es provisional del laboratorio y requiere aprobar esa organización. En el CSV, sólo para filas con incluir_sgd=1, confirmar DNI real de ocho dígitos, separar apellidos, completar cargo_codigo de cuatro dígitos, cargo_nombre y perfil. USUARIO_AREA es la propuesta básica; SOPORTE_UTI concede administrador y sólo corresponde al soporte autorizado. Consultar personalmente los cargos existentes con el resultado 3 de Consultar-Catalogos-Piloto-PostgreSQL.sql. Nunca inventar DNI o cargos. Las filas con 0 se omiten.
 
 9. Consultar los permisos locales y validar la preparación, todavía sin aplicar:
 
@@ -95,7 +97,15 @@ Se crean dos archivos. Las plantillas contienen códigos y textos de ejemplo, y 
 
 En `area.json` completar código de dependencia de cinco dígitos, nombre, sigla, nombre corto, padre existente, nivel, sede, tipos documentales y perfiles. El padre 00000 de la plantilla es el nodo temporal del laboratorio; sólo mantenerlo si apruebas esa organización provisional del piloto. Para una raíz institucional usar null o un padre institucional previamente preparado. El utilitario no reconstruye automáticamente todo el organigrama ni crea padres pendientes.
 
-La sede usa un código de tres dígitos por compatibilidad con la configuración de empleados; cargos usan cuatro. Si ya existen, deben coincidir con sus datos; no se sobrescriben. Completar `titular_empleado` con el código de uno de los usuarios verificados de la carga. Marcar `aprobado` como SI y registrar `verificado_por` después de revisar área, titular y permisos.
+La sede usa un código de tres dígitos por compatibilidad con la configuración de empleados; cargos usan cuatro. Los registros institucionales existentes deben coincidir con sus datos y no se sobrescriben. La única excepción es la sede provisional 001 descrita a continuación. Completar `titular_empleado` con el código de uno de los usuarios verificados de la carga. Marcar `aprobado` como SI y registrar `verificado_por` después de revisar área, titular y permisos.
+
+### Sede 001 en instalaciones nuevas y anteriores
+
+La instalación nueva crea directamente la sede central `001` con nombre `INSTITUTO NACIONAL DE INNOVACIÓN AGRARIA`, dirección `Av. La Molina Nº 1981, La Molina, Lima` y estado `1`. El cambio está integrado en `bd/02-inia-usuarios-ficticios.sql`, dentro de la transacción habitual de instalación. No hay otro SQL obligatorio ni hace falta repetir la instalación de una base existente.
+
+En una instalación anterior, la sede `001` puede figurar como `INSTALACION LOCAL INIA / PENDIENTE`. Al aplicar la carga normal con `Cargar-Area.bat` o `Cargar-Area.sh`, el utilitario sustituye esos dos valores por los aprobados en `area.json`, sólo si coincide exactamente la sede provisional activa creada por `admin`. La actualización comparte el respaldo y la transacción de la carga: si algo falla, también se revierte la sede. El código, estado y relaciones se conservan. Si ya coincide, se reutiliza; cualquier otro dato incompatible sigue bloqueando la carga. La validación sin `--aplicar` no modifica la sede ni consulta PostgreSQL.
+
+`bd/Actualizar-Sede-Piloto-PostgreSQL.sql` queda únicamente como alternativa manual de recuperación para la sede central, no como paso previo obligatorio. Si se usa, ejecutarlo personalmente completo en PostgreSQL del SGD; es el mismo SQL en Windows y Linux. No ejecutarlo en SQL Server. Para otra sede, aprobar su dirección y equivalencia propias antes de cargar.
 
 El CSV tiene estos encabezados exactos, separados por coma:
 
@@ -107,7 +117,9 @@ Cada fila representa una persona candidata; incluir_sgd determina si participar�
 
 No concatenar o recortar apellidos para forzar límites: paterno y materno admiten 40 caracteres cada uno; nombres 80, usuario 20 y correo 50. CSV UTF-8 con encabezados; si un valor contiene coma, encerrarlo entre comillas dobles conforme al formato CSV. No añadir columnas de contraseña o hash.
 
-Los perfiles de plantilla son una propuesta de permisos que debes revisar, no la traducción aprobada de tus perfiles anteriores. Incluir códigos de menús padres para que las opciones sean visibles. `administrador=true` concede el indicador de administrador del SGD; usarlo sólo en la cuenta de soporte autorizada. `firma` habilita la configuración de firma, pero no instala certificados ni demuestra que la firma digital funcione. Para Mesa de Partes ajustar también `mesa_partes=true` en el área.
+Los perfiles de plantilla son una propuesta de permisos que debes revisar, no la traducción aprobada de tus perfiles anteriores. Incluir códigos de menús padres para que las opciones sean visibles. `administrador=true` concede el indicador de administrador del SGD; usarlo sólo en la cuenta de soporte autorizada. Para Mesa de Partes ajustar también `mesa_partes=true` en el área.
+
+Esta primera etapa del piloto será sin firma obligatoria. Mantener `firma=false`: el SGD consulta la obligatoriedad del documento del área y el cargador actual crea esos vínculos con `es_obl_firma=0`, por lo que permite emitir sin firmar digitalmente. `firma=true` no activa la firma; se traduce al modo que tampoco la exige. El componente de firma, certificados y flujo obligatorio se configurarán y probarán en una etapa posterior.
 
 ## Revisar y aplicar una carga
 

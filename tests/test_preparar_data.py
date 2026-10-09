@@ -18,17 +18,19 @@ class PreparacionTests(unittest.TestCase):
                 cApellidosTrabajador='Pérez García',cNumDocIdentidad='12345678',cMailTrabajador='qa@ejemplo.invalid',
                 cCargo='ANALISTA, QA',oficina_piloto_seleccionada='501')],
             'perfiles':[dict(iCodPerfil='1',cDescPerfil='Perfil origen QA')],
-            'asignaciones':[dict(iCodTrabajador='301',iCodOficina='501',iCodPerfil='1')]
+            'asignaciones':[dict(iCodPerfilUsuario='1',iCodTrabajador='301',iCodOficina='501',iCodPerfil='1')]
         }
         self.write()
 
     def tearDown(self):self.tmp.cleanup()
 
-    def write(self,delimiter=',',encoding='utf-8-sig'):
+    def write(self,delimiter=',',encoding='utf-8-sig',header=True):
         for name,rows in self.rows.items():
             with (self.source/(name+'.csv')).open('w',encoding=encoding,newline='') as f:
-                writer=csv.DictWriter(f,fieldnames=list(rows[0]),delimiter=delimiter)
-                writer.writeheader();writer.writerows(rows)
+                fields=list(rows[0]) if header else p.SOURCE_FIELDS[name]
+                writer=csv.DictWriter(f,fieldnames=fields,delimiter=delimiter)
+                if header:writer.writeheader()
+                writer.writerows(rows)
 
     def prepare(self):
         with patch.object(p,'private_folder',lambda path:path.mkdir(parents=True)),\
@@ -75,7 +77,7 @@ class PreparacionTests(unittest.TestCase):
     def test_falta_encabezado_o_incluye_claves(self):
         target=self.source/'trabajadores.csv'
         target.write_text('301,qa.uno,José QA\n',encoding='utf-8')
-        with self.assertRaisesRegex(ValueError,'Encabezados'):self.prepare()
+        with self.assertRaisesRegex(ValueError,'16 columnas'):self.prepare()
         self.rows['trabajadores'][0]['password']='PRUEBA NO REAL';self.write()
         with self.assertRaisesRegex(ValueError,'campos privados'):self.prepare()
 
@@ -95,6 +97,33 @@ class PreparacionTests(unittest.TestCase):
         (self.out/'area.json').write_text(json.dumps(area,ensure_ascii=False),encoding='utf-8')
         (self.out/'usuarios-verificados.csv').write_text(p.csv_text(users,g.FIELDS),encoding='utf-8')
         self.assertEqual(len(g.read_bundle(self.out)[1]),1)
+
+    def test_csv_ssms_sin_encabezados_conserva_primera_persona(self):
+        for index,(delimiter,encoding) in enumerate([(',','utf-8-sig'),(';','cp1252'),('\t','utf-16')]):
+            with self.subTest(delimiter=delimiter,encoding=encoding):
+                self.write(delimiter,encoding,header=False);self.out=self.root/('sin-header'+str(index))
+                area,users=self.prepare()
+                self.assertEqual(len(users),1);self.assertEqual(users[0]['origen_id'],'301')
+                self.assertEqual(users[0]['nombres'],'José QA');self.assertEqual(users[0]['incluir_sgd'],'1')
+                self.assertEqual(users[0]['verificado'],'NO')
+
+    def test_sin_encabezados_rechaza_perfiles_guardados_como_trabajadores(self):
+        self.write(';',header=False)
+        (self.source/'trabajadores.csv').write_bytes((self.source/'perfiles.csv').read_bytes())
+        with self.assertRaisesRegex(ValueError,'trabajadores.csv.*16 columnas'):self.prepare()
+        self.assertFalse(self.out.exists())
+
+    def test_encabezado_parcial_no_se_confunde_con_persona(self):
+        self.write(header=False)
+        target=self.source/'trabajadores.csv'
+        target.write_text(','.join(p.SOURCE_FIELDS['trabajadores'][:-1])+'\n'+target.read_text(encoding='utf-8-sig'),encoding='utf-8')
+        with self.assertRaisesRegex(ValueError,'Encabezados incompletos'):self.prepare()
+
+    def test_asignaciones_vacias_sin_header_se_admiten_como_pendiente(self):
+        self.write(';',header=False)
+        (self.source/'asignaciones.csv').write_bytes(b'')
+        area,users=self.prepare()
+        self.assertIn('Sin perfil asignado',(self.out/'pendientes.csv').read_text(encoding='utf-8'))
 
 
 if __name__=='__main__':unittest.main()

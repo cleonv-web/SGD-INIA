@@ -461,7 +461,7 @@ def empaquetar():
         for f in sorted(ROOT.rglob('*')):
             if not f.is_file():continue
             rel=f.relative_to(ROOT);parts=rel.parts
-            if parts[0]=='datos' or 'target' in parts or '__pycache__' in parts or f.suffix in ['.class','.tmp']:continue
+            if parts[0] in ['datos','.git'] or 'target' in parts or '__pycache__' in parts or f.suffix in ['.class','.tmp']:continue
             if parts[0]=='logs' and f.name not in ['compilacion.json','pruebas-funcionales.json','qa-rollback.json']:continue
             if parts[:4]==('payara','payara5','glassfish','domains'):
                 if len(parts)<6 or parts[4]!='sgd' or parts[5]!='config':continue

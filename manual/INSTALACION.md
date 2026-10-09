@@ -56,6 +56,8 @@ Las nueve carpetas principales son: fuentes (código editable), java (JDK de amb
 
 configuracion.json es el único archivo de configuración del instalador. base identifica la base nueva; host_bd es 127.0.0.1 en modo completo; entidad, ruc y anio personalizan la carga; url_publica determina enlaces; direccion_http controla escucha HTTP; activar_integraciones permanece false en el laboratorio. Mantener juntos binarios, fuentes, runtimes y dependencias al trasladar la carpeta.
 
+La sede central 001 se crea con nombre y dirección reales en la transacción de instalación. Para una base anterior, Cargar-Area actualiza sólo la sede provisional reconocida con los datos aprobados del área dentro de su transacción; no hay que ejecutar un parche previo. El script Actualizar-Sede-Piloto-PostgreSQL.sql es únicamente una alternativa manual de recuperación. No repetir la instalación sobre una base existente.
+
 Para otra instancia en el mismo equipo elegir cuatro puertos diferentes. También se reservan cinco puertos auxiliares Payara: HTTP+1000 hasta HTTP+1004. Evitar que coincidan con otra instancia. Al cambiar configuración de una instalación existente, detener primero, ejecutar SGD configurar y luego SGD verificar; configurar no recarga la base.
 
 El dominio payara/payara5/glassfish/domains/sgd ya contiene la configuración JDBC. Los scripts adaptan rutas y puertos al destino y usan una variable de entorno para la clave JDBC. payara/payara-5.2022.5-backup.zip conserva el servidor original. Los scripts no cambian JAVA_HOME ni PATH globales.
@@ -147,4 +149,4 @@ La instalación en un Windows Server físico diferente todavía requiere ejecuta
 
 ## 10. Carga y retiro por área
 
-Procedimiento, formatos, comandos Windows/Linux y propuesta de piloto en manual/CARGA-POR-AREA.md; también en las secciones 10 a 12 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Cargar-Area exige usuarios verificados; Limpiar-BD retira sólo un área rastreada, conservando catálogos e historia. Su preparación no ejecutó operaciones contra las bases.
+Procedimiento, formatos, comandos Windows/Linux y propuesta de piloto en manual/CARGA-POR-AREA.md; también en las secciones 10 a 13 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Cargar-Area exige usuarios verificados; Limpiar-BD retira sólo un área rastreada, conservando catálogos e historia. Su preparación no ejecutó operaciones contra las bases.

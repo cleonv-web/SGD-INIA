@@ -3,7 +3,7 @@
    Cambiar únicamente @Oficina. La selección final se realiza en el CSV preparado:
    incluir_sgd=1 para cargar, incluir_sgd=0 para excluir.
    Estado 1 NO demuestra vínculo laboral vigente. Revisar cesados y cuentas genéricas.
-   Exportar cada resultado por separado como CSV UTF-8 con encabezados.
+   Exportar cada resultado por separado como CSV. Se admite con o sin encabezados.
    Guardarlos en datos (excluido de Git); no exportar claves ni hashes.
    Sólo una oficina: no incorpora automáticamente sus subáreas ni sus usuarios.
    Sus antecesores se incluyen únicamente para reconstruir el organigrama. */
