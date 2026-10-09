@@ -347,7 +347,7 @@ public class DocumentoSrvlt extends HttpServlet{
             this.documentoXmlService = (DocumentoXmlService) applicationContext.getBean("documentoXmlService");
             DocumentoObjBean docObjBean = null;
             docObjBean = documentoXmlService.crearDocx(pnuAnn,pnuEmi);
-            if (docObjBean!=null){
+            if (docObjBean!=null && docObjBean.getDocumento()!=null && docObjBean.getDocumento().length>0){
                 response.setContentType("application/octet-stream");
                 response.setHeader("Content-Disposition","attachment;filename="+docObjBean.getNombreArchivo());                
                 response.setHeader("Cache-Control", "no-cache");
@@ -355,15 +355,15 @@ public class DocumentoSrvlt extends HttpServlet{
                 ServletOutputStream ouputStream = null;
                 ouputStream = response.getOutputStream();
                 ouputStream.write(docObjBean.getDocumento(), 0, docObjBean.getDocumento().length);
-                ouputStream.close();
                 ouputStream.flush();
+                ouputStream.close();
             }else{
                 response.setContentType("application/std");
                 response.setHeader("Cache-Control", "no-cache");
                 PrintWriter out = response.getWriter();
-                out.println("Plantilla no Existe para este Documento");
-                out.close();
+                out.println("No se pudo generar el DOCX. Revise los datos, la plantilla y el registro del servidor.");
                 out.flush();                
+                out.close();
             }
         } 
 

@@ -247,58 +247,21 @@ public class DocumentoXmlServiceImp implements DocumentoXmlService{
         long startTime = System.currentTimeMillis();
         
         DatosPlantillaDoc  datosPlantilla=datosParaPlantilla(pnuAnn,pnuEmi);
-        PlantillaDocx plantillaDocx = Plantillas.getInstancia().getPlantilla(datosPlantilla.getCoTipoDoc(), datosPlantilla.getCoDepEmi());
+        if (datosPlantilla == null) return null;
+        PlantillaDocx plantillaDocx = obtenerPlantilla(datosPlantilla);
         if(plantillaDocx != null){
             try
             {
                 IXDocReport report = plantillaDocx.getTemplate();
 
                 if(report!=null){
-                    docObjBean = new DocumentoObjBean();
-                    docObjBean.setNombreArchivo(plantillaDocx.getNomArchivo());
+                    IContext context = crearContextoPlantilla(report, datosPlantilla);
 
-                    IContext context = report.createContext();
-
-                    context.put("NOMBRE_ANIO",datosPlantilla.getNombreAnio());
-                    
-                    context.put("CORRELATIVO",datosPlantilla.getNuCorEmi());
-                    context.put("TIPO_DOC",datosPlantilla.getDeTipoDoc());
-                    context.put("SIGLA_DOC",datosPlantilla.getSiglaDoc());
-                    context.put("NUMERO_DOC",datosPlantilla.getNumeroDoc());
-//                    context.put("NUMERO_DOC","Informe de Prueba");
-                    //context.put("SIGLA_DOC",datosPlantilla.getDeDocSig());
-                    context.put("FECHA_DOC",datosPlantilla.getFechaDoc());
-                    context.put("UUOO_EMITE",datosPlantilla.getDeDepEmi());
-                    context.put("EMPLEADO_EMITE",datosPlantilla.getDeEmpEmi());                    
-                    context.put("REFERENCIA",datosPlantilla.getReferenciaDoc());
-                    context.put("ASUNTO",datosPlantilla.getDeAsunto());
-                    context.put("NU_DNI",datosPlantilla.getNuDniDes());
-                    context.put("PIE_PAGINA",datosPlantilla.getPiePagina());
-                    context.put("UUOO_DESTINO",datosPlantilla.getDepDestino()+"");
-                    context.put("TITULO_LISTA_DESTINO",(datosPlantilla.getDepTituloDestLista()==null? "":datosPlantilla.getDepTituloDestLista()));
-                    context.put("LISTA_DESTINO",datosPlantilla.getDepDestinoLista()+"");
-                    context.put("EMPLEADO_DESTINO",datosPlantilla.getEmpDestino());
-                    context.put("COPIA",(datosPlantilla.getCopiaDoc()==null?"":"cc.: "+datosPlantilla.getCopiaDoc()));
-                    context.put("INICIALES_EMP",datosPlantilla.getDeIniciales());
-                    context.put("DEPENDENCIA_EMITE",datosPlantilla.getDeDepEmiMae());
-                    context.put("DEPENDENCIA_DESTINO",datosPlantilla.getDeDepDestMae());
-                    context.put("CARGO_EMP_EMITE",datosPlantilla.getDeCargoFunEmiMae());
-                    context.put("CARGO_EMP_DESTINO",datosPlantilla.getDeCargoFunDestMae());
-                    context.put("NOMBRE_DESTINATARIO",(datosPlantilla.getNombreDestinatario()==null? "":datosPlantilla.getNombreDestinatario()));
-                    context.put("DIRECCION_DESTINATARIO",(datosPlantilla.getDireccionDestinatario()==null? "": datosPlantilla.getDireccionDestinatario()));
-                    context.put("ENTIDAD_PRIVADA_DESTINATARIO",(datosPlantilla.getEntidadPrivadaDestinatario()==null?"":datosPlantilla.getEntidadPrivadaDestinatario()));
-                    context.put("NRO_EXPEDIENTE",(datosPlantilla.getNroExpediente()==null?"":datosPlantilla.getNroExpediente()));
-                    context.put("CARGO",(datosPlantilla.getCargo()==null?"":datosPlantilla.getCargo()));
-                    
-                    context.put("URL_WEB_VERIFICA",(datosPlantilla.getUrlWebVerifica()==null?"":datosPlantilla.getUrlWebVerifica()));
-                    context.put("CO_VER_EXT",(datosPlantilla.getCoVerExt()==null?"":datosPlantilla.getCoVerExt()));
-                    context.put("NOMBRE_ANIO2",datosPlantilla.getNombreAnio2());
-                    
-                    context.put("DEPENDENCIA_TITULO",datosPlantilla.getTituloDependencia());
-                    context.put("DEPENDENCIA_TITULO_PADRE",datosPlantilla.getTituloDependenciaPadre());
-                    
                      ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     report.process(context, baos ); 
+                    if (baos.size() == 0) return null;
+                    docObjBean = new DocumentoObjBean();
+                    docObjBean.setNombreArchivo(plantillaDocx.getNomArchivo());
                     docObjBean.setDocumento(baos.toByteArray());
                     baos.flush();
                     baos.close();
@@ -307,8 +270,9 @@ public class DocumentoXmlServiceImp implements DocumentoXmlService{
                 }
 
             }
-            catch ( Throwable e )
+            catch ( Exception e )
             {
+                docObjBean = null;
                 e.printStackTrace();
             }        
         }else{
@@ -320,6 +284,66 @@ public class DocumentoXmlServiceImp implements DocumentoXmlService{
         return(docObjBean);
     }
     
+    protected PlantillaDocx obtenerPlantilla(DatosPlantillaDoc datos) {
+        return Plantillas.getInstancia().getPlantilla(datos.getCoTipoDoc(), datos.getCoDepEmi());
+    }
+
+    protected IContext crearContextoPlantilla(IXDocReport report, DatosPlantillaDoc datosPlantilla) throws Exception {
+        IContext context = report.createContext();
+
+        context.put("NOMBRE_ANIO",datosPlantilla.getNombreAnio());
+
+        context.put("CORRELATIVO",datosPlantilla.getNuCorEmi());
+        context.put("TIPO_DOC",datosPlantilla.getDeTipoDoc());
+        context.put("SIGLA_DOC",datosPlantilla.getSiglaDoc());
+        context.put("NUMERO_DOC",datosPlantilla.getNumeroDoc());
+        context.put("FECHA_DOC",datosPlantilla.getFechaDoc());
+        context.put("UUOO_EMITE",datosPlantilla.getDeDepEmi());
+        context.put("EMPLEADO_EMITE",datosPlantilla.getDeEmpEmi());
+        context.put("REFERENCIA",datosPlantilla.getReferenciaDoc());
+        context.put("ASUNTO",datosPlantilla.getDeAsunto());
+        context.put("NU_DNI",datosPlantilla.getNuDniDes());
+        context.put("PIE_PAGINA",datosPlantilla.getPiePagina());
+        context.put("UUOO_DESTINO",datosPlantilla.getDepDestino());
+        context.put("TITULO_LISTA_DESTINO",(datosPlantilla.getDepTituloDestLista()==null? "":datosPlantilla.getDepTituloDestLista()));
+        context.put("LISTA_DESTINO",datosPlantilla.getDepDestinoLista());
+        context.put("EMPLEADO_DESTINO",datosPlantilla.getEmpDestino());
+        context.put("COPIA",(datosPlantilla.getCopiaDoc()==null?"":"cc.: "+datosPlantilla.getCopiaDoc()));
+        context.put("INICIALES_EMP",datosPlantilla.getDeIniciales());
+        context.put("DEPENDENCIA_EMITE",datosPlantilla.getDeDepEmiMae());
+        context.put("DEPENDENCIA_DESTINO",datosPlantilla.getDeDepDestMae());
+        context.put("CARGO_EMP_EMITE",datosPlantilla.getDeCargoFunEmiMae());
+        context.put("CARGO_EMP_DESTINO",datosPlantilla.getDeCargoFunDestMae());
+        context.put("NOMBRE_DESTINATARIO",(datosPlantilla.getNombreDestinatario()==null? "":datosPlantilla.getNombreDestinatario()));
+        context.put("DIRECCION_DESTINATARIO",(datosPlantilla.getDireccionDestinatario()==null? "": datosPlantilla.getDireccionDestinatario()));
+        context.put("ENTIDAD_PRIVADA_DESTINATARIO",(datosPlantilla.getEntidadPrivadaDestinatario()==null?"":datosPlantilla.getEntidadPrivadaDestinatario()));
+        context.put("NRO_EXPEDIENTE",(datosPlantilla.getNroExpediente()==null?"":datosPlantilla.getNroExpediente()));
+        context.put("CARGO",(datosPlantilla.getCargo()==null?"":datosPlantilla.getCargo()));
+
+        context.put("URL_WEB_VERIFICA",(datosPlantilla.getUrlWebVerifica()==null?"":datosPlantilla.getUrlWebVerifica()));
+        context.put("CO_VER_EXT",(datosPlantilla.getCoVerExt()==null?"":datosPlantilla.getCoVerExt()));
+        context.put("NOMBRE_ANIO2",datosPlantilla.getNombreAnio2());
+
+        context.put("DEPENDENCIA_TITULO",datosPlantilla.getTituloDependencia());
+        context.put("DEPENDENCIA_TITULO_PADRE",datosPlantilla.getTituloDependenciaPadre());
+
+        // TITULO_DEP puede ser nulo en áreas cargadas o no personalizadas.
+        context.put("DEPENDENCIA_TITULO", primerTexto(datosPlantilla.getTituloDependencia(),
+                datosPlantilla.getDeDepEmiMae(), datosPlantilla.getDeDepEmi()));
+        // Todos los campos declarados conservan un valor textual aunque el dato sea nulo.
+        for (String campo : context.getContextMap().keySet()) {
+            if (context.get(campo) == null) context.put(campo, "");
+        }
+        return context;
+    }
+
+    private static String primerTexto(String... valores) {
+        for (String valor : valores) {
+            if (valor != null && !valor.trim().isEmpty()) return valor;
+        }
+        return "";
+    }
+
     public DocumentoObjBean crearPdfx(String pnuAnn, String pnuEmi, String ptiCap){
         DocumentoObjBean docObjBean = null;
         long startTime = System.currentTimeMillis();
