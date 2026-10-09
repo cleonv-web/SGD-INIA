@@ -123,6 +123,14 @@ Los perfiles de plantilla son una propuesta de permisos que debes revisar, no la
 
 Esta primera etapa del piloto será sin firma obligatoria. Mantener `firma=false`: el SGD consulta la obligatoriedad del documento del área y el cargador actual crea esos vínculos con `es_obl_firma=0`, por lo que permite emitir sin firmar digitalmente. `firma=true` no activa la firma; se traduce al modo que tampoco la exige. El componente de firma, certificados y flujo obligatorio se configurarán y probarán en una etapa posterior.
 
+## Trasladar una carga revisada a otra instalación
+
+Para cargar UTI en otra instalación donde el área aún no esté cargada, transferir únicamente `area.json` y `usuarios-verificados.csv` ya revisados. Colocarlos juntos en `datos/carga-uti-preparada`, dentro de la raíz del SGD de destino. El primero define área, sede, responsable y perfiles; el segundo define las personas incluidas y verificadas. Conservar las credenciales propias de ese destino.
+
+`LEEME.txt` y `pendientes.csv` son ayudas de revisión. `cargos-piloto.csv`, si se conserva, también es auxiliar: el cargador no lo lee. Los cinco CSV de exportación sólo se necesitan para preparar nuevamente la carga. Estos archivos privados no se publican en Git. UTI 00217 ya fue cargada en la PC local; no repetir esa carga allí.
+
+Actualizar los utilitarios desde el repositorio y validar en el destino antes de aplicar. La secuencia es validar → detener la aplicación → iniciar sólo PostgreSQL → aplicar la carga → revisar el resultado → iniciar el SGD → probar accesos. Ejecutar cada comando por separado y detenerse ante cualquier error.
+
 ## Revisar y aplicar una carga
 
 Primero validar los archivos sin tocar ninguna base:
@@ -162,6 +170,18 @@ En servidores separados coordinar también la parada de la aplicación remota. D
 ```bash
 bash Cargar-Area.sh --carpeta datos/carga-uti-preparada --aplicar --confirmar CARGAR:00217
 ```
+
+Cuando indique **Operación terminada**, revisar `resultado.json` de esa ejecución e iniciar el SGD con una de estas opciones:
+
+```powershell
+.\SGD.bat iniciar
+```
+
+```bash
+bash SGD.sh iniciar
+```
+
+Abrir la URL configurada y comprobar acceso y permisos del área. Las claves de las cuentas nuevas están en `CLAVES-GENERADAS-PRIVADAS.json`, dentro de la carpeta de resultados indicada por esa carga confirmada. Las cuentas existentes conservan su contraseña; no usar claves generadas en otra instalación ni distribuir claves de una operación fallida.
 
 La operación exige credenciales existentes de esta instalación y la librería Java compilada; si falta la librería, ejecutar primero `SGD.bat compilar` o `bash SGD.sh compilar`. No instala Docker ni descarga dependencias de ejecución. Funciona con los runtimes x64 incluidos; otros procesadores o sistemas requieren su paquete compatible.
 

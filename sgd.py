@@ -538,7 +538,7 @@ def comprobar_paquete_cliente():
     msi=folder/'InstallerTramiteDoc.msi'
     metadata=folder/'PROCEDENCIA.json'
     if not msi.is_file() or not metadata.is_file():
-        raise RuntimeError('Falta el cliente original en cliente-windows. Copiar el paquete portable completo; Git no incluye el MSI externo.')
+        raise RuntimeError('Falta cliente-windows/InstallerTramiteDoc.msi o PROCEDENCIA.json. Copiar ambos desde el repositorio o desde el paquete portable completo.')
     expected=json.loads(metadata.read_text(encoding='utf-8'))['sha256']
     with msi.open('rb') as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()
     if actual!=expected:

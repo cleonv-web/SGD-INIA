@@ -23,8 +23,7 @@
 /herramientas/*.tar.gz
 /herramientas/*.zip
 
-# Instalador externo del cliente: incluido en el portable, fuera de Git.
-/cliente-windows/*.msi
+# Conservar el cliente original Tramitedoc en Git para preparar otros puestos.
 
 # Salidas de compilación. Los JAR de proveedor necesarios sí se conservan.
 **/target/

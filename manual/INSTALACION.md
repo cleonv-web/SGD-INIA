@@ -2,7 +2,7 @@
 Edición 8 de octubre de 2026. Windows x64 y Linux x64. PostgreSQL nativo: los equipos de destino no necesitan Docker.
 
 ## 1. Preparar la carpeta
-Utilizar SGD-INIA-INSTALL_PG-PORTABLE.zip para una instalación nueva. Extraer la carpeta completa en una ruta corta con permiso de escritura, por ejemplo C:\SGD\SGD-INIA-INSTALL_PG o /opt/sgd/SGD-INIA-INSTALL_PG. En Windows usar una ruta corta: las carpetas internas del servidor pueden superar el límite de rutas si se extrae dentro de varias subcarpetas. No usar OneDrive, carpetas sincronizadas ni una unidad de red para la base activa. La carpeta de trabajo de esta PC contiene datos y claves del laboratorio; el ZIP limpio los excluye.
+El portable es la carpeta completa SGD-INIA-INSTALL_PG. Disponer de fuentes, utilitarios, runtimes y dependencias en una ruta corta con permiso de escritura, por ejemplo C:\SGD\SGD-INIA-INSTALL_PG o /opt/sgd/SGD-INIA-INSTALL_PG. Git distribuye fuentes, scripts, documentación y el MSI original Tramitedoc; los runtimes pesados se conservan aparte. No usar OneDrive, carpetas sincronizadas ni una unidad de red para la base activa. No copiar datos ni claves de esta PC para crear una instalación nueva.
 
 El paquete incluye PostgreSQL 17.11, Java Temurin 8u504, Payara 5.2022.5, Python, Maven 3.10.0, dependencias offline, fuentes y WAR. No requiere instalar globalmente estos programas ni conectarse a Internet para la compilación inicial. Reservar 8 GB de RAM, preferiblemente 16 GB, y 15 GB de espacio inicial; documentos y respaldos necesitan espacio adicional.
 
@@ -38,7 +38,7 @@ sudo apt-get install -y ca-certificates fontconfig \
 ```
 En Rocky/RHEL usar fontconfig, freetype, libstdc++, ca-certificates, tar y unzip. La prueba Linux se realizó en Debian 12 x64. Los otros sistemas requieren ejecutar las verificaciones del instalador en el equipo destino.
 
-Extraer el ZIP completo, revisar configuracion.json y ejecutar:
+Con la carpeta portable completa, revisar configuracion.json y ejecutar:
 ```bash
 cd /opt/sgd/SGD-INIA-INSTALL_PG
 bash SGD.sh diagnosticar
@@ -169,7 +169,7 @@ Validación de la corrección: 17 escenarios JavaScript offline con respuestas f
 Integración del cliente: 18 pruebas offline aprobadas en `tests/test_instalacion_cliente.py` cubren hash, errores, cancelación, reinicio pendiente, instalación existente, Word ausente y separación de servidor/puesto. Simulan las respuestas del MSI; no ejecutan un instalador real ni certifican una instalación completa en otra PC.
 
 ## 8. Copiar a otro equipo y respaldar
-Para una instalación nueva utilizar el ZIP limpio entregado. Para generar otro ZIP tras cambios de fuentes, ejecutar SGD.bat empaquetar o bash SGD.sh empaquetar. Se crea SGD-INIA-INSTALL_PG-PORTABLE.zip junto a la carpeta, con archivo SHA256. Excluye base activa, claves, documentos, target y despliegues antiguos. El destino recompila y crea nuevas claves.
+Para instalar o mantener otro equipo utilizar la carpeta portable completa. Incorporar fuentes, utilitarios y documentación actualizados del repositorio; en una instalación existente ejecutar Actualizar-SGD y conservar datos, configuración privada, claves y runtimes. SGD.bat empaquetar o bash SGD.sh empaquetar genera un ZIP opcional, no requerido para actualizar por Git. El MSI original Tramitedoc se incluye en el repositorio. Los runtimes pesados se conservan aparte y deben estar presentes en el destino.
 
 Para trasladar información existente, detener aplicaciones y arrancar solamente la base para sacar un respaldo consistente:
 ```powershell
@@ -178,7 +178,7 @@ Para trasladar información existente, detener aplicaciones y arrancar solamente
 .\SGD.bat respaldar
 .\SGD.bat detener
 ```
-En Linux utilizar bash SGD.sh con las mismas acciones. Conservar datos/credenciales.json, datos/respaldo-portable.dump y datos/documentos. Extraer el ZIP limpio en destino y copiar esos tres recursos a datos. Ajustar URL y puertos y ejecutar el instalador. Cuando la base está vacía y existe el dump, se restaura automáticamente y conserva usuarios y claves. Se adaptan las rutas de documentos al destino.
+En Linux utilizar bash SGD.sh con las mismas acciones. Para restaurar en un destino nuevo, preparar la carpeta portable completa y conservar datos/credenciales.json, datos/respaldo-portable.dump y datos/documentos del origen. Copiar esos recursos al destino, ajustar URL y puertos y ejecutar el instalador. Cuando la base está vacía y existe el dump, se restaura automáticamente y conserva usuarios y claves. Actualizar código en una instalación existente no requiere restaurar ni reinstalar.
 
 No copiar datos/postgresql entre Windows y Linux: utilizar pg_dump y pg_restore mediante los comandos del instalador. La restauración se rechaza si ya existe esquema SGD. Guardar una copia externa del dump, credenciales y documentos. Para clonar el laboratorio como instalación nueva no copiar sus credenciales ni datos.
 
