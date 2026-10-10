@@ -125,6 +125,10 @@ def validar(folder, root=ROOT):
                    'tipos_documento': area['tipos_documento'],
                    'cargos': sorted({u['cargo_codigo'] for u in users}),
                    'perfiles_utilizados': sorted({u['perfil'] for u in users}), 'huella': fingerprint}
+        summary['acceso_documentos_por_perfil'] = {
+            name: {'alcance': area['perfiles'][name].get('acceso_documentos', 'personal'),
+                   'ti_acceso': carga.document_access(area['perfiles'][name], name)}
+            for name in summary['perfiles_utilizados']}
         report['area'] = summary
         report['comprobaciones'].append({'nombre': 'Área, usuarios y relaciones', 'estado': 'OK', 'detalle': summary})
         check('Tablas, columnas y claves del modelo local',

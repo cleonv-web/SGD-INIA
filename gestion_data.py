@@ -20,11 +20,20 @@ KEEP = ['si_mae_local', 'rhtm_cargos']
 FIELDS = ['origen_id', 'codigo_empleado', 'usuario', 'nombres', 'apellido_paterno',
           'apellido_materno', 'dni', 'email', 'cargo_codigo', 'cargo_nombre', 'perfil', 'verificado', 'incluir_sgd']
 RESERVED = {'00000', '49001', '49002', '49003'}
+DOCUMENT_ACCESS = {'personal': '1', 'personal_y_emisor': '2', 'dependencia': '0'}
 
 
 def require(condition, message):
     if not condition:
         raise ValueError(message)
+
+
+def document_access(profile, name='perfil'):
+    # Ser administrador o tener menus no concede acceso a documentos de otros.
+    access = profile.get('acceso_documentos', 'personal')
+    require(isinstance(access, str) and access in DOCUMENT_ACCESS,
+            'acceso_documentos debe ser personal, personal_y_emisor o dependencia en ' + name)
+    return DOCUMENT_ACCESS[access]
 
 
 def text(value, label, limit, empty=False):
@@ -114,6 +123,7 @@ def read_bundle(folder):
         require(isinstance(profile, dict), 'Perfil inválido: ' + name)
         require(type(profile.get('administrador')) is bool, 'administrador debe ser booleano en ' + name)
         require(type(profile.get('firma')) is bool, 'firma debe ser booleano en ' + name)
+        document_access(profile, name)
         options = profile.get('opciones')
         require(isinstance(options, list) and options and all(isinstance(x, str) for x in options)
                 and len(options) == len(set(options)), 'Definir opciones sin duplicados en ' + name)
@@ -285,7 +295,7 @@ def load_sql(area, users, fingerprint, encrypted=None):
         add('tdtx_dependencia_empleado', {'co_dep': dep, 'co_emp': emp}, dict(co_dep=dep, co_emp=emp, es_emp='1'))
         add('tdtx_config_emp', {'co_emp': emp, 'co_dep': dep}, dict(co_emp=emp, co_dep=dep,
             co_loc=loc, fe_use_cre='__AHORA__', fe_use_mod='__AHORA__', de_dir_emi=route, de_dir_rec=route,
-            de_dir_ane=route, ti_emi='0', ti_acceso='1' if profile['administrador'] else '0', es_reg='1',
+            de_dir_ane=route, ti_emi='0', ti_acceso=document_access(profile), es_reg='1',
             in_boton_generar='1', in_boton_cargar='1', in_mail='0', in_carga_doc='1', in_carga_emi='1',
             in_firma='1' if profile['firma'] else '0', in_tipo_doc='1', in_obs_docu='1', in_revi_docu='1',
             in_gene_num_emi='1', in_consulta='1', in_consulta_mp='1' if area['mesa_partes'] else '0',

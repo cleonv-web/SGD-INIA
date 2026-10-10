@@ -133,6 +133,8 @@ def prepare(source,destination):
 2. Los apellidos completos están conservados en apellido_paterno: separarlos/confirmarlos personalmente.
 3. Confirmar DNI real, cargo_codigo (4 dígitos), cargo_nombre y perfil de cada usuario.
    Perfiles disponibles de ejemplo: USUARIO_AREA, SOPORTE_UTI, MESA_PARTES.
+   acceso_documentos=personal es el valor inicial de los perfiles. Revisar este
+   alcance por separado; solo dependencia concede acceso a toda el area.
    Los perfiles del sistema anterior se muestran en pendientes.csv; no se tradujeron automáticamente.
 4. En incluir_sgd poner 0 para excluir cesados, cuentas genéricas y personas que no participarán.
    Poner 1 para incluir a una persona. Las filas con 0 se omiten, pueden conservar verificado=NO.

@@ -18,6 +18,7 @@ PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, 
 | Compilar | SGD.bat compilar | bash SGD.sh compilar |
 | Desplegar | SGD.bat desplegar | bash SGD.sh desplegar |
 | Verificar | SGD.bat verificar | bash SGD.sh verificar |
+| Recargar accesos de usuarios ya cargados | Recargar-Usuarios.bat | bash Recargar-Usuarios.sh |
 | Validar archivos de una carga | Validar-Carga.bat | bash Validar-Carga.sh |
 | Respaldar | SGD.bat respaldar | bash SGD.sh respaldar |
 | Empaquetar sin datos ni claves | SGD.bat empaquetar | bash SGD.sh empaquetar |
@@ -67,6 +68,14 @@ Windows nativo y Debian 12 nativo: ocho compilaciones, base nueva, JDBC, cuatro 
 Referencias: [binarios PostgreSQL Windows](https://www.enterprisedb.com/download-postgresql-binaries), [fuente PostgreSQL 17.11](https://ftp.postgresql.org/pub/source/v17.11/), [initdb](https://www.postgresql.org/docs/17/app-initdb.html), [pg_ctl](https://www.postgresql.org/docs/17/app-pg-ctl.html), [pg_dump](https://www.postgresql.org/docs/17/app-pgdump.html).
 
 ## Carga de datos por área
+
+El cargador ahora usa acceso documental personal por defecto. El acceso a
+documentos de toda la dependencia requiere `acceso_documentos=dependencia` en
+un perfil aprobado. Para las oficinas ya cargadas con permisos incorrectos,
+`Recargar-Usuarios` recarga el alcance desde sus archivos revisados, conserva
+cuentas, contraseñas y documentos y admite un lote de oficinas con un respaldo
+y una transacción. Por defecto prepara un plan offline; solo `--aplicar` escribe
+en la base. Comandos en [RECARGA-USUARIOS.md](manual/RECARGA-USUARIOS.md).
 
 Antes de cargar, ejecutar **Validar-Carga.bat** en Windows (admite doble clic) o **bash Validar-Carga.sh** en Linux. Sin argumentos revisa datos/carga-uti-preparada; para otra carpeta usar --carpeta RUTA. Comprueba la selección 0/1, las reglas del cargador, las relaciones del área, columnas y claves del modelo local, configuración y archivos necesarios. El resultado queda en datos/validacion-carga/resultado.json, sin publicar identidades ni contraseñas. Sólo continuar si indica VALIDACION CORRECTA. No conecta a ninguna base ni garantiza ausencia de colisiones actuales: esas comprobaciones y el respaldo se realizan al aplicar la carga. La validación usa exactamente las mismas reglas que Cargar-Area; no sustituye la revisión humana.
 

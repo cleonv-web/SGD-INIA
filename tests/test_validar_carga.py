@@ -65,6 +65,27 @@ class ValidarCargaTests(unittest.TestCase):
         self.write()
         self.assertIn('titular_empleado', ' '.join(self.report()['errores']))
 
+    def test_informe_identifica_alcance_por_perfil_y_no_infiere_por_admin(self):
+        profile = self.area['perfiles']['USUARIO_AREA']
+        profile.pop('acceso_documentos', None)
+        profile['administrador'] = True
+        self.write()
+        report = self.report()
+        self.assertEqual(report['resultado'], 'VALIDACION CORRECTA')
+        self.assertEqual(report['area']['acceso_documentos_por_perfil'],
+                         {'USUARIO_AREA': {'alcance': 'personal', 'ti_acceso': '1'}})
+        profile['acceso_documentos'] = 'dependencia'
+        self.write()
+        self.assertEqual(self.report()['area']['acceso_documentos_por_perfil'],
+                         {'USUARIO_AREA': {'alcance': 'dependencia', 'ti_acceso': '0'}})
+
+    def test_informe_rechaza_alcance_invalido(self):
+        self.area['perfiles']['USUARIO_AREA']['acceso_documentos'] = 'todos'
+        self.write()
+        report = self.report()
+        self.assertEqual(report['resultado'], 'ERROR')
+        self.assertIn('acceso_documentos', ' '.join(report['errores']))
+
     def test_duplicados_y_selector_invalido_rechazados(self):
         other = dict(self.user, origen_id='2', codigo_empleado='52002', dni='87654321', usuario='QA.UNO')
         self.write([self.user, other])

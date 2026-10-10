@@ -74,6 +74,48 @@ class CargaTests(unittest.TestCase):
         before=g.read_bundle(self.folder)[2]; self.user['email']='otro@ejemplo.invalid';self.write()
         self.assertNotEqual(before,g.read_bundle(self.folder)[2])
 
+    def generated_config(self):
+        area, users, fingerprint = g.read_bundle(self.folder)
+        sql = g.load_sql(area, users, fingerprint)
+        calls = re.findall(r"PERFORM pg_temp.registrar\('[^']*','tdtx_config_emp','((?:[^']|'')*)'::jsonb,'((?:[^']|'')*)'::jsonb\);", sql)
+        self.assertEqual(len(calls), 1)
+        return json.loads(calls[0][1].replace("''", "'"))
+
+    def test_acceso_personal_por_defecto_incluso_administrador(self):
+        profile = self.area['perfiles']['USUARIO_AREA']
+        profile.pop('acceso_documentos', None)
+        for admin in [False, True]:
+            with self.subTest(administrador=admin):
+                profile['administrador'] = admin
+                self.write()
+                self.assertEqual(self.generated_config()['ti_acceso'], '1')
+
+    def test_documentos_de_dependencia_requieren_permiso_explicito(self):
+        profile = self.area['perfiles']['USUARIO_AREA']
+        for mode, expected in [('personal', '1'), ('personal_y_emisor', '2'), ('dependencia', '0')]:
+            with self.subTest(alcance=mode):
+                profile['acceso_documentos'] = mode
+                self.write()
+                config = self.generated_config()
+                self.assertEqual(config['ti_acceso'], expected)
+                self.assertEqual(config['in_consulta'], '1')
+                self.assertEqual(config['co_emp'], self.user['codigo_empleado'])
+                self.assertEqual(config['co_dep'], self.area['codigo'])
+
+    def test_acceso_documental_invalido_se_rechaza(self):
+        for value in [None, True, 0, '0', '', 'todos', [], {}]:
+            with self.subTest(valor=value):
+                self.area['perfiles']['USUARIO_AREA']['acceso_documentos'] = value
+                self.write()
+                with self.assertRaisesRegex(ValueError, 'acceso_documentos'):
+                    g.read_bundle(self.folder)
+
+    def test_huella_registra_cambio_de_alcance_documental(self):
+        before = g.read_bundle(self.folder)[2]
+        self.area['perfiles']['USUARIO_AREA']['acceso_documentos'] = 'dependencia'
+        self.write()
+        self.assertNotEqual(before, g.read_bundle(self.folder)[2])
+
     def test_revision_nunca_conecta_y_confirmacion_precede_respaldo(self):
         with patch.object(g,'DATA',self.folder/'salidas'),patch.object(g,'private_folder',lambda p:p.mkdir(parents=True)),\
              patch.object(g,'backup') as backup,patch.object(g,'execute_sql') as execute,patch('sys.stdout',new=io.StringIO()):

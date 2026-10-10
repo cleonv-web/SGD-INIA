@@ -121,6 +121,49 @@ No concatenar o recortar apellidos para forzar límites: paterno y materno admit
 
 Los perfiles de plantilla son una propuesta de permisos que debes revisar, no la traducción aprobada de tus perfiles anteriores. Incluir códigos de menús padres para que las opciones sean visibles. `administrador=true` concede el indicador de administrador del SGD; usarlo sólo en la cuenta de soporte autorizada. Para Mesa de Partes ajustar también `mesa_partes=true` en el área.
 
+### Alcance de acceso a documentos por perfil
+
+Cada perfil de `area.json` puede declarar `acceso_documentos`. El alcance se
+revisa por separado de `administrador`, de los menús y de `firma`. El cargador
+corregido usa **personal** cuando el campo falta; tampoco concede acceso de
+dependencia automáticamente a un administrador o al titular del área.
+
+| `acceso_documentos` | `TI_ACCESO` generado | Alcance en emisión administrativa |
+| --- | --- | --- |
+| `personal` | `1` | Documentos de los que el trabajador es responsable/elaborador. |
+| `personal_y_emisor` | `2` | Documentos de los que es responsable/elaborador o emisor. |
+| `dependencia` | `0` | Documentos de la dependencia autorizada, incluidos los de otros trabajadores. No concede acceso a todas las dependencias del SGD. |
+
+Para que solo algunas personas vean los documentos de toda el área, definir un
+perfil distinto con `acceso_documentos=dependencia` y asignarlo únicamente a
+esas personas en la columna `perfil` del CSV. No cambiar `USUARIO_AREA` a
+dependencia si lo usan también trabajadores con acceso personal. Por ejemplo:
+
+```json
+"VER_DOCUMENTOS_AREA": {
+  "administrador": false,
+  "firma": false,
+  "acceso_documentos": "dependencia",
+  "opciones": ["M02", "M0201", "M020101", "M020102", "M03", "M0301", "M030101", "M030102"]
+}
+```
+
+Incorporar esta definición dentro de `perfiles`, tras la revisión funcional del
+operador. No asignar el perfil por el nombre del puesto ni importar permisos de
+SQL Server automáticamente. El informe de `Validar-Carga` muestra el alcance y
+el código generado de cada perfil utilizado, sin listar personas.
+
+**Carga UTI ya existente:** el cargador anterior asignaba `TI_ACCESO=0` a todos
+los perfiles no administradores. La revisión de 2026-10-10 confirmó nueve
+usuarios `USUARIO_AREA` afectados en `00217`. Actualizar los utilitarios corrige
+las futuras cargas, pero no cambia sus permisos existentes. No repetir
+`Cargar-Area --aplicar` ni retirar/recrear el área: los registros existentes
+necesitan una recarga específica de permisos, con respaldo y comprobación
+de las excepciones autorizadas. Usar `Recargar-Usuarios.bat` o
+`bash Recargar-Usuarios.sh`: admiten una oficina o un lote de oficinas y no
+recrean cuentas. Ver `RECARGA-USUARIOS.md` para los comandos completos y
+`REVISION-ACCESOS-CARGA-2026-10-10.md` para el diagnóstico original.
+
 Esta primera etapa del piloto será sin firma obligatoria. Mantener `firma=false`: el SGD consulta la obligatoriedad del documento del área y el cargador actual crea esos vínculos con `es_obl_firma=0`, por lo que permite emitir sin firmar digitalmente. `firma=true` no activa la firma; se traduce al modo que tampoco la exige. El componente de firma, certificados y flujo obligatorio se configurarán y probarán en una etapa posterior.
 
 ## Trasladar una carga revisada a otra instalación

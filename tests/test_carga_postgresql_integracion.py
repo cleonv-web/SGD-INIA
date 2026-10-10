@@ -8,6 +8,7 @@ import copy,csv,json,os,re,socket,subprocess,sys,tempfile,unittest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import gestion_data as g
+import recargar_usuarios as recarga
 
 
 @unittest.skipUnless(os.environ.get('SGD_PROBAR_POSTGRESQL_AISLADO')=='1',
@@ -146,6 +147,87 @@ class CargaPostgreSQLTests(unittest.TestCase):
         self.assertIn('historial_prueba.co_dep',result.stderr)
         self.assertEqual(self.query(self.db,"SELECT count(*) FROM idosgd.rhtm_dependencia WHERE co_dependencia='51011';").stdout.strip(),'1')
         self.assertEqual(self.query(self.db,"SELECT count(*) FROM idosgd.seg_usuarios1 WHERE cod_user='qa.operador';").stdout.strip(),'1')
+
+    def legacy_access(self):
+        legacy = copy.deepcopy(self.area)
+        legacy['perfiles']['USUARIO_AREA']['acceso_documentos'] = 'dependencia'
+        self.query(self.db, g.load_sql(legacy, self.users, self.fingerprint, {'qa.operador': 'ABCD'}))
+
+    def reload(self, execution='qa-recarga', items=None, check=True):
+        items = items or [(self.path, self.area, self.users, self.fingerprint)]
+        return self.query(self.db, recarga.reload_sql(items, execution, self.db), check=check)
+
+    def test_recarga_conserva_cuenta_clave_y_documentos(self):
+        self.legacy_access()
+        before = self.query(self.db, "SELECT to_jsonb(u)::text FROM idosgd.seg_usuarios1 u WHERE cod_user='qa.operador';").stdout
+        self.query(self.db, "CREATE TABLE idosgd.documento_qa(id integer PRIMARY KEY,contenido text);"
+                   "INSERT INTO idosgd.documento_qa VALUES(1,'DOCUMENTO CONSERVADO');")
+        result = self.reload()
+        self.assertIn('"permisos_actualizados": 1', result.stdout)
+        self.assertEqual(self.query(self.db, "SELECT ti_acceso FROM idosgd.tdtx_config_emp WHERE co_emp='52011' AND co_dep='51011';").stdout.strip(), '1')
+        self.assertEqual(self.query(self.db, "SELECT to_jsonb(u)::text FROM idosgd.seg_usuarios1 u WHERE cod_user='qa.operador';").stdout, before)
+        self.assertEqual(self.query(self.db, "SELECT contenido FROM idosgd.documento_qa;").stdout.strip(), 'DOCUMENTO CONSERVADO')
+        self.assertEqual(self.query(self.db, "SELECT datos->>'ti_acceso' FROM idosgd.piloto_objetos WHERE tabla='tdtx_config_emp';").stdout.strip(), '1')
+        self.assertEqual(self.query(self.db, "SELECT acceso_anterior||','||acceso_nuevo FROM idosgd.piloto_recargas_acceso;").stdout.strip(), '0,1')
+
+    def test_recarga_repetida_no_duplica_ni_cambia_usuarios(self):
+        self.legacy_access()
+        self.reload()
+        again = self.reload('qa-recarga-2')
+        self.assertIn('"permisos_actualizados": 0', again.stdout)
+        self.assertEqual(self.query(self.db, "SELECT count(*) FROM idosgd.piloto_recargas_acceso;").stdout.strip(), '1')
+        self.assertEqual(self.query(self.db, "SELECT count(*) FROM idosgd.seg_usuarios1;").stdout.strip(), '5')
+        self.assertEqual(self.query(self.db, g.clean_sql(self.area['codigo']), check=False).returncode, 0)
+
+    def test_recarga_lote_conflicto_revierte_todas_las_oficinas(self):
+        self.legacy_access()
+        other = copy.deepcopy(self.area)
+        other['codigo'] = '51012'
+        other['perfiles']['USUARIO_AREA']['acceso_documentos'] = 'dependencia'
+        self.query(self.db, g.load_sql(other, self.users, 'huella-qa-otra-oficina', {'qa.operador': 'ABCD'}))
+        self.query(self.db, "UPDATE idosgd.tdtx_config_emp SET ti_acceso='2' WHERE co_dep='51012' AND co_emp='52011';")
+        items = [(self.path, self.area, self.users, self.fingerprint),
+                 (self.path, other, self.users, 'huella-qa-otra-oficina')]
+        other['perfiles']['USUARIO_AREA']['acceso_documentos'] = 'personal'
+        failed = self.reload(items=items, check=False)
+        self.assertNotEqual(failed.returncode, 0)
+        self.assertIn('Permiso cambiado manualmente', failed.stderr)
+        self.assertEqual(self.query(self.db, "SELECT co_dep||','||ti_acceso FROM idosgd.tdtx_config_emp WHERE co_emp='52011' ORDER BY co_dep;").stdout.strip(), '51011,0\n51012,2')
+        self.assertEqual(self.query(self.db, "SELECT to_regclass('idosgd.piloto_recargas_acceso') IS NULL;").stdout.strip(), 't')
+
+    def test_recarga_excepcion_explicita_conserva_acceso_de_area(self):
+        self.legacy_access()
+        self.area['perfiles']['USUARIO_AREA']['acceso_documentos'] = 'dependencia'
+        result = self.reload()
+        self.assertIn('"permisos_actualizados": 0', result.stdout)
+        self.assertEqual(self.query(self.db, "SELECT ti_acceso FROM idosgd.tdtx_config_emp WHERE co_emp='52011' AND co_dep='51011';").stdout.strip(), '0')
+
+    def test_recarga_identidad_incorrecta_y_base_distinta_se_bloquean(self):
+        self.legacy_access()
+        bad = copy.deepcopy(self.users)
+        bad[0]['dni'] = '87654321'
+        result = self.reload(items=[(self.path,self.area,bad,self.fingerprint)], check=False)
+        self.assertNotEqual(result.returncode, 0)
+        sql = recarga.reload_sql([(self.path,self.area,self.users,self.fingerprint)], 'qa-base', 'otra_base')
+        self.assertNotEqual(self.query(self.db, sql, check=False).returncode, 0)
+        self.assertEqual(self.query(self.db, "SELECT ti_acceso FROM idosgd.tdtx_config_emp WHERE co_emp='52011' AND co_dep='51011';").stdout.strip(), '0')
+
+    def test_recarga_cincuenta_oficinas_en_una_transaccion(self):
+        items = []
+        for index in range(50):
+            area = copy.deepcopy(self.area)
+            area['codigo'] = str(51011 + index)
+            legacy = copy.deepcopy(area)
+            legacy['perfiles']['USUARIO_AREA']['acceso_documentos'] = 'dependencia'
+            fingerprint = 'huella-qa-oficina-' + str(index)
+            self.query(self.db, g.load_sql(legacy, self.users, fingerprint, {'qa.operador': 'ABCD'}))
+            items.append((self.path, area, self.users, fingerprint))
+        result = self.reload(items=items)
+        self.assertIn('"oficinas": 50', result.stdout)
+        self.assertIn('"usuarios_comprobados": 50', result.stdout)
+        self.assertIn('"permisos_actualizados": 50', result.stdout)
+        self.assertEqual(self.query(self.db, "SELECT count(*) FROM idosgd.tdtx_config_emp WHERE co_emp='52011' AND ti_acceso='1';").stdout.strip(), '50')
+        self.assertEqual(self.query(self.db, "SELECT count(*) FROM idosgd.seg_usuarios1;").stdout.strip(), '5')
 
 
 if __name__=='__main__':unittest.main()

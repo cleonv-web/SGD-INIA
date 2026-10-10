@@ -7,6 +7,16 @@
 .env
 .env.*
 !.env.example
+/cliente-windows/clave.txt
+
+# Resultados locales, auditorías y dependencias de las pruebas.
+# Los entregables que se distribuyen se conservan en manual/.
+/output/
+/INCIDENCIAS/
+
+# Instaladores locales de Firma ONPE.
+/cliente-windows/InstallerFirmaONPE*.msi
+/cliente-windows/InstallerFirmaONPE*.zip
 
 # Motores y herramientas externos. Conservar el ZIP portable y sus hashes.
 /java/
