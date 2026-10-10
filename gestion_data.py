@@ -176,7 +176,8 @@ def read_bundle(folder):
         cargos[cargo] = user['cargo_nombre']
     require(manifest.get('titular_empleado') in identifiers['codigo_empleado'],
             'titular_empleado debe corresponder a un usuario verificado de esta carga')
-    document_path = (DATA / 'documentos').as_posix()
+    # Tramitedoc entrega esta ruta al Explorador: conservar el formato nativo.
+    document_path = str(DATA / 'documentos')
     require(len(document_path) <= 200, 'Ruta datos/documentos supera 200 caracteres')
     # El selector no es un dato del empleado; mantener la huella de CSV anteriores.
     canonical = json.dumps({'area': manifest, 'usuarios':
@@ -264,7 +265,7 @@ def load_sql(area, users, fingerprint, encrypted=None):
         de_sigla=area['sigla'], co_cargo=titular['cargo_codigo'], co_empleado=titular['codigo_empleado'],
         co_emp_titular=titular['codigo_empleado'], co_tipo_encargatura='1', in_numero_mp='0',
         in_mesa_partes='1' if area['mesa_partes'] else '0', de_descrip='Alta por utilitario de piloto INIA'))
-    route = (DATA / 'documentos').as_posix()
+    route = str(DATA / 'documentos')
     for user in users:
         emp = user['codigo_empleado']; login = user['usuario']; profile = area['perfiles'][user['perfil']]
         add('rhtm_per_empleados', {'cemp_codemp': emp}, dict(cemp_codemp=emp, cemp_indbaj='1',

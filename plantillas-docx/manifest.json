@@ -1,12 +1,12 @@
 {
-  "version": 1,
+  "version": 2,
   "origen": "Diseño adaptado del memorando INIA suministrado por el operador",
   "dependencia_predeterminada": "00000",
   "plantillas": [
     {
       "tipo": "003",
       "archivo": "INFORME-INIA.docx",
-      "sha256": "b25b4e1154385d3b8b86dce582d7e806cf173d39e1d449326da5cceffca67847",
+      "sha256": "446262ac93a0a786c3ff0a9f810bbbc1b52e427f7e5fd9de5f26f61d239e0fd7",
       "campos": [
         "ASUNTO",
         "CARGO_EMP_DESTINO",
@@ -29,7 +29,7 @@
     {
       "tipo": "001",
       "archivo": "OFICIO-INIA.docx",
-      "sha256": "a41dd3275c0ff645b4af98b03838052b9a558a385cabc7830efdaa126b99aedf",
+      "sha256": "cc60481629822ac5d11fb8b9bf0d31a9a0f8d8575e7c4ee8a17b6e21477d98c0",
       "campos": [
         "ASUNTO",
         "CARGO",
@@ -53,5 +53,10 @@
         "REFERENCIA"
       ]
     }
-  ]
+  ],
+  "espacio_firma_cabecera": {
+    "ancho_twips": 2522,
+    "inicio_x_puntos": 426.7,
+    "motivo": "Reserva superior derecha sin logos ni texto"
+  }
 }

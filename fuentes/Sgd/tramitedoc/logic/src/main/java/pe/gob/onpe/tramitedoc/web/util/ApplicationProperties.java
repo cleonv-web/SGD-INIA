@@ -72,6 +72,10 @@ public class ApplicationProperties {
     public String getFileSizeMaxCargo() {
          return properties.getProperty("FILE_SIZE_MAX_CARGO");
     }
+
+    public String getLocalidadDocumentalPredeterminada() {
+        return properties.getProperty("localidad_documental_predeterminada", "");
+    }
     
 
     public Properties getProperties() {

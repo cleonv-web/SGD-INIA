@@ -115,7 +115,9 @@ class NombresDocumentoTest(unittest.TestCase):
             sources = [source, base / 'service/DocumentoObjService.java',
                        base / 'service/impl/DocumentoObjServiceImp.java',
                        base / 'service/impl/DocumentoObjInterServiceImp.java',
-                       base / 'util/NombreArchivoDocumento.java']
+                       base / 'util/NombreArchivoDocumento.java',
+                       base / 'util/TextoDocumento.java',
+                       base / 'web/util/ApplicationProperties.java']
             compiled = subprocess.run([str(jdk / ('javac' + suffix)), '-encoding', 'UTF-8', '-cp', cp,
                                        '-d', directory, *map(str, sources)], capture_output=True, text=True)
             self.assertEqual(compiled.returncode, 0, compiled.stderr)

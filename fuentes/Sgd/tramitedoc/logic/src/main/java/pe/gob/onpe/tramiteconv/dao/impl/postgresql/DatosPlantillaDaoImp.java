@@ -208,9 +208,9 @@ public class DatosPlantillaDaoImp extends SimpleJdbcDaoBase implements DatosPlan
         try {
             result = this.jdbcTemplate.queryForObject(sql.toString(), String.class, new Object[]{pco_local});
         } catch (EmptyResultDataAccessException e) {
-            result = "Lima";
+            result = "";
         } catch (Exception e) {
-            result = "Lima";
+            result = "";
             e.printStackTrace();
         }
         

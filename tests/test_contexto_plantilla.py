@@ -118,7 +118,8 @@ def probar(output,compilar_fuente=True):
         servlet=ROOT/'herramientas/maven-repo/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar'
         cp=os.pathsep.join([str(libs/'*'),str(servlet)])
         sources=[src]
-        if compilar_fuente:sources += [base/'service/impl/DocumentoXmlServiceImp.java',base/'web/servlet/DocumentoSrvlt.java']
+        if compilar_fuente:sources += [base/'service/impl/DocumentoXmlServiceImp.java',base/'web/servlet/DocumentoSrvlt.java',
+                                      base/'util/TextoDocumento.java',base/'web/util/ApplicationProperties.java']
         result=subprocess.run([str(jdk/('javac'+suffix)),'-encoding','UTF-8','-cp',cp,'-d',temp,*map(str,sources)],capture_output=True,text=True)
         if result.returncode:raise AssertionError(result.stderr)
         result=subprocess.run([str(jdk/('java'+suffix)),'-cp',temp+os.pathsep+cp,'ContextoPlantillaTest',str(ROOT/'plantillas-docx'),str(output)],capture_output=True,text=True)

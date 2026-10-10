@@ -239,9 +239,10 @@ def datos():
 def generar_sql():
     v=credentials();header=''
     for u,p in v['usuarios'].items():header+='\\set clave'+('' if u=='admin' else '_'+u)+' '+quote(cipher(p))+'\n'
-    header+='\\set ruta '+quote((ROOT/'datos/documentos').as_posix())+'\n'
+    # Insertar un literal SQL: \set interpreta las barras de las rutas Windows.
+    ruta_documentos=quote(str(ROOT/'datos/documentos'))
     schema=(ROOT/'bd/01-estructura-catalogos.sql').read_text(encoding='utf-8')
-    seed=(ROOT/'bd/02-inia-usuarios-ficticios.sql').read_text(encoding='utf-8').replace("'2026'",quote(C['anio']))
+    seed=(ROOT/'bd/02-inia-usuarios-ficticios.sql').read_text(encoding='utf-8').replace("'2026'",quote(C['anio'])).replace(":'ruta'",ruta_documentos)
     tail="""
 CREATE TABLE idosgd.instalacion_portable(version text PRIMARY KEY, instalada timestamp NOT NULL DEFAULT now());
 INSERT INTO idosgd.instalacion_portable(version) VALUES ('1');
@@ -385,7 +386,7 @@ def configurar():
         if name not in resources:admin(['create-jdbc-resource','--connectionpoolid','SGDPostgreSQL',name])
     admin(['ping-connection-pool','SGDPostgreSQL'],log='payara-jdbc.log')
     (DATA/'documentos').mkdir(exist_ok=True)
-    path=quote((DATA/'documentos').as_posix())
+    path=quote(str(DATA/'documentos'))
     jdbc_sql('UPDATE idosgd.tdtx_config_emp SET de_dir_emi='+path+',de_dir_rec='+path+',de_dir_ane='+path+
         " WHERE co_emp IN ('00000','49001','49002','49003');",'bd-rutas-portables.log')
     print('Payara configurado y conexión JDBC comprobada.',flush=True)
@@ -485,7 +486,7 @@ def restaurar():
         psql('CREATE ROLE sgd_app LOGIN PASSWORD '+quote(v['aplicacion'])+';',log='bd-restaurar-rol.log')
     pg_tool('pg_restore',[*connection(),'--exit-on-error','--single-transaction',f],log='bd-restauracion.log')
     psql('ALTER ROLE sgd_app IN DATABASE '+C['base']+' SET search_path=idosgd,public;\n'+
-        'UPDATE idosgd.tdtx_config_emp SET de_dir_emi='+quote((DATA/'documentos').as_posix())+',de_dir_rec='+quote((DATA/'documentos').as_posix())+',de_dir_ane='+quote((DATA/'documentos').as_posix())+';',transaction=True)
+        'UPDATE idosgd.tdtx_config_emp SET de_dir_emi='+quote(str(DATA/'documentos'))+',de_dir_rec='+quote(str(DATA/'documentos'))+',de_dir_ane='+quote(str(DATA/'documentos'))+';',transaction=True)
     print('Respaldo restaurado en base nueva.',flush=True)
 
 def detener():

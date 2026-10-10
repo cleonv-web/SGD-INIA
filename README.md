@@ -50,6 +50,10 @@ La instalación nueva crea la sede central 001 con sus datos reales. En instalac
 
 ## SQL y fuentes
 
+La correccion de rutas para Tramitedoc y los scripts generales pendientes de
+aprobacion se documentan en [CORRECCION-RUTAS-DOCUMENTOS.md](manual/CORRECCION-RUTAS-DOCUMENTOS.md).
+Las cargas nuevas guardan el directorio en el formato nativo del sistema.
+
 Una transacción reúne esquema, catálogos, ficticios y permisos. ON_ERROR_STOP detiene errores y revierte la carga. No se repite una base inicializada. No ejecutar SQL Server ni el DDL MPV duplicado. sgd_app no es superusuario. Ante un fallo revisar logs/ULTIMO-ERROR.txt y el log indicado.
 
 La compilación clean install -DskipTests es offline. Los WAR se generan desde fuentes; no se ocultan errores con WAR antiguos. La única aplicación sin fuente es wstradoc, que utiliza el WAR suministrado. También existen dependencias JAR sin fuente: srvccuo, srvciopidetramite, srvcsunat y wsoapIopCliente. Ver logs/compilacion.json.

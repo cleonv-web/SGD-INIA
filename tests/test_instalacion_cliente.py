@@ -42,7 +42,7 @@ class InstalacionClienteTests(unittest.TestCase):
 
     def test_falta_msi_detiene_antes_del_servidor(self):
         self.msi.unlink()
-        with patch.object(sgd, 'todo') as server, self.assertRaisesRegex(RuntimeError, 'Falta el cliente'):
+        with patch.object(sgd, 'todo') as server, self.assertRaisesRegex(RuntimeError, r'Falta cliente-windows/InstallerTramiteDoc\.msi'):
             sgd.instalar('servidor')
         server.assert_not_called()
 

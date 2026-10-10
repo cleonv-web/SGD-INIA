@@ -61,7 +61,9 @@ public class DocumentoXmlServiceImp implements DocumentoXmlService{
                 
                 datosPlantilla.setSiglaDoc(generarFormatoSiglas(datosPlantilla.getDeTipoDoc(), datosPlantilla.getNuDocEmi(),datosPlantilla.getNuAnn(), applicationProperties.getSiglaInstitucion() , datosPlantilla.getDeDocSig()));
                 datosPlantilla.setNumeroDoc("N° "+datosPlantilla.getNuDocEmi()+"-"+datosPlantilla.getNuAnn()+"-"+datosPlantilla.getDeDocSig()); // Numero de Documento                
-                datosPlantilla.setFechaDoc(datosPlantillaDao.getDistritoLocal(datosPlantilla.getCoLocEmi())+", "+datosPlantilla.getFeEmiLargo());
+                datosPlantilla.setFechaDoc(pe.gob.onpe.tramitedoc.util.TextoDocumento.fecha(
+                        datosPlantillaDao.getDistritoLocal(datosPlantilla.getCoLocEmi()),
+                        datosPlantilla.getFeEmiLargo(), applicationProperties.getLocalidadDocumentalPredeterminada()));
                 datosPlantilla.setPiePagina(datosPlantillaDao.getPiePagina(datosPlantilla.getCoEmpRes(), datosPlantilla.getCoDepEmi()));
                 datosPlantilla.setDeCargoFunEmiMae(datosPlantilla.getDeCargoFunEmiMae()+datosPlantilla.getDeTiFun());
                 

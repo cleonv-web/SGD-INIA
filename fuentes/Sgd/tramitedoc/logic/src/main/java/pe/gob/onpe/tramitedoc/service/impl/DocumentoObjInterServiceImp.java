@@ -75,6 +75,8 @@ public class DocumentoObjInterServiceImp implements DocumentoObjInterService{
         try{
            docDatoBean = documentoObjDao.getDatosDoc(pnuAnn, pnuEmi);
            if (docDatoBean!=null){
+               docDatoBean.setDeLugar(pe.gob.onpe.tramitedoc.util.TextoDocumento.primero(
+                       docDatoBean.getDeLugar(), applicationProperties.getLocalidadDocumentalPredeterminada()));
                docDatoBean.setNuSecFirma(Utilidades.generateRandomNumber(8));
            }
         }catch(Exception e){
