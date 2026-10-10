@@ -46,12 +46,19 @@
                     <tr>
                         <td class="sgd-login-photo-cell" width="45%" align="center">
                             <img src="${staticResourcesURL}/images/inicio_login_inia.png" width="352" height="280" alt="Sede del Instituto Nacional de Innovación Agraria"/>
+                            <div class="inia-login-story">
+                                <span class="inia-eyebrow">INIA · GESTIÓN INSTITUCIONAL</span>
+                                <h1>La innovación <br/>empieza con una <br/>buena gestión.</h1>
+                                <p>Conectamos personas, documentos y decisiones para impulsar la innovación agraria.</p>
+                                <span class="inia-story-footer">Instituto Nacional de Innovación Agraria</span>
+                            </div>
                         </td>
                         <td width="55%" valign="top" >
                             <div>
                                 <div id="rightPane" style="padding:10px 10px;">
                                     <div id="loginMaster">
                                         <img class="sgd-login-logo" src="${staticResourcesURL}/images/logo-inia.png" width="250" height="75" alt="INIA Instituto Nacional de Innovación Agraria"/>
+                                        <p class="inia-login-eyebrow">BIENVENIDO AL SGD</p>
                                         <spring:nestedPath path="usuario">
                                              
                                             <form name="loginForm" action="login.do" method="POST" id="loginForm" autocomplete="off"  onsubmit="return loginSessionValidate();" >
@@ -64,7 +71,7 @@
                                                            </tr>
                                                            <tr></tr>
                                                            <tr>
-                                                            <td width="30%" align="left" id="subti_noti">Usuario</td>
+                                                            <td width="30%" align="left" id="subti_noti"><label for="coUsuario">Usuario</label></td>
                                                             <td width="70%" align="left">
                                                                 <spring:bind path="coUsuario">
                                                                     <input type="text"
@@ -82,7 +89,7 @@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td align="left" id="subti_noti">Contraseña</td>
+                                                            <td align="left" id="subti_noti"><label for="dePass">Contraseña</label></td>
                                                             <td align="left" >
                                                                 <spring:bind path="dePassword">
                                                                   <!--  <input type="password"
@@ -129,7 +136,7 @@
                                                          </td>
                                                         </tr>
                                                         <tr>
-                                                            <td align="left" id="subti_noti">Dependencia</td>
+                                                            <td align="left" id="subti_noti"><label for="deDependencia">Dependencia</label></td>
                                                             <td align="left" >
                                                                 <spring:bind path="cempCodemp">
                                                                     <input type="hidden"

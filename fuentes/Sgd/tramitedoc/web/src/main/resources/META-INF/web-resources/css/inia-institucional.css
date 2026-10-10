@@ -1,0 +1,253 @@
+/* INIA — capa de presentación sobre el SGD 4.7.
+   No reemplaza Bootstrap, iconos, estados, permisos ni lógica de los controles.
+   Las reglas se limitan a las dos plantillas del SGD; impresión conserva sus estilos. */
+:root {
+    --inia-green: #256b35;
+    --inia-forest: #173e2d;
+    --inia-leaf: #619e31;
+    --inia-gold: #ecb526;
+    --inia-ink: #243b31;
+    --inia-muted: #64756c;
+    --inia-line: #dbe5dd;
+    --inia-surface: #f3f6f2;
+    --inia-shadow: 0 12px 36px rgba(25, 58, 39, .08);
+}
+body.inia-access, body.inia-workspace {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--inia-ink);
+    background: var(--inia-surface);
+}
+.inia-access a:focus-visible, .inia-workspace a:focus-visible,
+.inia-access button:focus-visible, .inia-workspace button:focus-visible {
+    outline: 3px solid var(--inia-gold);
+    outline-offset: 3px;
+}
+/* Acceso: fotografía de la sede, marca original y formulario existente. */
+body.inia-access {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 12% 20%, #e2ebdc 0, transparent 48%),
+                radial-gradient(ellipse at 90% 90%, #e9eedb 0, transparent 40%), #f4f6f1;
+}
+.inia-access #page { box-sizing: border-box; padding: 60px 24px; min-height: 100vh; }
+.inia-access #dlglogin_principal {
+    position: relative; top: auto; left: auto; transform: none;
+    width: 1100px; max-width: 100%; margin: max(0px, calc((100vh - 760px) / 2)) auto 0;
+    background: white; border: 1px solid rgba(30, 67, 41, .08); border-radius: 24px;
+    box-shadow: 0 28px 80px rgba(28, 60, 39, .13);
+}
+.inia-access .sgd-login-layout { border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+.inia-access .sgd-login-layout > tbody > tr:first-child > td { vertical-align: top; }
+.inia-access .sgd-login-photo-cell {
+    position: relative; overflow: hidden; background: var(--inia-forest);
+    border-radius: 23px 0 0 0; padding: 0; text-align: left;
+}
+.inia-access .sgd-login-photo-cell > img {
+    position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+    object-fit: cover; object-position: 48% center; opacity: .43;
+}
+.inia-access .sgd-login-photo-cell::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(16, 51, 31, .25), rgba(12, 39, 27, .93));
+}
+.inia-login-story { position: relative; z-index: 1; padding: 44px 40px; color: #fff; }
+.inia-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #fff0bb; }
+.inia-login-story h1 { margin: 112px 0 24px; font-size: 40px; font-weight: 600; line-height: 1.18; letter-spacing: -1.3px; }
+.inia-login-story h1::before { content: ""; display: block; width: 40px; height: 4px; background: var(--inia-gold); margin-bottom: 24px; border-radius: 2px; }
+.inia-login-story p { max-width: 330px; font-size: 15px; line-height: 1.8; color: #e4eee5; }
+.inia-story-footer { display: block; margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.22); font-size: 11px; letter-spacing: .35px; color: #dfebdf; }
+.inia-access #rightPane { padding: 44px 52px 36px !important; }
+.inia-access .sgd-login-logo { width: 250px; max-width: 100%; height: auto; margin: 0 0 32px; }
+.inia-login-eyebrow { color: var(--inia-muted); font-size: 10px; font-weight: 700; letter-spacing: 2px; margin: 0 0 8px; }
+.inia-access #dlglogin { background: transparent; }
+.inia-access #dlglogin .padded-table10 { display: block; width: 100%; }
+.inia-access #dlglogin .padded-table10 > tbody { display: block; }
+.inia-access #dlglogin .padded-table10 > tbody > tr { display: block; }
+.inia-access #dlglogin .padded-table10 > tbody > tr > td { display: block; width: 100%; padding: 0; }
+.inia-access #dlglogin #titulo_servicios {
+    text-align: left; color: var(--inia-forest); font-size: 30px;
+    line-height: 1.2; letter-spacing: -.8px; font-weight: 600; padding-bottom: 28px;
+}
+.inia-access #dlglogin #subti_noti { font-size: 13px; color: var(--inia-ink); padding: 12px 0 8px; }
+.inia-access #dlglogin label { margin: 0; font-weight: 600; cursor: pointer; }
+.inia-access #dlglogin .input, .inia-access #dlglogin .input16,
+.inia-access #dlglogin #captcha {
+    box-sizing: border-box; width: 100% !important; height: 46px !important;
+    padding: 10px 14px; font-family: inherit; font-size: 15px; line-height: 24px;
+    color: var(--inia-ink); background: #f9fbf8; border: 1px solid #cdd8cf; border-radius: 8px;
+    box-shadow: none; transition: border-color .18s, box-shadow .18s;
+}
+.inia-access #dlglogin input:focus {
+    outline: none; border-color: var(--inia-green); background: #fff;
+    box-shadow: 0 0 0 3px rgba(73, 133, 47, .14);
+}
+.inia-access #dlglogin #deDependencia { width: calc(100% - 46px) !important; border-radius: 8px 0 0 8px; background: #eff3ee; }
+.inia-access #dlglogin .input-group { display: flex; width: 100%; }
+.inia-access #dlglogin .input-group > .btn { flex: 0 0 46px; height: 46px !important; border-radius: 0 8px 8px 0; color: var(--inia-green); border-color: #cdd8cf; background: #eff3ee; }
+.inia-access #dlglogin #divCaptcha { margin-top: 16px; }
+.inia-access #dlglogin #divCaptcha .input-group > .btn { height: 52px !important; }
+.inia-access #dlglogin #captcha { margin-top: 8px; }
+.inia-access #dlglogin button[type="submit"] {
+    width: 100% !important; margin-top: 24px; min-height: 48px; padding: 12px 18px;
+    font-size: 15px; font-weight: 600; letter-spacing: .25px; color: #fff;
+    border: 1px solid var(--inia-green); border-radius: 8px;
+    background: var(--inia-green); box-shadow: 0 5px 14px rgba(37, 107, 53, .18);
+    transition: background .18s, box-shadow .18s;
+}
+.inia-access #dlglogin button[type="submit"]:hover { background: #1c542a; box-shadow: 0 7px 18px rgba(37, 107, 53, .25); }
+.inia-access #dlglogin button[type="submit"] .glyphicon { margin-right: 8px; }
+.inia-access .navbar-login {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 18px;
+    padding: 18px 20px; margin: 0; border-top: 1px solid var(--inia-line);
+}
+.inia-access .navbar-login > li > a {
+    display: inline-flex; align-items: center; gap: 7px; padding: 9px 4px;
+    color: var(--inia-muted); font-size: 12px; line-height: 1.4;
+}
+.inia-access .navbar-login > li > a:hover { color: var(--inia-green); }
+/* Área de trabajo: se conservan IDs, tamaños de iconos y estados funcionales. */
+.inia-workspace #bcMain { min-width: 0; background: var(--inia-surface); }
+.inia-workspace #headPanel { overflow: visible; }
+.inia-workspace #headPanel_top.sgd-header {
+    padding: 16px 28px; gap: 24px; min-height: 98px;
+    border-top: 4px solid var(--inia-leaf); background: #fff;
+}
+.inia-workspace .sgd-header-logo img { width: 190px; }
+.inia-workspace .sgd-header #titulo_interno {
+    text-align: left; color: var(--inia-forest); font-size: 22px;
+    line-height: 1.25; font-weight: 600; letter-spacing: -.5px;
+}
+.inia-workspace .sgd-header #txt_nav { font-size: 12px; line-height: 1.65; color: var(--inia-muted); }
+.inia-workspace .txt_nav2, .inia-workspace .txt_nav2 > a { font-size: 14px; font-weight: 600; color: var(--inia-green); }
+.inia-workspace .sgd-header #main_links {
+    padding: 4px 12px; border: 1px solid var(--inia-line); border-radius: 8px; color: var(--inia-muted);
+}
+.inia-workspace div#menu { height: auto; min-height: 54px; background: var(--inia-forest); box-shadow: 0 5px 12px rgba(20, 50, 30, .1); }
+.inia-workspace div#menu::after { content: ""; display: block; clear: both; }
+.inia-workspace div#menu ul.menu { padding-left: 45px; }
+.inia-workspace div#menu li { background: none; }
+.inia-workspace div#menu li.back { display: none; } /* Indicador ornamental del menú antiguo. */
+.inia-workspace div#menu ul.menu > li > a { height: 54px; line-height: 54px; padding: 0 18px; }
+.inia-workspace div#menu ul.menu > li > a > span { padding-top: 0; line-height: 54px; color: #f1f7ee; font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: .35px; }
+.inia-workspace div#menu ul.menu > li:hover > a, .inia-workspace div#menu ul.menu > li:focus-within > a { background: #2b543b; }
+.inia-workspace div#menu li.last span { background: none; }
+.inia-workspace div#menu li div { top: 54px; background: none; padding-bottom: 0; }
+.inia-workspace div#menu ul ul { background: #fff; border: 1px solid var(--inia-line); border-radius: 8px; box-shadow: var(--inia-shadow); padding: 6px 0; }
+.inia-workspace div#menu ul ul li { background: none; }
+.inia-workspace div#menu ul ul a { z-index: 1; }
+.inia-workspace div#menu ul ul a span { font-family: inherit; font-size: 12px; color: var(--inia-ink); background: none; }
+.inia-workspace div#menu ul ul a:hover, .inia-workspace div#menu ul ul a:focus { background: #edf4e9; }
+.inia-workspace div#menu ul ul a:hover span, .inia-workspace div#menu ul ul a:focus span { color: var(--inia-green); background: none; }
+.inia-workspace div#menu li:focus-within > div { visibility: visible !important; height: auto !important; opacity: 1 !important; overflow: visible !important; }
+.inia-workspace #divBandejaEntrada { padding: 24px; }
+.inia-workspace #divTablaBandejaEntrada { margin: 16px 0; box-shadow: var(--inia-shadow); border-radius: 12px; }
+.inia-workspace #divTablaBandejaEntrada .list-group-item { border-color: var(--inia-line); padding: 15px 20px; }
+.inia-workspace #divTablaBandejaEntrada .list-group-item.active { background: var(--inia-forest); border-color: var(--inia-forest); color: #fff; border-radius: 12px 12px 0 0; }
+.inia-workspace #divTablaBandejaEntrada .list-group-item:last-child { border-radius: 0 0 12px 12px; }
+.inia-workspace #divTablaBandejaEntrada .list-group-item:not(.active):hover { background-color: #edf4e9; }
+.inia-workspace .bandeja a { color: var(--inia-green); }
+.inia-workspace .bandeja h4 { font-family: inherit; font-size: 17px; }
+.inia-workspace #divBandejaEntrada .imagenInicio { max-width: 100%; height: auto; margin-left: 0; border-radius: 12px; }
+.inia-workspace #applicationPanel { background: var(--inia-surface); padding: 20px; }
+.inia-workspace .ui-panel { border-color: var(--inia-line); border-radius: 12px; box-shadow: var(--inia-shadow); background: #fff; }
+.inia-workspace .ui-panel-titlebar, .inia-access .ui-panel-titlebar {
+    background: var(--inia-forest); border-color: var(--inia-forest); color: #fff;
+    font-family: "Segoe UI", Arial, sans-serif; padding: 12px 16px;
+}
+.inia-workspace .ui-panel-titlebar { border-radius: 11px 11px 0 0; }
+.inia-workspace .ui-panel-body { padding: 16px; }
+.inia-workspace fieldset { border-color: var(--inia-line); border-radius: 8px; }
+.inia-workspace legend { color: var(--inia-green); font-family: inherit; font-weight: 600; }
+.inia-workspace .btn { border-radius: 6px; font-family: inherit; }
+.inia-workspace .btn-primary { background: var(--inia-green); border-color: var(--inia-green); color: #fff; }
+.inia-workspace .btn-primary:hover, .inia-workspace .btn-primary:focus { background: #1c542a; border-color: #1c542a; }
+.inia-workspace .btn-default { color: var(--inia-ink); background: #fff; border-color: #cdd8cf; }
+.inia-workspace .btn-default:hover { background: #edf4e9; border-color: #b4c8b5; }
+.inia-workspace input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]),
+.inia-workspace select, .inia-workspace textarea { border-color: #cdd8cf; border-radius: 5px; }
+.inia-workspace input:focus, .inia-workspace select:focus, .inia-workspace textarea:focus { border-color: var(--inia-green); outline-color: var(--inia-green); }
+.inia-workspace .ui-datatable-cab, .inia-workspace table.display thead th { background-color: #e4ede2; color: var(--inia-forest); }
+.inia-workspace .ui-datatable .ui-datatable-data td, .inia-workspace .ui-datatable-fixed tbody td { border-color: var(--inia-line); }
+/* No se sobrescriben row_selected, oculto, disabled ni colores de vencimiento. */
+.inia-workspace .ui-dialog, .inia-access .ui-dialog { border-color: var(--inia-line); border-radius: 12px; box-shadow: 0 24px 70px rgba(16, 43, 28, .2); }
+.inia-workspace .ui-dialog-titlebar, .inia-access .ui-dialog-titlebar { background: var(--inia-forest); color: #fff; border-color: var(--inia-forest); border-radius: 8px 8px 0 0; }
+/* Los diálogos originales son contenedores arrastrables agregados al body.
+   Un origen fijo evita que la altura de la nueva portada los coloque fuera de pantalla.
+   top/left conservan la prioridad de las coordenadas inline al arrastrar. */
+body.inia-access > .ui-draggable, body.inia-workspace > .ui-draggable { position: fixed !important; top: 0; left: 0; width: 100%; height: 0; z-index: 1000; }
+.inia-access .cuadrow > .panel, .inia-workspace .cuadrow > .panel { border: 1px solid var(--inia-line); border-radius: 10px; }
+.inia-access .cuadrow .panel-heading, .inia-workspace .cuadrow .panel-heading { background: var(--inia-forest); color: #fff; border-color: var(--inia-forest); border-radius: 9px 9px 0 0; padding: 14px 18px; }
+.inia-access .cuadrow .panel-title, .inia-workspace .cuadrow .panel-title { color: #fff; font-family: inherit; }
+.inia-access .cuadrow .btn_close_modal, .inia-workspace .cuadrow .btn_close_modal { color: #fff; }
+.inia-access .cuadrow input:not([type="hidden"]), .inia-workspace .cuadrow input:not([type="hidden"]) { max-width: 100%; }
+.inia-workspace #bottomPanel { background: #e8eee5; height: auto; min-height: 96px; padding: 12px 24px; border-top: 1px solid var(--inia-line); }
+.inia-workspace #bottomPanel::after { content: ""; display: block; clear: both; }
+.inia-workspace .txt_footer { color: var(--inia-muted); font-size: 11px; line-height: 1.5; }
+.inia-workspace .txt_footer a { color: var(--inia-green); overflow-wrap: anywhere; }
+@media (max-width: 1000px) {
+    .inia-access #page { padding: 32px 20px; }
+    .inia-access #rightPane { padding: 36px 32px !important; }
+    .inia-login-story { padding: 36px 28px; }
+    .inia-login-story h1 { font-size: 34px; }
+    .inia-workspace #headPanel_top.sgd-header { gap: 16px; padding: 16px 20px; }
+    .inia-workspace .sgd-header #titulo_interno { flex-basis: 230px; }
+    .inia-workspace div#menu { position: relative; }
+    .inia-workspace div#menu ul.menu > li { position: static; }
+    .inia-workspace div#menu ul.menu > li > div { top: 100%; left: 8px; width: calc(100% - 16px); margin: 0; padding: 0; }
+    .inia-workspace div#menu ul.menu > li > div > ul { box-sizing: border-box; width: 100%; margin: 0; }
+    .inia-workspace div#menu ul ul a { width: auto; }
+    .inia-workspace div#menu ul ul div { position: static; margin: 0 0 0 8px !important; width: auto; }
+}
+@media (max-width: 700px) {
+    .inia-access #page { padding: 20px 12px; }
+    .inia-access #dlglogin_principal { width: 100%; margin: 0 auto; border-radius: 18px; }
+    .inia-access .sgd-login-layout > tbody > tr > td { display: block; width: 100%; }
+    .inia-access .sgd-login-photo-cell { border-radius: 17px 17px 0 0; }
+    .inia-login-story { padding: 28px; }
+    .inia-login-story h1 { font-size: 28px; margin: 32px 0 16px; }
+    .inia-login-story h1 br { display: none; }
+    .inia-login-story h1::before { margin-bottom: 16px; }
+    .inia-login-story p { font-size: 13px; margin-bottom: 0; }
+    .inia-story-footer { margin-top: 24px; padding-top: 14px; font-size: 10px; }
+    .inia-access #rightPane { padding: 30px 24px !important; }
+    .inia-access .sgd-login-logo { width: 220px; margin-bottom: 26px; }
+    .inia-access #dlglogin #titulo_servicios { font-size: 26px; padding-bottom: 20px; }
+    .inia-access .navbar-login { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; padding: 14px 20px; text-align: left; }
+    .inia-access .navbar-login > li > a { font-size: 11px; }
+    .inia-workspace .sgd-header #titulo_interno { flex-basis: calc(100% - 170px); font-size: 19px; }
+    .inia-workspace .sgd-header-logo img { width: 140px; }
+    .inia-workspace .sgd-header #txt_nav { flex-basis: calc(100% - 120px); }
+    .inia-workspace .sgd-header-exit { flex-basis: auto; }
+    .inia-workspace div#menu ul.menu { padding: 0 8px 0 40px; }
+    .inia-workspace div#menu { position: relative; }
+    .inia-workspace div#menu ul.menu > li { position: static; }
+    .inia-workspace div#menu ul.menu > li > a { padding: 0 12px; height: 48px; }
+    .inia-workspace div#menu ul.menu > li > a > span { line-height: 48px; font-size: 11px; }
+    .inia-workspace div#menu li div { top: 48px; }
+    .inia-workspace div#menu ul.menu > li > div { top: 100%; left: 8px; width: calc(100% - 16px); margin: 0; padding: 0; }
+    .inia-workspace div#menu ul.menu > li > div > ul { box-sizing: border-box; width: 100%; margin: 0; }
+    .inia-workspace div#menu ul ul a { width: auto; }
+    .inia-workspace div#menu ul ul div { position: static; margin: 0 0 0 8px !important; width: 190px; }
+    .inia-workspace #divBandejaEntrada { padding: 16px; }
+    .inia-workspace #divBandejaEntrada > table { width: 100%; }
+    .inia-workspace #divBandejaEntrada > table > tbody > tr > td { display: block; width: 100%; margin-left: 0 !important; }
+    .inia-workspace #divBuscarExpediente { margin: 0 !important; }
+    .inia-workspace #divTablaBandejaEntrada { max-width: 100%; }
+    .inia-workspace #titleBandejaEntrada { min-width: 0 !important; }
+    .inia-workspace #carousel-example-generic { margin: 16px 0 !important; }
+    .inia-workspace #applicationPanel { padding: 12px; }
+    .inia-workspace .ui-panel-body { padding: 12px; overflow-x: auto; }
+    .inia-workspace .ui-datatable-scrollable-body, .inia-workspace .dataTables_wrapper { overflow-x: auto; }
+    .inia-workspace fieldset > .btn-group { display: flex; flex-wrap: wrap; gap: 4px; }
+    .inia-workspace fieldset > .btn-group > .btn { border-radius: 5px; margin-left: 0; }
+    .inia-workspace .ui-dialog, .inia-access .ui-dialog { box-sizing: border-box; max-width: calc(100vw - 24px) !important; }
+    .inia-workspace .ui-dialog-content, .inia-access .ui-dialog-content { overflow: auto; max-height: 70vh; }
+    .inia-workspace .cuadrow, .inia-access .cuadrow { box-sizing: border-box; width: calc(100vw - 24px) !important; max-width: calc(100vw - 24px); left: 12px !important; top: 24px !important; max-height: calc(100vh - 48px); overflow: auto; }
+    .inia-access .cuadrow .tlb tr > td { display: block; width: 100% !important; text-align: left; padding: 4px 0; }
+    .inia-workspace .modal-dialog, .inia-access .modal-dialog { width: auto; max-width: calc(100vw - 24px); margin: 12px; }
+    .inia-workspace #bottomPanel { padding: 12px; }
+    .inia-workspace #bottomPanel > div:first-child, .inia-workspace #bottomPanel > div:last-of-type { width: 100% !important; float: none !important; text-align: left !important; }
+    .inia-workspace #bottomPanel img { width: 160px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .inia-access #dlglogin input, .inia-access #dlglogin button[type="submit"] { transition: none; }
+}

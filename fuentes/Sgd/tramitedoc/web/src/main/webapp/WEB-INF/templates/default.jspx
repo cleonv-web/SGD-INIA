@@ -13,11 +13,13 @@ xmlns:spring="http://www.springframework.org/tags" xmlns:util="urn:jsptagdir:/WE
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/svg+xml" href="${resourceURL}/images/favicon-inia.svg" />
         <util:load-scripts />
+        <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/inia-institucional.css?v=20261009-1" />
     <title><spring:message code="application_name"/>::<tiles:insertAttribute name="title" ignore="true" /></title>
     </head>
-    <body>
+    <body class="inia-access">
         <div id="page">
             <tiles:insertAttribute name="header" ignore="true" />
             <tiles:insertAttribute name="body" ignore="true" />

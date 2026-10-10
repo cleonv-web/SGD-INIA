@@ -22,14 +22,16 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" type="image/svg+xml" href="${resourceURL}/images/favicon-inia.svg" />
         <util:load-scripts-ini/>
+        <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/inia-institucional.css?v=20261009-1" />
 
 		<spring:message code="application_name" var="app_name" htmlEscape="true"/>
         <title><tiles:insertAttribute name="title" ignore="true" />::${app_name}</title>
 	</head>
 
-  	<body onkeydown="fu_bs(event);">
+    <body class="inia-workspace" onkeydown="fu_bs(event);">
             <div style="display: none">
                 <a id="idTradocDesktop" onclick="this.click();" href="javascript:void(0);" target="_self"><jsp:text/></a>    
             </div>
