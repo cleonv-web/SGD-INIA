@@ -306,7 +306,8 @@ public class DatosPlantillaDaoImp extends SimpleJdbcDaoBase implements DatosPlan
                     
                     try {
                         InputStream in = new ByteArrayInputStream(docObjBean.getObjPlantilla());
-                        IXDocReport template = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Freemarker );
+                        // Cada carga pertenece a su documento; no retenerla en el registro global.
+                        IXDocReport template = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Freemarker, false);
                         docObjBean.setTemplate(template);
                     } catch (Exception e) {
                         docObjBean.setTemplate(null);

@@ -1,6 +1,6 @@
 # Configuracion del dominio Payara piloto
 
-Esta carpeta conserva la configuracion activa del dominio `sgd` capturada el
+Esta carpeta conserva la configuracion del dominio `sgd` capturada el
 2026-10-10, incluyendo credenciales y certificados del dominio por autorizacion
 expresa del operador. El acceso JDBC conserva `${ENV=SGD_DB_PASSWORD}`: la clave
 PostgreSQL se obtiene de `datos/credenciales.json` mediante el lanzador existente.
@@ -12,8 +12,12 @@ los archivos de seguridad y certificados, el driver JDBC y el favicon del
 dominio. `MANIFIESTO.json` registra SHA256, versiones y opciones JVM. Git conserva
 los bytes exactos mediante `.gitattributes`.
 
-La copia refleja la memoria actual **1024 MB**, sin aplicar los ajustes de
-rendimiento propuestos. No incluye PID, locks, logs, caches, temporales,
+Sobre la captura se ajusto a **4096 MB** el heap de `server-config`. Se reinicio
+exclusivamente Payara y se verifico `-Xmx4096m` en el nuevo proceso (PID 3696).
+`default-config` conserva **512 MB** y las demas opciones JVM no cambian.
+El manifiesto identifica el ajuste preparado y sus hashes; su fecha de captura
+original se conserva. Activacion, respaldo y reversion se describen en
+`manual/AJUSTE-MEMORIA-PAYARA.md`. No incluye PID, locks, logs, caches, temporales,
 aplicaciones desplegadas, documentos ni PostgreSQL. Las aplicaciones se
 construyen desde las fuentes y se despliegan con los utilitarios existentes.
 
@@ -59,8 +63,9 @@ otros archivos del destino, no arranca servicios y no conecta a ninguna base.
 No ejecutarla en el servidor actual solo para subir la configuracion a Git.
 
 Los lanzadores actuales `iniciar`, `configurar` y `restaurar` de `sgd.py` pueden
-regenerar propiedades, volver a establecer Java en 1 GB o realizar operaciones de
-base de datos. No usarlos como verificacion offline de esta copia. La autorizacion
+regenerar propiedades o realizar operaciones de base de datos. `configurar` ahora
+conserva el heap existente, salvo un `heap_payara_mb` explicito en la configuracion
+local (1024, 2048 o 4096). No usarlos como verificacion offline de esta copia. La autorizacion
 para versionar Payara no autoriza ejecutar esos comandos contra la base.
 
 ## Subir al repositorio
@@ -77,5 +82,7 @@ Pasaron ocho pruebas offline: preservacion exacta de archivos privados,
 exclusion de PID/logs, deteccion de modificaciones y archivos extra, proteccion
 de rutas, rechazo de sobrescritura de la copia, confirmacion y parada requeridas
 para restaurar, respaldo del destino y conservacion de archivos ajenos. La copia
-real contiene 33 archivos verificados por SHA256. No se ha restaurado en el
-dominio activo, reiniciado el servidor ni ejecutado ninguna consulta SQL.
+real contiene 33 archivos verificados por SHA256. No se restauro la copia completa sobre el dominio activo. El ajuste de heap a
+4096 MB se activo con respaldo y reinicio exclusivo de Payara. No se ejecutaron
+scripts SQL ni comandos de PostgreSQL; el arranque de las aplicaciones mantiene
+su actividad normal con la base.

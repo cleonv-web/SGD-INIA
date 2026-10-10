@@ -27,7 +27,7 @@
     "[17|]--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
     "[17|]--add-opens=java.desktop/java.beans=ALL-UNNAMED",
     "[17|]--add-exports=jdk.naming.dns/com.sun.jndi.dns=ALL-UNNAMED",
-    "-Xmx1024m",
+    "-Xmx4096m",
     "-XX:NewRatio=2",
     "-XX:+UnlockDiagnosticVMOptions",
     "-Dcom.sun.enterprise.config.config_environment_factory_class=com.sun.enterprise.config.serverbeans.AppserverConfigEnvironmentFactory",
@@ -79,7 +79,7 @@
     "config/default-logging.properties": "a57def717e2e47ca924117ff5b9086310fdaff7fe8a77b9bc4b0ed0d6d176e74",
     "config/default-web.xml": "802c56179d7536333834fda40c1a550323928d2e7ed8f532c272248df462e9b4",
     "config/domain-passwords": "a9e91856ad8f754e16c148349790926965bedfe90e7de3703870a8400eef809e",
-    "config/domain.xml": "ea8f5405a2bd79c3171ae0c31f5d26cb84f64d4580174c79a0251d08f6a97549",
+    "config/domain.xml": "58f5e9ff84f1ffe86376e1a7485048480977bd55ed4cf9bf7f5c99cf9c0ad15d",
     "config/glassfish-acc.xml": "f56391f4716857cde2e7de4e0e056b79473c4bb878b2eafcffb231c393c94d9c",
     "config/javaee.server.policy": "32f9a24d83fb0b41b32178924ef9ff0ed4bddb74a4331159b828b8a932299874",
     "config/keyfile": "654c58e3b01dc2cff5d0e7267a35161129ba25c9d5cf83cb245463a4e0a0912f",
@@ -111,5 +111,16 @@
   "runtime_externo": {
     "payara/payara-5.2022.5-backup.zip": "3ac63a66604595bd63f18f37271e8d5ef923a14ce1acf6426fd46193fb5b281b",
     "payara/driver/postgresql-42.7.8.jar": "2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7"
+  },
+  "ajuste_heap_preparado": {
+    "fecha_utc": "2026-10-10T16:18:11.769390+00:00",
+    "heap_mb": 4096,
+    "activacion_verificada": true,
+    "verificacion_proceso": {
+      "fecha_utc": "2026-10-10T16:20:24.883257+00:00",
+      "pid": 3696,
+      "argumento_heap": "-Xmx4096m",
+      "reinicio_exclusivo_payara": true
+    }
   }
 }

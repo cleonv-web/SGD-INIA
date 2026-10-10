@@ -7,6 +7,9 @@ from pathlib import Path
 import argparse, base64, hashlib, http.cookiejar, json, os, platform, re, secrets, shutil, socket, subprocess, sys, tarfile, time, urllib.request, urllib.parse, zipfile, xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent
+# El Python portable usa _pth aislado y no agrega el directorio del script.
+sys.path.insert(0, str(ROOT))
+from herramientas.memoria_payara import configurar_heap
 C = json.loads((ROOT/'configuracion.json').read_text(encoding='utf-8'))
 DOMAIN = ROOT/'payara/payara5/glassfish/domains/sgd'
 LOG = ROOT/'logs'; LOG.mkdir(exist_ok=True)
@@ -350,8 +353,8 @@ def configurar():
             '--domainproperties',f"jms.port={C['puerto_http']+1000}:domain.jmxPort={C['puerto_http']+1001}:orb.listener.port={C['puerto_http']+1002}:orb.ssl.port={C['puerto_http']+1003}:orb.mutualauth.port={C['puerto_http']+1004}:http.ssl.port={C['puerto_https']}",'sgd'],log='payara-crear-dominio.log')
     xml=DOMAIN/'config/domain.xml';tree=ET.parse(xml);conf=tree.find('.//config[@name="server-config"]')
     jvm=conf.find('java-config')
-    for opt in jvm.findall('jvm-options'):
-        if opt.text and opt.text.startswith('-Xmx'):opt.text='-Xmx1024m'
+    # Conservar el heap elegido; el operador puede indicar 1024, 2048 o 4096 MB.
+    configurar_heap(jvm, C.get('heap_payara_mb'))
     for option in ['-Dcatalina.base=${com.sun.aas.instanceRoot}','-Djava.io.tmpdir=${com.sun.aas.instanceRoot}/temp','-Duser.timezone=America/Lima']:
         if option not in [x.text for x in jvm.findall('jvm-options')]:ET.SubElement(jvm,'jvm-options').text=option
     haz=conf.find('hazelcast-runtime-configuration')

@@ -354,7 +354,8 @@ public class DocumentoXmlServiceImp implements DocumentoXmlService{
 
             InputStream in = new FileInputStream(new File("C:\\TDOCUMENTOS\\PLANTILLAS_DOCX\\MEMORANDO3.docx"));
             //InputStream in = DocxNativeLineBreakAndTabWithFreemarker.class.getResourceAsStream( "C:\\TDOCUMENTOS\\PLANTILLAS_DOCX\\MEMORANDO2.docx" );
-            IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Freemarker );
+            // Conservar una instancia por operacion sin acumular reportes globales.
+            IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Freemarker, false);
 
             IContext context = report.createContext();
 
