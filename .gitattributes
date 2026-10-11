@@ -3,5 +3,16 @@
 *.py text eol=lf
 *.sql text eol=lf
 
+# Conservar CSV de carga/exportacion; CRLF es un salto valido, no un espacio final.
+datos/**/*.csv -text whitespace=cr-at-eol
+
 # La copia de Payara se verifica por SHA256. Conservar bytes en Windows/Linux.
 payara/configuracion/dominio/** -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+# Conservar los bytes del motor de proveedor, incluidas sus bibliotecas y WAR.
+payara/payara5/** -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+# Los runtimes y las dependencias offline conservan sus bytes originales.
+java/** -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+bd/postgresql/** -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+herramientas/python-windows/** -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+herramientas/maven/** -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+herramientas/maven-repo/** -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab

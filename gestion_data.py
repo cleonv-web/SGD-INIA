@@ -60,7 +60,8 @@ def j(value):
 
 def private_write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(value, encoding='utf-8')
+    # El CSV ya incluye CRLF: evitar convertirlo a CRCRLF en Windows.
+    path.write_text(value, encoding='utf-8', newline='')
     if os.name != 'nt':
         path.chmod(0o600)
 
@@ -510,9 +511,16 @@ def main(argv=None):
     parser.add_argument('accion',choices=['plantilla','cargar','limpiar','catalogos'])
     parser.add_argument('--carpeta',type=Path)
     parser.add_argument('--area')
+    parser.add_argument('--todo',action='store_true',help='Reiniciar toda la base local del piloto con respaldo previo')
     parser.add_argument('--aplicar',action='store_true')
     parser.add_argument('--confirmar',default='')
     args = parser.parse_args(argv)
+    if args.todo:
+        require(args.accion=='limpiar' and not args.area and not args.carpeta,
+                '--todo solo se permite en limpiar, sin --area ni --carpeta')
+        from reiniciar_piloto import reiniciar
+        reiniciar(aplicar=args.aplicar, confirmar=args.confirmar)
+        return
     if args.accion=='catalogos':
         for row in catalogs()['seg_opciones']:
             if row[0]=='9': print(row[1]+' | '+row[2])

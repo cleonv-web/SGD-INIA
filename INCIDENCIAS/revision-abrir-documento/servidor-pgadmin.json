@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "SGD INIA local (pendiente de conexion)",
+      "Group": "SGD INIA",
+      "Host": "127.0.0.1",
+      "Port": 55432,
+      "MaintenanceDB": "idosgd_inia",
+      "Username": "postgres",
+      "SSLMode": "prefer",
+      "ConnectNow": false
+    }
+  }
+}

@@ -41,10 +41,14 @@ de la base de datos.
 
 ## Restaurar configuracion
 
-Primero preparar el motor Payara **5.2022.5** y Java **Temurin 8u504**, conservados
-en el portable. El ZIP Payara queda fuera de Git; su SHA256 aparece en el
-manifiesto. Puede adjuntarse como artefacto de una release. No sustituirlo por una
-version mayor sin una prueba de compatibilidad.
+El motor Payara **5.2022.5** extraido en `payara/payara5` ahora se conserva en Git;
+Java **Temurin 8u504** sigue proviniendo del portable. El ZIP duplicado de Payara
+queda fuera de Git; su SHA256 aparece en el manifiesto. No sustituir el motor
+por una version mayor sin una prueba de compatibilidad. El dominio activo no
+se versiona: sus ajustes aprobados se conservan en esta copia. El instalador
+crea un dominio nuevo para otro ambiente y compila/despliega sus aplicaciones.
+Una captura puede contener referencias a aplicaciones del piloto: no copiarla
+ciegamente sobre un dominio nuevo sin sus aplicaciones.
 
 Detener Payara, comprobar que no hay proceso del dominio en ejecucion y revisar
 host, puertos, rutas, URLs y certificados si el destino es otro equipo. Esta
@@ -70,11 +74,16 @@ para versionar Payara no autoriza ejecutar esos comandos contra la base.
 
 ## Subir al repositorio
 
-Los comandos de Git estan en `manual/SUBIR-CONFIGURACION-PAYARA.ps1`. Incluyen solo
-los archivos preparados para esta tarea, no otros archivos pendientes como
-incidencias, instaladores o salidas. El script valida la copia antes de agregarla
-y rechaza un indice que ya tenga cambios preparados. Hace un commit; publica
-unicamente si se pasa `-Publicar`.
+Los comandos de Git estan en `manual/SUBIR-CONFIGURACION-PAYARA.ps1`. Por acuerdo
+del operador se usa `git add .`: se incluyen tambien fuentes pendientes,
+cargas, incidencias e instaladores; `.gitignore` filtra documentos emitidos,
+claves, temporales y WAR compilados. El script valida la copia y muestra el
+indice antes del commit; rechaza un indice que ya tenga cambios preparados.
+Publica unicamente si se pasa `-Publicar`. Reglas en `manual/VERSIONADO.md`.
+
+La limpieza local se hace con `Limpiar-Payara.bat --aplicar`. Solo retira
+`osgi-cache`, `generated`, `temp` y `logs`, con Payara detenido; conserva las
+aplicaciones y los archivos de configuracion. Detalle en `manual/LIMPIEZA-PAYARA.md`.
 
 ## Validacion realizada
 

@@ -2,7 +2,7 @@
 Edición 8 de octubre de 2026. Windows x64 y Linux x64. PostgreSQL nativo: los equipos de destino no necesitan Docker.
 
 ## 1. Preparar la carpeta
-El portable es la carpeta completa SGD-INIA-INSTALL_PG. Disponer de fuentes, utilitarios, runtimes y dependencias en una ruta corta con permiso de escritura, por ejemplo C:\SGD\SGD-INIA-INSTALL_PG o /opt/sgd/SGD-INIA-INSTALL_PG. Git distribuye fuentes, scripts, documentación y el MSI original Tramitedoc; los runtimes pesados se conservan aparte. No usar OneDrive, carpetas sincronizadas ni una unidad de red para la base activa. No copiar datos ni claves de esta PC para crear una instalación nueva.
+Clonar el repositorio privado en una ruta corta con permiso de escritura, por ejemplo C:\SGD\SGD-INIA-INSTALL_PG o /opt/sgd/SGD-INIA-INSTALL_PG, y ejecutar Instalar-SGD. Git incluye fuentes, utilitarios, Java, PostgreSQL, Python, Maven, dependencias offline, Payara y los instaladores de clientes; no necesita un portable adicional. Si configuracion.json no existe, el instalador lo crea desde configuracion.ejemplo.json. Para personalizar IP o puertos antes de instalar, copiar y editar el ejemplo previamente. No usar OneDrive, carpetas sincronizadas ni una unidad de red para la base activa. No copiar datos ni claves de esta PC para crear una instalación nueva.
 
 El paquete incluye PostgreSQL 17.11, Java Temurin 8u504, Payara 5.2022.5, Python, Maven 3.10.0, dependencias offline, fuentes y WAR. No requiere instalar globalmente estos programas ni conectarse a Internet para la compilación inicial. Reservar 8 GB de RAM, preferiblemente 16 GB, y 15 GB de espacio inicial; documentos y respaldos necesitan espacio adicional.
 
@@ -14,7 +14,6 @@ Abrir la carpeta en Visual Studio Code. Revisar configuracion.json antes de inst
 Ejecutar desde PowerShell:
 ```powershell
 cd C:\SGD\SGD-INIA-INSTALL_PG
-.\SGD.bat diagnosticar
 .\Instalar-SGD.bat
 ```
 También se puede hacer doble clic en Instalar-SGD.bat. El lanzador conserva la ventana al terminar. Alternativa PowerShell con política limitada al proceso:
@@ -41,7 +40,6 @@ En Rocky/RHEL usar fontconfig, freetype, libstdc++, ca-certificates, tar y unzip
 Con la carpeta portable completa, revisar configuracion.json y ejecutar:
 ```bash
 cd /opt/sgd/SGD-INIA-INSTALL_PG
-bash SGD.sh diagnosticar
 bash Instalar-SGD.sh
 ```
 Arrancar o detener posteriormente:
@@ -169,7 +167,7 @@ Validación de la corrección: 17 escenarios JavaScript offline con respuestas f
 Integración del cliente: 18 pruebas offline aprobadas en `tests/test_instalacion_cliente.py` cubren hash, errores, cancelación, reinicio pendiente, instalación existente, Word ausente y separación de servidor/puesto. Simulan las respuestas del MSI; no ejecutan un instalador real ni certifican una instalación completa en otra PC.
 
 ## 8. Copiar a otro equipo y respaldar
-Para instalar o mantener otro equipo utilizar la carpeta portable completa. Incorporar fuentes, utilitarios y documentación actualizados del repositorio; en una instalación existente ejecutar Actualizar-SGD y conservar datos, configuración privada, claves y runtimes. SGD.bat empaquetar o bash SGD.sh empaquetar genera un ZIP opcional, no requerido para actualizar por Git. El MSI original Tramitedoc se incluye en el repositorio. Los runtimes pesados se conservan aparte y deben estar presentes en el destino.
+Para una instalación nueva utilizar git clone y ejecutar Instalar-SGD: los runtimes necesarios ya están en el repositorio. En una instalación existente incorporar el commit, ejecutar Actualizar-SGD y conservar datos, configuración privada y claves. SGD.bat empaquetar o bash SGD.sh empaquetar genera un ZIP opcional, no requerido para instalar o actualizar por Git. La base se crea desde los SQL; después se cargan las oficinas y usuarios reales con Cargar-Area. Los documentos operativos de otro ambiente no se copian mediante el clon.
 
 Para trasladar información existente, detener aplicaciones y arrancar solamente la base para sacar un respaldo consistente:
 ```powershell

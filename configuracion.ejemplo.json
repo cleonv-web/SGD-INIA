@@ -11,5 +11,6 @@
   "entidad": "INIA",
   "ruc": "20131365994",
   "anio": "2026",
-  "activar_integraciones": false
+  "activar_integraciones": false,
+  "heap_payara_mb": 4096
 }

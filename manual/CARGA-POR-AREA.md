@@ -238,7 +238,7 @@ Probar personalmente los accesos y los permisos de esa área. Luego repetir el p
 
 ## Retirar sólo un área cargada
 
-El nombre Limpiar-BD se refiere exclusivamente al retiro de un área rastreada por este utilitario. No vacía la base ni elimina una dependencia creada fuera de él. Primero generar el plan offline:
+Con `--area`, Limpiar-BD retira exclusivamente un área rastreada por este utilitario. Ese modo no vacía la base ni elimina una dependencia creada fuera de él. Primero generar el plan offline:
 
 ```powershell
 .\Limpiar-BD.bat --area 51001
@@ -260,7 +260,27 @@ bash Limpiar-BD.sh --area 51001 --aplicar --confirmar RETIRAR:51001
 
 Se respalda toda la base antes del cambio. El retiro elimina sólo objetos creados por el utilitario sin uso por otra área. Conserva sedes, cargos, demás catálogos, estructura, archivos documentales y registros de acceso. Las cuentas o empleados compartidos permanecen. Si un empleado compartido aún tiene esa dependencia como principal, o hay oficinas hijas, documentos o referencias externas, el retiro se bloquea; resolver su asignación o conservar el área, sin borrar historia. También se detiene si un objeto rastreado fue modificado incompatiblemente desde su carga.
 
-No emplea TRUNCATE ni borrado CASCADE. Las validaciones y eliminaciones están en una transacción con bloqueos; cualquier error previo a la confirmación revierte el retiro. No proporciona una limpieza de documentos, vaciado global ni restauración automática del respaldo. Una restauración requiere otro procedimiento sobre una base nueva o una recuperación administrada.
+El modo `--area` no emplea TRUNCATE ni borrado CASCADE. Las validaciones y eliminaciones están en una transacción con bloqueos; cualquier error previo a la confirmación revierte el retiro. Ese modo no proporciona limpieza de documentos ni vaciado global. Una restauración requiere otro procedimiento sobre una base nueva o una recuperación administrada.
+
+## Reiniciar toda la base local del piloto y cargar UTI nuevamente
+
+Este procedimiento elimina TODOS los usuarios reales, oficinas cargadas y documentos de `idosgd_inia`. Usarlo únicamente para comenzar de nuevo el piloto completo. Conservar los CSV verificados de cada oficina para volver a cargarlos. El modo `--todo` exige base local `127.0.0.1:55432`, nombre `idosgd_inia` y configuración `completo`; se rechaza otro destino.
+
+Desde PowerShell, en la carpeta de instalación:
+
+```powershell
+.\Limpiar-BD.bat --todo --aplicar --confirmar REINICIAR:idosgd_inia
+if ($LASTEXITCODE -ne 0) { throw 'Falló el reinicio; no continuar.' }
+.\Cargar-Area.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar CARGAR:00217
+if ($LASTEXITCODE -ne 0) { throw 'Falló la carga; no continuar.' }
+.\SGD.bat iniciar
+```
+
+El utilitario detiene Payara, genera y comprueba un respaldo completo, y aparta los archivos documentales anteriores en `datos/reinicio-piloto-*/documentos-anteriores`. No elimina la carpeta `datos`, las credenciales ni los CSV. Recrea la base desde los SQL incluidos, conservando el rol PostgreSQL `sgd_app`; reinstala catálogos, plantillas y las cuatro cuentas de laboratorio. No restaura `datos/respaldo-portable.dump`. La carga siguiente genera contraseñas nuevas para los usuarios reales; usar el archivo `CLAVES-GENERADAS-PRIVADAS.json` que indique esa ejecución e iniciar una sesión nueva.
+
+Si falla el respaldo o su lectura, no se elimina la base. La recreación de la base completa no es una única transacción: después del borrado un error de instalación requiere recuperar desde el respaldo o revisar los logs; no continuar cargando ni iniciar Payara en ese caso. La instalación del esquema nuevo sí se ejecuta en una transacción. El respaldo y el SQL privado de recuperación permanecen en la carpeta de reinicio.
+
+Sin `--aplicar`, `Limpiar-BD.bat --todo` solo muestra el alcance y no consulta servidores. Se probaron los controles offline y una recreación con PostgreSQL temporal, incluyendo restaurar el respaldo y verificar la conservación de los archivos anteriores. No se ejecutó este reinicio contra la base real del piloto.
 
 ## Pruebas y límites
 

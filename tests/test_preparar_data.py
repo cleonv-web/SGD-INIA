@@ -52,6 +52,18 @@ class PreparacionTests(unittest.TestCase):
         self.assertEqual(users[0]['dni'],'12345678')
         with self.assertRaises(ValueError):g.read_bundle(self.out)
 
+    def test_csv_no_duplica_retornos_y_conserva_campos_multilinea(self):
+        self.prepare()
+        for nombre in ['usuarios-verificados.csv','pendientes.csv']:
+            raw=(self.out/nombre).read_bytes()
+            self.assertIn(b'\r\n',raw)
+            self.assertNotIn(b'\r\r\n',raw)
+        destino=self.root/'multilinea.csv'
+        filas=[{'detalle':'primera\r\nsegunda, con coma'}]
+        g.private_write(destino,p.csv_text(filas,['detalle']))
+        with destino.open(encoding='utf-8',newline='') as archivo:
+            self.assertEqual(list(csv.DictReader(archivo)),filas)
+
     def test_codificaciones_y_separadores_ssms(self):
         for index,(delimiter,encoding) in enumerate([(';','utf-8-sig'),('\t','utf-16'),(',','cp1252')]):
             with self.subTest(delimiter=delimiter,encoding=encoding):

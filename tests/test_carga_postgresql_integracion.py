@@ -9,6 +9,9 @@ import copy,csv,json,os,re,socket,subprocess,sys,tempfile,unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import gestion_data as g
 import recargar_usuarios as recarga
+import reiniciar_piloto as reinicio
+from types import SimpleNamespace
+from unittest.mock import patch
 
 
 @unittest.skipUnless(os.environ.get('SGD_PROBAR_POSTGRESQL_AISLADO')=='1',
@@ -88,6 +91,43 @@ class CargaPostgreSQLTests(unittest.TestCase):
     def legacy(self):
         self.query(self.db,"UPDATE idosgd.si_mae_local SET de_nombre_local='INSTALACION LOCAL INIA',"
                    "de_direccion_local='PENDIENTE' WHERE ccod_local='001';")
+
+    def test_reinicio_completo_con_respaldo(self):
+        # Cada comando usa exclusivamente el puerto del cluster temporal.
+        self.query(self.db, self.sql)
+        self.query('postgres', "CREATE ROLE sgd_app LOGIN PASSWORD 'QA';")
+        self.run_tool('createdb','-h','127.0.0.1','-p',self.port,'-U','postgres','-T',self.db,'idosgd_inia')
+        root=self.path/'instalacion-reinicio'; data=root/'datos'; docs=data/'documentos'
+        docs.mkdir(parents=True); (docs/'anterior.txt').write_text('DOCUMENTO QA',encoding='utf-8')
+        header=''.join('\\set '+name+" 'ABCD'\n" for name in ['clave','clave_mesa_demo','clave_area_demo','clave_jefe_demo'])
+        initial=header+(g.ROOT/'bd/01-estructura-catalogos.sql').read_text(encoding='utf-8')
+        initial+='\n'+(g.ROOT/'bd/02-inia-usuarios-ficticios.sql').read_text(encoding='utf-8').replace(":'ruta'", "'QA'")
+        initial+="\nCREATE TABLE idosgd.instalacion_portable(version text PRIMARY KEY);"
+        initial+="\nCREATE ROLE sgd_app LOGIN PASSWORD 'QA';\nGRANT USAGE ON SCHEMA idosgd TO sgd_app;\n"
+        def psql(sql,db=None,**kwargs):
+            return self.query(db or 'idosgd_inia',sql)
+        def base():
+            if self.query('postgres',"SELECT EXISTS(SELECT 1 FROM pg_database WHERE datname='idosgd_inia')").stdout.strip()=='f':
+                self.query('postgres','CREATE DATABASE idosgd_inia;')
+        def backup(work):
+            target=work/'antes-de-aplicar.dump'
+            self.run_tool('pg_dump','-h','127.0.0.1','-p',self.port,'-U','postgres','-d','idosgd_inia','-Fc','-f',target)
+            return target
+        backend=SimpleNamespace(ROOT=root,DATA=data,
+            C=dict(modo='completo',base='idosgd_inia',host_bd='127.0.0.1',puerto_bd=55432),
+            detener=lambda:None, admin=lambda args:SimpleNamespace(stdout='sgd not running'),
+            base=base,scalar=lambda sql:psql(sql).stdout.strip(),generar_sql=lambda:initial,
+            psql=psql,pg_tool=lambda name,args:self.run_tool(name,*args))
+        with patch.object(g,'backup',side_effect=backup):
+            reinicio.reiniciar(aplicar=True,confirmar=reinicio.TOKEN,_sgd=backend)
+        self.assertEqual(psql('SELECT count(*) FROM idosgd.seg_usuarios1;').stdout.strip(),'4')
+        self.assertEqual(psql('SELECT count(*) FROM idosgd.tdtv_remitos;').stdout.strip(),'0')
+        self.assertEqual(list(docs.iterdir()),[])
+        work=next(data.glob('reinicio-piloto-*'))
+        self.assertEqual((work/'documentos-anteriores/anterior.txt').read_text(encoding='utf-8'),'DOCUMENTO QA')
+        self.run_tool('createdb','-h','127.0.0.1','-p',self.port,'-U','postgres','qa_respaldo_reinicio')
+        self.run_tool('pg_restore','-h','127.0.0.1','-p',self.port,'-U','postgres','-d','qa_respaldo_reinicio',work/'antes-de-aplicar.dump')
+        self.assertEqual(self.query('qa_respaldo_reinicio','SELECT count(*) FROM idosgd.seg_usuarios1;').stdout.strip(),'5')
 
     def site(self):
         return json.loads(self.query(self.db,"SELECT json_build_object('nombre',de_nombre_local,"

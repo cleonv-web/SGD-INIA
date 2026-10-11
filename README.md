@@ -1,6 +1,14 @@
 # SGD INIA · PostgreSQL portable
 
-Leer manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx, edición vigente con el validador, comandos de UTI 00217 y preparación de los puestos Tramitedoc. El portable es la carpeta completa `SGD-INIA-INSTALL_PG`. Git distribuye fuentes, utilitarios, documentación y el MSI original Tramitedoc; los runtimes pesados se conservan aparte. Para una instalación nueva, con la carpeta completa, ejecutar **Instalar-SGD.bat** en Windows/Windows Server o **bash Instalar-SGD.sh** en Linux x64. Para una instalación existente incorporar los cambios del repositorio y ejecutar **Actualizar-SGD**, conservando sus datos, configuración privada y runtimes. El instalador pregunta si este equipo será servidor, servidor con puesto Windows o solo puesto Windows. Linux prepara el servidor; los puestos Windows se preparan por separado. **No requiere Docker en los destinos.**
+Para una instalación nueva, clonar el repositorio privado y ejecutar **Instalar-SGD.bat** en Windows/Windows Server o **bash Instalar-SGD.sh** en Linux x64. Git incluye Java, PostgreSQL, Python, Maven, dependencias offline, Payara, fuentes, cargas, correcciones e instaladores de clientes; no hace falta copiar un portable adicional. El instalador crea `configuracion.json` desde el ejemplo cuando falta y conserva la configuración existente. Leer manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx para personalizar el ambiente y cargar oficinas. Para una instalación existente incorporar los cambios y ejecutar **Actualizar-SGD**, conservando sus datos y configuración privada. El instalador pregunta el uso del equipo. **No requiere Docker en los destinos.**
+
+```powershell
+git clone -b base-sgd-inia https://github.com/cleonv-web/SGD-INIA.git C:\SGD\SGD-INIA-INSTALL_PG
+cd C:\SGD\SGD-INIA-INSTALL_PG
+.\Instalar-SGD.bat servidor
+```
+
+La base nueva se crea desde los SQL versionados, con catálogos y cuatro cuentas técnicas de laboratorio. Las oficinas y usuarios reales se cargan después con `Cargar-Area`, usando sus archivos revisados incluidos en Git. Los documentos, registros operativos, claves, base física y respaldos de otro ambiente no viajan con el clon. `.gitignore` los excluye sin borrarlos del disco.
 
 PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, código fuente y WAR están incluidos. Windows x64 y Linux x64 con glibc >=2.31; Linux necesita Bash, tar y bibliotecas de fuentes/JDK indicadas en el manual. Usar una cuenta normal en Linux. No instalar la base activa en OneDrive ni en una carpeta sincronizada.
 
@@ -21,6 +29,8 @@ PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, 
 | Recargar accesos de usuarios ya cargados | Recargar-Usuarios.bat | bash Recargar-Usuarios.sh |
 | Validar archivos de una carga | Validar-Carga.bat | bash Validar-Carga.sh |
 | Respaldar | SGD.bat respaldar | bash SGD.sh respaldar |
+| Reiniciar toda la base local del piloto | Limpiar-BD.bat --todo | bash Limpiar-BD.sh --todo |
+| Revisar/limpiar temporales de Payara | Limpiar-Payara.bat [--aplicar] | Utilitario de limpieza disponible para Windows. |
 | Empaquetar sin datos ni claves | SGD.bat empaquetar | bash SGD.sh empaquetar |
 
 PowerShell: powershell -NoProfile -ExecutionPolicy Bypass -File .\SGD.ps1 instalar -Equipo servidor. Los lanzadores BAT de instalación, inicio y parada esperan una tecla al terminar. Después de reiniciar el equipo arrancar con Iniciar-SGD.
@@ -29,7 +39,7 @@ Después de modificar fuentes, ejecutar Actualizar-SGD.bat (Windows) o bash Actu
 
 **Generar Doc requiere el cliente Tramitedoc en la PC que utiliza el navegador.** El portable incluye `cliente-windows/InstallerTramiteDoc.msi` original, versión 1.0.4.0. Tramitedoc conecta el navegador con los archivos de la PC y Word para generar, abrir y cargar documentos. `Instalar-SGD.bat completo` prepara servidor y puesto en la misma PC; `Instalar-SGD.bat puesto` o `Cliente-SGD.bat instalar` prepara solamente el puesto. Si el protocolo ya es válido, conserva la instalación. Comprueba SHA256, registro con ejecutable existente y presencia de Word; no instala Office ni declara probado el ciclo documental. `wstradoc.war` es el puente del servidor. Procedimiento y pruebas en [INSTALACION.md](manual/INSTALACION.md#cliente-tramitedoc-y-generar-doc). El MSI original se conserva en Git; su origen y SHA256 se registran en `cliente-windows/PROCEDENCIA.json`.
 
-Editar configuracion.json antes de instalar. URL inicial: http://127.0.0.1:8085/sisdoc/login.do. Usuarios ficticios: admin, mesa_demo, area_demo y jefe_demo. Claves por instalación en datos/ACCESOS-LABORATORIO.txt. Puertos: BD 55432, HTTP 8085, HTTPS 8185, administración 4855; auxiliares Payara HTTP+1000 hasta HTTP+1004.
+Si necesitas personalizar IP, URL o puertos antes de instalar, copiar configuracion.ejemplo.json a configuracion.json y editarlo; si no existe, el instalador lo crea automáticamente. URL inicial: http://127.0.0.1:8085/sisdoc/login.do. Usuarios ficticios: admin, mesa_demo, area_demo y jefe_demo. Claves por instalación en datos/ACCESOS-LABORATORIO.txt. Puertos: BD 55432, HTTP 8085, HTTPS 8185, administración 4855; auxiliares Payara HTTP+1000 hasta HTTP+1004.
 
 La instalación nueva crea la sede central 001 con sus datos reales. En instalaciones anteriores, la carga por área actualiza automáticamente sólo la sede provisional reconocida (INSTALACION LOCAL INIA / PENDIENTE), usando los datos aprobados del área y la misma transacción. No requiere un SQL adicional; otras sedes existentes se conservan y los conflictos se rechazan.
 
@@ -45,7 +55,7 @@ La instalación nueva crea la sede central 001 con sus datos reales. En instalac
 | binarios | WAR compilados y reserva del proveedor. |
 | plantillas-docx | INFORME 003 y OFICIO 001 adaptados al modelo INIA, con manifiesto SHA256. |
 | cliente-windows | MSI original Tramitedoc y su procedencia. |
-| datos | Base, documentos, credenciales y respaldos; privado. |
+| datos | Cargas/exportaciones versionadas; base, documentos, credenciales y respaldos locales. |
 | logs | Resultados y manifiesto de compilación. |
 | manual | Word, instrucciones y evidencias de pruebas. |
 
@@ -79,10 +89,16 @@ en la base. Comandos en [RECARGA-USUARIOS.md](manual/RECARGA-USUARIOS.md).
 
 Antes de cargar, ejecutar **Validar-Carga.bat** en Windows (admite doble clic) o **bash Validar-Carga.sh** en Linux. Sin argumentos revisa datos/carga-uti-preparada; para otra carpeta usar --carpeta RUTA. Comprueba la selección 0/1, las reglas del cargador, las relaciones del área, columnas y claves del modelo local, configuración y archivos necesarios. El resultado queda en datos/validacion-carga/resultado.json, sin publicar identidades ni contraseñas. Sólo continuar si indica VALIDACION CORRECTA. No conecta a ninguna base ni garantiza ausencia de colisiones actuales: esas comprobaciones y el respaldo se realizan al aplicar la carga. La validación usa exactamente las mismas reglas que Cargar-Area; no sustituye la revisión humana.
 
-Exportar-Area-SQLServer.sql sólo requiere elegir @Oficina; en el CSV preparado incluir_sgd=1 incluye a una persona e incluir_sgd=0 la omite; estado 1 no demuestra vínculo laboral vigente. Preparar-Carga.bat y Preparar-Carga.sh convierten sus cinco CSV, con o sin encabezados, a un borrador pendiente de revisión, sin consultar bases. Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD.bat y Limpiar-BD.sh retiran exclusivamente un área rastreada por el utilitario, conservando catálogos y objetos compartidos. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 a 13 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Pasan 33 pruebas offline (8 del validador); se conservan 7 pruebas previas en PostgreSQL 17.11 temporal con datos ficticios, incluyendo actualización de sede, carga, reversión, repetición y retiro protegido. UTI 00217 ya fue cargada y confirmada por el operador; no repetir esa carga.
+Exportar-Area-SQLServer.sql sólo requiere elegir @Oficina; en el CSV preparado incluir_sgd=1 incluye a una persona e incluir_sgd=0 la omite; estado 1 no demuestra vínculo laboral vigente. Preparar-Carga.bat y Preparar-Carga.sh convierten sus cinco CSV, con o sin encabezados, a un borrador pendiente de revisión, sin consultar bases. Cargar-Area.bat y Cargar-Area.sh validan el CSV de usuarios revisados por el operador; --aplicar respalda y carga una sola área en PostgreSQL. Limpiar-BD con --area retira un área rastreada conservando catálogos y objetos compartidos. Con --todo permite reiniciar toda la base local del piloto, incluidos documentos y usuarios reales, con respaldo obligatorio; necesita --aplicar --confirmar REINICIAR:idosgd_inia. Por defecto ambos generan planes offline. Instrucciones y comandos completos en manual/CARGA-POR-AREA.md y secciones 10 a 13 de manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx. Pasan 33 pruebas offline (8 del validador); se conservan 7 pruebas previas en PostgreSQL 17.11 temporal con datos ficticios, incluyendo actualización de sede, carga, reversión, repetición y retiro protegido. UTI 00217 ya fue cargada y confirmada por el operador; no repetir esa carga.
 
 Generar Doc requiere además una plantilla DOCX para el tipo documental y dependencia. La instalación nueva incorpora INFORME 003 y OFICIO 001 en la dependencia global 00000, como alternativa a los formatos por área. Están adaptados al modelo INIA suministrado por el operador, con campos dinámicos y sin nombres, contenido, firmas ni QR del ejemplo. Los nombres de archivo sustituyen las barras de las siglas por guiones, conservando las siglas del contenido.
 
 Para una base existente o restaurada, `Plantillas-SGD.bat` o `bash Plantillas-SGD.sh` verifica los archivos y genera un plan sin consultar BD. Revisar los DOCX; después el operador puede ejecutar `Plantillas-SGD.bat --aplicar --confirmar PLANTILLAS:INIA` o el equivalente SH en el equipo que administra PostgreSQL. Requiere la BD iniciada y las credenciales de esa instalación. Crea un respaldo único antes de aplicar en una transacción; conserva los formatos por área y rechaza una plantilla global distinta o inactiva. No modifica usuarios, cargas por área ni documentos. Procedimiento en la sección 15 del Word y en [INSTALACION.md](manual/INSTALACION.md#plantillas-y-nombres-de-archivo).
 
 La generación admite títulos de dependencia ausentes: utiliza el nombre de la dependencia emisora y convierte campos null a texto vacío. Ante un fallo del motor no devuelve un archivo incompleto. Si los formatos INIA ya fueron cargados, aplicar esta corrección con Actualizar-SGD; no repetir la carga de plantillas ni la de UTI. La prueba `tests/test_contexto_plantilla.py` reproduce el error de cabecera y ejecuta el servicio y servlet reales con datos ficticios, sin BD ni Word.
+
+## Reinicio del piloto y archivos que se suben
+
+Los comandos simples del reinicio completo y la nueva carga de UTI están en [CARGA-POR-AREA.md](manual/CARGA-POR-AREA.md). La limpieza exclusiva de Payara está en [LIMPIEZA-PAYARA.md](manual/LIMPIEZA-PAYARA.md). El alcance de Git y los WAR incluidos por nombre están en [VERSIONADO.md](manual/VERSIONADO.md). Los acuerdos para continuar el trabajo se conservan en [AGENTS.md](AGENTS.md).
+
+El repositorio privado incluye datos/carga-*, datos/cargas, datos/exportacion-*, INCIDENCIAS e instaladores. Excluye documentos emitidos, claves, dumps, temporales y los WAR que se generan desde fuentes. Usar siempre git add . y revisar el índice antes de publicar.

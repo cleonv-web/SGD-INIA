@@ -9,12 +9,13 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Ya hay cambios preparados en Git. Revisarlos antes de usar este script.' }
     & .\herramientas\python-windows\python.exe .\herramientas\configuracion_payara.py verificar
     if ($LASTEXITCODE -ne 0) { throw 'La configuracion no supera la verificacion.' }
-    & git add -- .gitattributes payara/configuracion herramientas/configuracion_payara.py tests/test_configuracion_payara.py manual/SUBIR-CONFIGURACION-PAYARA.ps1
+    # Acuerdo del operador: preparar todos los cambios y revisar el indice.
+    & git add .
     if ($LASTEXITCODE -ne 0) { throw 'No se pudieron preparar los archivos.' }
     & git diff --cached --check
     if ($LASTEXITCODE -ne 0) { throw 'La revision Git detecto errores. Revisar el indice antes de confirmar.' }
     & git diff --cached --stat
-    & git commit -m 'Conservar configuracion del dominio Payara piloto y utilitario offline'
+    & git commit -m 'Versionar Payara, cargas, utilitarios y correcciones del SGD'
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo crear el commit.' }
     if ($Publicar) {
         $branchPayaraRepo = (& git branch --show-current).Trim()

@@ -1,5 +1,19 @@
-# Datos y secretos de cada instalación. Respaldar fuera de Git.
-/datos/
+# Datos operativos locales. Las cargas y exportaciones revisadas SI se versionan.
+/datos/*
+!/datos/carga-*/
+!/datos/carga-*/**
+!/datos/cargas/
+!/datos/cargas/**
+!/datos/exportacion-*/
+!/datos/exportacion-*/**
+# Aunque aparezcan en una carpeta de carga, no distribuir claves ni respaldos.
+/datos/**/CLAVES-GENERADAS-PRIVADAS.json
+/datos/**/credenciales.json
+/datos/**/postgres-password.txt
+/datos/**/ACCESOS-LABORATORIO.txt
+/datos/**/*.dump
+/datos/**/INSTALACION-MANUAL-PRIVADA.sql
+/datos/**/*.tmp
 /logs/
 /configuracion.json
 /configuracion.local.json
@@ -12,25 +26,35 @@
 # Resultados locales, auditorías y dependencias de las pruebas.
 # Los entregables que se distribuyen se conservan en manual/.
 /output/
-/INCIDENCIAS/
 
-# Instaladores locales de Firma ONPE.
-/cliente-windows/InstallerFirmaONPE*.msi
-/cliente-windows/InstallerFirmaONPE*.zip
+# Payara extraido SI se versiona. El dominio activo se reconstruye al instalar.
+# Su configuracion aprobada se conserva en payara/configuracion/.
+/payara/payara5/glassfish/domains/
+/payara/payara5/mq/var/
+# Documentacion y ejemplos del proveedor no necesarios para ejecutar el SGD.
+/payara/payara5/mq/examples/
+/payara/payara5/mq/javadoc/
+/payara/payara5/h2db/src/
+/payara/payara5/glassfish/h2db/src/
 
-# Motores y herramientas externos. Conservar el ZIP portable y sus hashes.
-/java/
-/payara/payara5/
+# Componentes necesarios para git clone + Instalar-SGD: SI se versionan.
+# Java Windows extraido y Java Linux comprimido; PostgreSQL Windows extraido
+# y PostgreSQL Linux comprimido; Python Windows extraido y Linux comprimido;
+# Maven y su repositorio offline. Solo excluir duplicados y salidas locales.
+/java/linux/
+# Ejemplos del JDK no utilizados al compilar ni ejecutar el SGD. Conservar en disco.
+/java/windows/*/sample/
 /payara/*.zip
-/bd/postgresql/
+/bd/postgresql/linux/
 /bd/postgresql-*.zip
 /bd/postgresql-*.tar.gz
+!/bd/postgresql-linux-x64.tar.gz
 /bd/*.tar
 /bd/original-proveedor.zip
-/herramientas/maven/
-/herramientas/maven-repo/
-/herramientas/python-*/
+/herramientas/maven-repo/.locks/
+/herramientas/python-linux/
 /herramientas/*.tar.gz
+!/herramientas/python-linux.tar.gz
 /herramientas/*.zip
 
 # Conservar el cliente original Tramitedoc en Git para preparar otros puestos.
@@ -41,12 +65,35 @@
 *.pyc
 *.class
 *.war
-# Única aplicación sin fuentes: entrada necesaria, no salida de compilación.
+# WAR propios regenerables: sgd, consulta, verifica, mpd, notificador,
+# wsiotramite, mpvio y recursos; tambien sus copias antiguas en proveedor/.
+# Unico WAR SGD sin fuentes: SI se distribuye.
 !/binarios/proveedor/wstradoc.war
+# WAR internos del motor Payara sin fuentes en este proyecto: SI se distribuyen.
+!/payara/payara5/glassfish/lib/install/applications/ejb-timer-service-app.war
+!/payara/payara5/glassfish/lib/install/applications/metro/wstx-services.war
+!/payara/payara5/mq/lib/imqums.war
+!/payara/payara5/mq/lib/imqhttp.war
+!/payara/payara5/mq/lib/imqhttps.war
 
 # Temporales de editores y documentos.
 *.tmp
 *.log
+*.lastUpdated
+*.part
+*.swp
+*.swo
+**/node_modules/
+/.pytest_cache/
+/.mypy_cache/
+/.ruff_cache/
 ~$*.docx
 Thumbs.db
 .DS_Store
+
+# INCIDENCIAS y sus correcciones/evidencias se distribuyen a otros ambientes.
+# Conservar incluso logs de evidencia colocados expresamente en esa carpeta.
+!/INCIDENCIAS/**/*.log
+# No ignorar globalmente PDF/Word: manuales, plantillas y ejemplos son entradas.
+# Los documentos emitidos quedan en datos/documentos y los temporales en output
+# o en el dominio activo de Payara, todos excluidos por las reglas anteriores.

@@ -10,7 +10,9 @@ ROOT = Path(__file__).resolve().parent
 # El Python portable usa _pth aislado y no agrega el directorio del script.
 sys.path.insert(0, str(ROOT))
 from herramientas.memoria_payara import configurar_heap
-C = json.loads((ROOT/'configuracion.json').read_text(encoding='utf-8'))
+from herramientas.configuracion_instalacion import cargar_configuracion
+C = cargar_configuracion(ROOT, crear=(__name__ == '__main__' and len(sys.argv) > 1
+                                     and sys.argv[1] in ('instalar', 'todo')))
 DOMAIN = ROOT/'payara/payara5/glassfish/domains/sgd'
 LOG = ROOT/'logs'; LOG.mkdir(exist_ok=True)
 DATA = ROOT/'datos'; DATA.mkdir(exist_ok=True)
