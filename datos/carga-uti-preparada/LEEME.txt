@@ -2,7 +2,10 @@ PREPARACIÓN PENDIENTE. NO SE CARGÓ NINGUNA BASE.
 1. Abrir usuarios-verificados.csv en VS Code; no usar Excel sin importar códigos como TEXTO.
 2. Los apellidos completos están conservados en apellido_paterno: separarlos/confirmarlos personalmente.
 3. Confirmar DNI real, cargo_codigo (4 dígitos), cargo_nombre y perfil de cada usuario.
-   Perfiles disponibles de ejemplo: USUARIO_AREA, SOPORTE_UTI, MESA_PARTES.
+   Perfiles disponibles: USUARIO_AREA, SOPORTE_UTI, CONSULTA_TODA_AREA.
+   CONSULTA_TODA_AREA permite emisión, recepción y consultas con alcance de la oficina.
+   Usarlo para secretarias que elaboran documentos y hacen seguimiento; no es administrador.
+   UTI no es Mesa de Partes y este paquete no incluye ese perfil.
    Los perfiles del sistema anterior se muestran en pendientes.csv; no se tradujeron automáticamente.
 4. En incluir_sgd poner 0 para excluir cesados, cuentas genéricas y personas que no participarán.
    Poner 1 para incluir a una persona. Las filas con 0 se omiten, pueden conservar verificado=NO.

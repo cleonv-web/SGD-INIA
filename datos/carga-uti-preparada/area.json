@@ -27,6 +27,7 @@
     "USUARIO_AREA": {
       "administrador": false,
       "firma": false,
+      "acceso_documentos": "personal",
       "opciones": [
         "M02",
         "M0201",
@@ -41,6 +42,7 @@
     "SOPORTE_UTI": {
       "administrador": false,
       "firma": false,
+      "acceso_documentos": "personal",
       "opciones": [
         "M01",
         "M0113",
@@ -50,18 +52,19 @@
         "M0134"
       ]
     },
-    "MESA_PARTES": {
+    "CONSULTA_TODA_AREA": {
       "administrador": false,
       "firma": false,
+      "acceso_documentos": "dependencia",
       "opciones": [
         "M02",
-        "M0203",
-        "M020301",
-        "M020302",
+        "M0201",
+        "M020101",
+        "M020102",
         "M03",
-        "M0304",
-        "M030401",
-        "M030402"
+        "M0301",
+        "M030101",
+        "M030102"
       ]
     }
   }
