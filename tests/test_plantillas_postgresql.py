@@ -36,7 +36,7 @@ class PlantillasPostgresqlTest(unittest.TestCase):
             sql('CREATE SCHEMA idosgd;'+table+'ALTER TABLE idosgd.tdtr_plantilla_docx ADD PRIMARY KEY(co_dep,co_tipo_doc);')
             plan='BEGIN;'+sgd.sql_plantillas()+'COMMIT;'
             sql(plan);sql(plan)
-            self.assertEqual(sql('SELECT count(*) FROM idosgd.tdtr_plantilla_docx;').stdout.strip(),'2')
+            self.assertEqual(sql('SELECT count(*) FROM idosgd.tdtr_plantilla_docx;').stdout.strip(),'45')
             for code,filename,content in sgd.comprobar_plantillas():
                 self.assertEqual(sql("SELECT encode(bl_doc,'hex') FROM idosgd.tdtr_plantilla_docx WHERE co_tipo_doc='"+code+"';").stdout.strip(),content.hex())
             # Un conflicto en el segundo formato revierte la inserción del primero.

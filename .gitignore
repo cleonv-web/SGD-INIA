@@ -95,5 +95,9 @@ Thumbs.db
 # Conservar incluso logs de evidencia colocados expresamente en esa carpeta.
 !/INCIDENCIAS/**/*.log
 # No ignorar globalmente PDF/Word: manuales, plantillas y ejemplos son entradas.
+# Documentos emitidos guardados por error junto a las plantillas: conservarlos
+# en disco sin incluirlos en Git. Los formatos *-INIA.docx sí se versionan.
+/plantillas-docx/*-R[0-9]*-20[0-9][0-9]-*.pdf
+/plantillas-docx/*-R[0-9]*-20[0-9][0-9]-*.docx
 # Los documentos emitidos quedan en datos/documentos y los temporales en output
 # o en el dominio activo de Payara, todos excluidos por las reglas anteriores.

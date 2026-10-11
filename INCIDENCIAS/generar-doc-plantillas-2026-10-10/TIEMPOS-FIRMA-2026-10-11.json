@@ -1,0 +1,19 @@
+{
+  "fecha": "2026-10-11",
+  "zona": "America/Lima",
+  "fuentes": ["Tramitedoc/log_11_10_2026.txt", "FirmaONPE/log_11_10_2026.txt"],
+  "documento": "DIRECTIVA, emision 0000000579",
+  "etapas": [
+    {"etapa": "Orden recibida por Tramitedoc, descarga y lanzamiento", "inicio": "00:34:41", "fin": "00:34:41", "precision_log": "segundos"},
+    {"etapa": "Lanzamiento y PDF mostrado en FirmaONPE", "inicio": "00:34:41", "fin": "00:34:43", "segundos": 2},
+    {"etapa": "Dialogo de seleccion de certificado", "inicio": "00:34:50", "fin": "00:35:11", "segundos": 21, "incluye_interaccion_operador": true},
+    {"etapa": "Validacion anterior a OCSP", "inicio": "00:35:11", "fin": "00:35:22", "segundos": 11},
+    {"etapa": "OCSP", "inicio": "00:35:22", "fin": "00:35:23", "segundos": 1, "resultado": "Correcto"},
+    {"etapa": "FirmarPDFOcsp", "inicio": "00:35:23", "fin": "00:36:02", "segundos": 39}
+  ],
+  "comparacion_carta": {"etapa": "FirmarPDFOcsp", "inicio": "00:31:52", "fin": "00:32:43", "segundos": 51},
+  "conclusion": "Mayor demora registrada dentro del cliente FirmaONPE. La descarga desde SGD se completo en el mismo segundo. El bloque FirmarPDFOcsp incluye construccion de cadena X509 y firma, sin tiempos internos separados.",
+  "limitaciones": ["No se midio la espera anterior a la orden recibida por Tramitedoc", "No se identifica aun que operacion interna consume los 39 segundos"],
+  "cambios_bd": false,
+  "cambios_configuracion_firmador": false
+}

@@ -2,6 +2,7 @@
 from pathlib import Path
 import hashlib
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -33,18 +34,54 @@ class PlantillasTests(unittest.TestCase):
         self.manifest.write_text(json.dumps(m), encoding='utf-8')
 
     def test_paquete_valido(self):
-        self.assertEqual({v[0] for v in sgd.comprobar_plantillas()}, {'001','003'})
+        self.assertEqual({v[0] for v in sgd.comprobar_plantillas()}, {f'{n:03d}' for n in range(1,44)} | {'234','250'})
+
+    def test_instalacion_nueva_carga_las_45_plantillas_en_su_transaccion(self):
+        # Reproduce la ruta datos -> generar_sql -> sql_plantillas sin BD real,
+        # cifrado real ni credenciales del laboratorio.
+        bd = self.root / 'bd'; bd.mkdir()
+        original = Path(__file__).resolve().parents[1]
+        for name in ['01-estructura-catalogos.sql','02-inia-usuarios-ficticios.sql']:
+            shutil.copyfile(original / 'bd' / name, bd / name)
+        config = dict(anio='2026',base='sgd_prueba_ficticia',entidad='ENTIDAD FICTICIA',ruc='00000000000',url_publica='http://127.0.0.1:9999')
+        with patch.object(sgd,'C',config),patch.object(sgd,'credentials',return_value={'usuarios':{'admin':'CLAVE FICTICIA'},'aplicacion':'CLAVE FICTICIA'}),patch.object(sgd,'cipher',return_value='ABCDEF'),patch.object(sgd,'scalar',side_effect=['f','f']),patch.object(sgd,'psql') as execute:
+            sgd.datos()
+        execute.assert_called_once()
+        sql = execute.call_args.args[0]
+        self.assertTrue(execute.call_args.kwargs['transaction'])
+        codes = re.findall(r"INSERT INTO idosgd\.tdtr_plantilla_docx\([^\n]+?VALUES \('([^']+)'",sql)
+        self.assertEqual(codes,[f'{n:03d}' for n in range(1,44)]+['234','250'])
+        self.assertIn("'MEMORANDO-INIA.docx'",sql)
+        self.assertIn('CREATE TABLE idosgd.instalacion_portable',sql)
+
+    def test_catalogo_completo_y_siete_tipos_uti(self):
+        catalog = json.loads((self.root / 'plantillas-docx/catalogo.json').read_text(encoding='utf-8'))['tipos']
+        seed = (Path(__file__).resolve().parents[1] / 'bd/02-inia-usuarios-ficticios.sql').read_text(encoding='utf-8')
+        active = dict(re.findall(r"INSERT INTO IDOSGD\.SI_MAE_TIPO_DOC\([^\n]+?VALUES\('([^']+)','([^']+)','0'",seed))
+        self.assertEqual({r['codigo']:r['nombre'] for r in catalog}, active)
+        self.assertEqual({r['codigo'] for r in catalog if r['formato']=='pdf-sistema'}, {'232','304'})
+        word = {v[0] for v in sgd.comprobar_plantillas()}
+        self.assertTrue({'001','002','003','006','009','012','020'} <= word)
+
+    def test_copias_conservan_cabeceras_pies_estilos_y_medios(self):
+        for code, filename, _ in sgd.comprobar_plantillas():
+            base = 'OFICIO-INIA.docx' if code in {'001','002','042','043','250'} else 'INFORME-INIA.docx'
+            with self.subTest(tipo=code), zipfile.ZipFile(self.root / 'plantillas-docx' / base) as reference, zipfile.ZipFile(self.root / 'plantillas-docx' / filename) as doc:
+                self.assertEqual(set(reference.namelist()),set(doc.namelist()))
+                for name in reference.namelist():
+                    if name != 'word/document.xml':
+                        self.assertEqual(reference.read(name),doc.read(name),filename+':'+name)
 
     def test_archivo_alterado(self):
         (self.root / 'plantillas-docx/INFORME-INIA.docx').write_bytes(b'ALTERADO')
         with self.assertRaisesRegex(RuntimeError, 'Hash'):sgd.comprobar_plantillas()
 
     def test_tipos_duplicados(self):
-        self.change(lambda m:m['plantillas'][0].update(tipo='001'))
+        self.change(lambda m:m['plantillas'][0].update(tipo='003'))
         with self.assertRaisesRegex(RuntimeError, 'requiere'):sgd.comprobar_plantillas()
 
     def test_archivo_de_otro_tipo(self):
-        self.change(lambda m:m['plantillas'][0].update(archivo='OFICIO-INIA.docx'))
+        self.change(lambda m:m['plantillas'][0].update(archivo='INFORME-INIA.docx'))
         with self.assertRaisesRegex(RuntimeError, 'corresponde'):sgd.comprobar_plantillas()
 
     def test_nombre_fuera_del_paquete(self):

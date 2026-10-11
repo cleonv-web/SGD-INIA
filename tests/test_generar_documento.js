@@ -109,4 +109,33 @@ assert.deepEqual(r.validaciones, []);
 r = escenario({ tieneWord: 'SI', plantilla: null });
 assert.deepEqual(r.operaciones, [2], 'Un Word del repositorio no requiere regenerar una plantilla');
 assert.deepEqual(r.validaciones, []);
-console.log('17 escenarios offline aprobados. Cliente real y ciclo documental: pendientes.');
+// Usar el procesador real: antes se simulaba runOnDesktop y no se comprobaba
+// que un error GENERAR_DOCUMENTO dejaba el callback sin respuesta.
+const protocolo = vm.createContext({
+    $: Object.assign(() => {}, {cookie: () => 'CANAL_FICTICIO'}),
+    idChannel: 'CANAL_FICTICIO', setInterval() {},
+    alert() { throw new Error('Los errores documentales deben completar el callback'); }
+});
+vm.runInContext(fs.readFileSync(path.join(jsRoot, 'wsTradoc.js'), 'utf8'), protocolo);
+protocolo.nrOperacion = 42;
+for (const accion of ['GENERAR_DOCUMENTO', 'VERIFICAR_EXISTE_DOC']) {
+    let llamadas = [];
+    protocolo.processMessageRecived({accion, error:'1', message:'Archivo C:\\SGD\\datos\\documentos\\2026\\PRUEBA.docx No Existe', nrOperacion:'42'}, dato => llamadas.push(dato));
+    assert.equal(llamadas.length, 1, 'Un error del cliente debe responder exactamente una vez');
+    assert.match(llamadas[0], /No Existe/);
+    assert.notEqual(llamadas[0], 'OK');
+    llamadas = [];
+    protocolo.processMessageRecived({accion, error:'0', message:accion === 'GENERAR_DOCUMENTO' ? 'OK' : 'NO', nrOperacion:'42'}, dato => llamadas.push(dato));
+    assert.deepEqual(llamadas, [accion === 'GENERAR_DOCUMENTO' ? 'OK' : 'NO']);
+    protocolo.processMessageRecived({accion, error:'1', message:'Ignorar', nrOperacion:'41'}, () => assert.fail('Operación ajena'));
+}
+for (const directorio of ['C:|SGD|datos|documentos', "D:|Carpeta con espacios|O'Prueba #1 & QA?|documentos", '|opt|sgd|documentos']) {
+    const url = protocolo.fn_urlTramitedoc('ws://127.0.0.1:8085/wstradoc/chat/', 'CANAL', 'http://127.0.0.1:8085/sisdoc/', directorio);
+    const rutaCodificada = url.split('?rutaPri=')[1];
+    assert.equal(decodeURIComponent(rutaCodificada), directorio, 'La carpeta debe llegar íntegra al cliente');
+    assert.ok(!/[ #?&]/.test(rutaCodificada), 'La carpeta no debe romper parámetros del protocolo');
+}
+r = escenario({ generado: 'No se pudo generar o abrir el documento: Archivo de prueba No Existe' });
+assert.match(r.mensajes[0], /Archivo de prueba No Existe/);
+assert.equal(r.esperas.at(-1), false, 'El error real debe cerrar PROCESANDO');
+console.log('Generación, errores reales del protocolo y codificación de rutas: aprobados offline.');

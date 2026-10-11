@@ -1,0 +1,287 @@
+{
+  "origen": "IDOSGD.SI_MAE_TIPO_DOC y bd/02-inia-usuarios-ficticios.sql",
+  "tipos": [
+    {
+      "codigo": "001",
+      "nombre": "OFICIO",
+      "formato": "docx",
+      "archivo": "OFICIO-INIA.docx"
+    },
+    {
+      "codigo": "002",
+      "nombre": "CARTA",
+      "formato": "docx",
+      "archivo": "CARTA-INIA.docx"
+    },
+    {
+      "codigo": "003",
+      "nombre": "INFORME",
+      "formato": "docx",
+      "archivo": "INFORME-INIA.docx"
+    },
+    {
+      "codigo": "004",
+      "nombre": "RESOLUCIÓN",
+      "formato": "docx",
+      "archivo": "RESOLUCION-INIA.docx"
+    },
+    {
+      "codigo": "005",
+      "nombre": "DECRETO",
+      "formato": "docx",
+      "archivo": "DECRETO-INIA.docx"
+    },
+    {
+      "codigo": "006",
+      "nombre": "DIRECTIVA",
+      "formato": "docx",
+      "archivo": "DIRECTIVA-INIA.docx"
+    },
+    {
+      "codigo": "007",
+      "nombre": "ACTA",
+      "formato": "docx",
+      "archivo": "ACTA-INIA.docx"
+    },
+    {
+      "codigo": "008",
+      "nombre": "EXPEDIENTE",
+      "formato": "docx",
+      "archivo": "EXPEDIENTE-INIA.docx"
+    },
+    {
+      "codigo": "009",
+      "nombre": "SOLICITUD",
+      "formato": "docx",
+      "archivo": "SOLICITUD-INIA.docx"
+    },
+    {
+      "codigo": "010",
+      "nombre": "DENUNCIA",
+      "formato": "docx",
+      "archivo": "DENUNCIA-INIA.docx"
+    },
+    {
+      "codigo": "011",
+      "nombre": "RECLAMO",
+      "formato": "docx",
+      "archivo": "RECLAMO-INIA.docx"
+    },
+    {
+      "codigo": "012",
+      "nombre": "INFORME TÉCNICO",
+      "formato": "docx",
+      "archivo": "INFORME-TECNICO-INIA.docx"
+    },
+    {
+      "codigo": "013",
+      "nombre": "INFORME LEGAL",
+      "formato": "docx",
+      "archivo": "INFORME-LEGAL-INIA.docx"
+    },
+    {
+      "codigo": "014",
+      "nombre": "DICTAMEN",
+      "formato": "docx",
+      "archivo": "DICTAMEN-INIA.docx"
+    },
+    {
+      "codigo": "015",
+      "nombre": "CONTRATO",
+      "formato": "docx",
+      "archivo": "CONTRATO-INIA.docx"
+    },
+    {
+      "codigo": "016",
+      "nombre": "CONVENIO",
+      "formato": "docx",
+      "archivo": "CONVENIO-INIA.docx"
+    },
+    {
+      "codigo": "017",
+      "nombre": "ACUERDO",
+      "formato": "docx",
+      "archivo": "ACUERDO-INIA.docx"
+    },
+    {
+      "codigo": "018",
+      "nombre": "NOTIFICACIÓN",
+      "formato": "docx",
+      "archivo": "NOTIFICACION-INIA.docx"
+    },
+    {
+      "codigo": "019",
+      "nombre": "CITACIÓN",
+      "formato": "docx",
+      "archivo": "CITACION-INIA.docx"
+    },
+    {
+      "codigo": "020",
+      "nombre": "MEMORANDO",
+      "formato": "docx",
+      "archivo": "MEMORANDO-INIA.docx"
+    },
+    {
+      "codigo": "021",
+      "nombre": "AGENDA",
+      "formato": "docx",
+      "archivo": "AGENDA-INIA.docx"
+    },
+    {
+      "codigo": "022",
+      "nombre": "PROYECTO",
+      "formato": "docx",
+      "archivo": "PROYECTO-INIA.docx"
+    },
+    {
+      "codigo": "023",
+      "nombre": "MANUAL",
+      "formato": "docx",
+      "archivo": "MANUAL-INIA.docx"
+    },
+    {
+      "codigo": "024",
+      "nombre": "INSTRUCTIVO",
+      "formato": "docx",
+      "archivo": "INSTRUCTIVO-INIA.docx"
+    },
+    {
+      "codigo": "025",
+      "nombre": "COMUNICADO",
+      "formato": "docx",
+      "archivo": "COMUNICADO-INIA.docx"
+    },
+    {
+      "codigo": "026",
+      "nombre": "INVITACIÓN",
+      "formato": "docx",
+      "archivo": "INVITACION-INIA.docx"
+    },
+    {
+      "codigo": "027",
+      "nombre": "CERTIFICADO",
+      "formato": "docx",
+      "archivo": "CERTIFICADO-INIA.docx"
+    },
+    {
+      "codigo": "028",
+      "nombre": "CONSTANCIA",
+      "formato": "docx",
+      "archivo": "CONSTANCIA-INIA.docx"
+    },
+    {
+      "codigo": "029",
+      "nombre": "DECLARACIÓN",
+      "formato": "docx",
+      "archivo": "DECLARACION-INIA.docx"
+    },
+    {
+      "codigo": "030",
+      "nombre": "ORDEN DE SERVICIO",
+      "formato": "docx",
+      "archivo": "ORDEN-DE-SERVICIO-INIA.docx"
+    },
+    {
+      "codigo": "031",
+      "nombre": "CONVOCATORIA",
+      "formato": "docx",
+      "archivo": "CONVOCATORIA-INIA.docx"
+    },
+    {
+      "codigo": "032",
+      "nombre": "RESOLUCIÓN DIRECTORAL",
+      "formato": "docx",
+      "archivo": "RESOLUCION-DIRECTORAL-INIA.docx"
+    },
+    {
+      "codigo": "033",
+      "nombre": "RESUMEN EJECUTIVO",
+      "formato": "docx",
+      "archivo": "RESUMEN-EJECUTIVO-INIA.docx"
+    },
+    {
+      "codigo": "034",
+      "nombre": "AUTORIZACIÓN",
+      "formato": "docx",
+      "archivo": "AUTORIZACION-INIA.docx"
+    },
+    {
+      "codigo": "035",
+      "nombre": "PERMISO",
+      "formato": "docx",
+      "archivo": "PERMISO-INIA.docx"
+    },
+    {
+      "codigo": "036",
+      "nombre": "LICENCIA",
+      "formato": "docx",
+      "archivo": "LICENCIA-INIA.docx"
+    },
+    {
+      "codigo": "037",
+      "nombre": "PECOSA",
+      "formato": "docx",
+      "archivo": "PECOSA-INIA.docx"
+    },
+    {
+      "codigo": "038",
+      "nombre": "RESOLUCIÓN MINISTERIAL",
+      "formato": "docx",
+      "archivo": "RESOLUCION-MINISTERIAL-INIA.docx"
+    },
+    {
+      "codigo": "039",
+      "nombre": "FICHA TÉCNICA",
+      "formato": "docx",
+      "archivo": "FICHA-TECNICA-INIA.docx"
+    },
+    {
+      "codigo": "040",
+      "nombre": "MINUTA",
+      "formato": "docx",
+      "archivo": "MINUTA-INIA.docx"
+    },
+    {
+      "codigo": "041",
+      "nombre": "ACTA DE CONFORMIDAD",
+      "formato": "docx",
+      "archivo": "ACTA-DE-CONFORMIDAD-INIA.docx"
+    },
+    {
+      "codigo": "042",
+      "nombre": "OFICIO MÚLTIPLE",
+      "formato": "docx",
+      "archivo": "OFICIO-MULTIPLE-INIA.docx"
+    },
+    {
+      "codigo": "043",
+      "nombre": "CARTA MÚLTIPLE",
+      "formato": "docx",
+      "archivo": "CARTA-MULTIPLE-INIA.docx"
+    },
+    {
+      "codigo": "232",
+      "nombre": "PROVEIDO",
+      "formato": "pdf-sistema",
+      "archivo": null
+    },
+    {
+      "codigo": "234",
+      "nombre": "MEMORANDO MULTIPLE",
+      "formato": "docx",
+      "archivo": "MEMORANDO-MULTIPLE-INIA.docx"
+    },
+    {
+      "codigo": "250",
+      "nombre": "OFICIO CIRCULAR",
+      "formato": "docx",
+      "archivo": "OFICIO-CIRCULAR-INIA.docx"
+    },
+    {
+      "codigo": "304",
+      "nombre": "HOJA DE ENVIO",
+      "formato": "pdf-sistema",
+      "archivo": null
+    }
+  ]
+}

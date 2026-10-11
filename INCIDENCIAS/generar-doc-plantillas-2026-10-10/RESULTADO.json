@@ -1,0 +1,47 @@
+{
+  "plantillas_word": 45,
+  "tipos_pdf_sistema": [
+    "232",
+    "304"
+  ],
+  "tipos_uti": [
+    "001",
+    "002",
+    "003",
+    "006",
+    "009",
+    "012",
+    "020"
+  ],
+  "python": {
+    "pruebas": 24,
+    "resultado": "OK",
+    "docx_procesados": 135,
+    "comprobaciones_nombres_java": 73,
+    "instalacion_nueva_sql": "OK: datos -> generar_sql -> sql_plantillas incluye los 45 tipos en una transaccion; archivos temporales y claves ficticias"
+  },
+  "javascript": "OK: protocolo, errores y rutas especiales",
+  "postgresql_aislado": "OK: 45 blobs, idempotencia, rollback y formatos del área",
+  "visual": "45 resultados internos, 45 páginas, Word PDF y PNG",
+  "compilacion": "8 WAR desde fuentes; despliegue local y verificación OK",
+  "http_local": {
+    "login_jarbieto": true,
+    "informe_descarga_http": 200,
+    "docx_bytes": 96097,
+    "memorando_validacion_plantilla": "OK",
+    "memorando_descarga_http": 200,
+    "memorando_docx_bytes": 96075,
+    "memorando_titulo_y_campos": "OK"
+  },
+  "plantillas_base_local": {
+    "activas": 45,
+    "hashes_coinciden_con_paquete": true,
+    "aplicacion": "Plantillas-SGD con respaldo previo y transaccion confirmada"
+  },
+  "pendiente": [
+    "ciclo completo de Tramitedoc con el operador",
+    "instalación y prueba remota"
+  ],
+  "base_activa_reiniciada_por_esta_revision": false,
+  "publicado_en_git": false
+}

@@ -1,0 +1,24 @@
+{
+  "fecha_local": "2026-10-10",
+  "documento_probado": "SOLICITUD-R3-2026-MIDAGRI-INIA-GG-UTI.docx",
+  "apertura_existente": {
+    "solicitudes_generar_documento": 1,
+    "word_documentos_abiertos": 1,
+    "word_ventanas_documento": 1,
+    "proceso_word_padre": "Tramitedoc.exe",
+    "plantilla_original_abierta": false
+  },
+  "descarga_nueva": {
+    "archivo_previo_conservado": true,
+    "solicitudes_generar_documento": 1,
+    "word_documentos_abiertos": 1,
+    "word_ventanas_documento": 1,
+    "plantilla_original_abierta": false
+  },
+  "documento_original_restaurado": true,
+  "sha256_original_restaurado": "2B8E0DE0400B0A81E10CD111BAF843DEB46C2832024BFA440C9A7AE198E2672D",
+  "modificaciones_bd_esta_revision": false,
+  "modificaciones_fuentes_por_doble_apertura": false,
+  "causa_doble_apertura": "No reproducida en las dos pruebas de SOLICITUD. No se certifica como corregida.",
+  "pendiente": "Prueba del operador del tipo que presentaba el fallo y validacion remota."
+}

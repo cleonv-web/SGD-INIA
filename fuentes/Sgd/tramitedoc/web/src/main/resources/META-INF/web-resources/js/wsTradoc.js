@@ -96,7 +96,7 @@ function processMessageRecived(msg, callback){
                     if(auxMsg.error==="0"){
                         callback(auxMsg.message);
                     }else{
-                        alert(auxMsg.message);
+                        callback("No se pudo generar o abrir el documento: " + auxMsg.message);
                     }
                 }
                 break;                
@@ -106,7 +106,7 @@ function processMessageRecived(msg, callback){
                     if(auxMsg.error==="0"){
                         callback(auxMsg.message);
                     }else{
-                        alert(auxMsg.message);
+                        callback("No se pudo verificar el archivo: " + auxMsg.message);
                     }
                 }
                 break;             
@@ -521,7 +521,7 @@ function fn_generaDocDesktop(urlDoc, rutaDoc,nuAnn, nuEmi, tieneWord, callback) 
                     retval = data;
                     if (retval !== "SI" && retval !== "NO") {
                         loadding(false);
-                        callback("No se pudo verificar el archivo con el cliente Tramitedoc. Compruebe su conexión antes de generar el documento.");
+                        callback(typeof retval === "string" && retval.indexOf("No se pudo verificar el archivo:") === 0 ? retval : "No se pudo verificar el archivo con el cliente Tramitedoc. Compruebe su conexión antes de generar el documento.");
                         return;
                     }
                     var param = {urlDoc: urlDoc, rutaDoc: rutaDoc, remplazaArchivo: false};
@@ -697,6 +697,11 @@ function fn_selecDirectorioOnDesktop(){
 
 //siempre al final
 var isCallAppDesktop=false;
+function fn_urlTramitedoc(ws, canal, base, directorio) {
+    // El cliente convierte | en el separador nativo y decodifica rutaPri.
+    // Codificar la carpeta impide que espacios, ? o # alteren el protocolo.
+    return 'Tramitedoc:accion=TraDoc?ws=' + ws + canal + '/?urlBase=' + base + '?rutaPri=' + encodeURIComponent(directorio);
+}
 $(function() {
     var waitToResponseApp = function() {
         if (ispageLoad) {
@@ -704,7 +709,7 @@ $(function() {
                 isCallAppDesktop=true;
                 try{
 		    //var url = 'OnpeTradoc:accion=TraDoc?ws='+wsServiceLocation + $.cookie('idChannel') + '/?urlBase='+urlBase+'?rutaPri='+rutaPri;
-                    var url = 'Tramitedoc:accion=TraDoc?ws='+wsServiceLocation + $.cookie('idChannel') + '/?urlBase='+urlBase+'?rutaPri='+rutaPri;
+                    var url = fn_urlTramitedoc(wsServiceLocation, $.cookie('idChannel'), urlBase, rutaPri);
                     console.log('urlTramitedoc: '+url);
                     var desktopObj = document.getElementById('idTradocDesktop');
                     desktopObj.href = url;

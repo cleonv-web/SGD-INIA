@@ -274,12 +274,16 @@ def comprobar_plantillas():
     folder=ROOT/'plantillas-docx'
     manifest=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
     entries=manifest['plantillas']
-    if manifest.get('dependencia_predeterminada')!='00000' or sorted(e['tipo'] for e in entries)!=['001','003']:
-        raise RuntimeError('El paquete requiere las plantillas base OFICIO 001 e INFORME 003.')
+    catalog=json.loads((folder/'catalogo.json').read_text(encoding='utf-8'))['tipos']
+    expected={e['codigo']:e['archivo'] for e in catalog if e['formato']=='docx'}
+    codes=[f'{n:03d}' for n in range(1,44)]+['234','250']
+    if (manifest.get('dependencia_predeterminada')!='00000' or sorted(expected)!=codes
+            or sorted(e['tipo'] for e in entries)!=codes):
+        raise RuntimeError('El paquete requiere las 45 plantillas Word del catálogo SGD.')
     result=[]
     for entry in entries:
         name=entry['archivo']
-        if name!={'001':'OFICIO-INIA.docx','003':'INFORME-INIA.docx'}[entry['tipo']]:raise RuntimeError('El archivo no corresponde al tipo documental de la plantilla.')
+        if name!=expected[entry['tipo']] or Path(name).name!=name or not re.fullmatch(r'[A-Z0-9-]+-INIA\.docx',name):raise RuntimeError('El archivo no corresponde al tipo documental de la plantilla.')
         content=(folder/name).read_bytes()
         if hashlib.sha256(content).hexdigest()!=entry['sha256']:raise RuntimeError('Hash de plantilla no coincide: '+name)
         with zipfile.ZipFile(folder/name) as doc:
@@ -306,7 +310,7 @@ def plantillas(aplicar=False,confirmar=None):
     sql=sql_plantillas()
     plan=DATA/'plantillas-INIA.sql';plan.write_text(sql,encoding='utf-8')
     if not aplicar:
-        print('Plantillas OFICIO e INFORME verificadas sin consultar BD. Plan: '+str(plan),flush=True)
+        print('45 plantillas Word INIA verificadas sin consultar BD. Plan: '+str(plan),flush=True)
         print('Para una instalación existente, revisar los DOCX y ejecutar Plantillas-SGD con --aplicar --confirmar PLANTILLAS:INIA. La BD debe estar iniciada.',flush=True)
         return
     if C.get('modo')=='solo_payara':raise RuntimeError('Aplicar desde el equipo que administra PostgreSQL, con su configuración y runtimes.')

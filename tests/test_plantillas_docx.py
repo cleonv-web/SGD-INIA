@@ -16,10 +16,12 @@ import fr.opensagres.xdocreport.template.*;
 public class PlantillasDocxTest {
  public static void main(String[] args) throws Exception {
   String[] keys={"NOMBRE_ANIO","NOMBRE_ANIO2","NUMERO_DOC","DEPENDENCIA_TITULO","NRO_EXPEDIENTE","ASUNTO","REFERENCIA","FECHA_DOC","EMPLEADO_EMITE","EMPLEADO_DESTINO","CARGO_EMP_EMITE","CARGO_EMP_DESTINO","DEPENDENCIA_EMITE","DEPENDENCIA_DESTINO","NOMBRE_DESTINATARIO","CARGO","ENTIDAD_PRIVADA_DESTINATARIO","DIRECCION_DESTINATARIO","INICIALES_EMP","COPIA"};
-  for (String kind:new String[]{"INFORME","OFICIO"}) {
+  File[] archivos=new File(args[0]).listFiles((dir,name)->name.endsWith("-INIA.docx"));
+  for (File archivo:archivos) {
+   String kind=archivo.getName().replace("-INIA.docx","");
    for(String test:new String[]{"interno","externo","vacio"}) {
     IXDocReport report;
-    try(InputStream in=new FileInputStream(new File(args[0],kind+"-INIA.docx"))) {
+    try(InputStream in=new FileInputStream(archivo)) {
      report=XDocReportRegistry.getRegistry().loadReport(in,TemplateEngineKind.Freemarker);
     }
     IContext ctx=report.createContext();
@@ -42,7 +44,7 @@ public class PlantillasDocxTest {
     try(OutputStream out=new FileOutputStream(new File(args[1],kind+"-"+test+".docx"))) {report.process(ctx,out);}
    }
   }
-  System.out.println("Seis DOCX ficticios procesados con XDocReport y FreeMarker incluidos.");
+  System.out.println((archivos.length*3)+" DOCX ficticios procesados con XDocReport y FreeMarker incluidos.");
  }
 }
 '''

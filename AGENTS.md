@@ -11,6 +11,7 @@
 - Para preparar una subida usar siempre `git add .`; revisar después el contenido del índice y `git diff --cached --check`. No hacer exclusiones adicionales de incidencias o instaladores sin una solicitud del operador.
 - El operador ejecuta los comandos que reinician su base. Prepararlos y documentarlos; no ejecutar el borrado de PostgreSQL por iniciativa propia. La solicitud de limpiar Payara solo permite retirar los archivos regenerables de ese servidor, no resetear datos ni aplicar SQL de incidencias.
 - Proceder con lecturas locales y tareas reversibles de bajo riesgo sin repetir solicitudes de permiso. No crear confirmaciones adicionales cuando el operador ya haya definido el alcance.
+- Toda corrección de datos de instalación debe quedar reproducible en fuentes, SQL o utilitarios versionables; verificar tanto la instalación nueva como la actualización de una base existente. Una corrección aplicada únicamente en la BD del laboratorio no completa el trabajo.
 
 ## Utilitarios que no deben confundirse
 
@@ -19,5 +20,6 @@
 - `Recargar-Usuarios` ajusta alcances de acceso sin eliminar cuentas, contraseñas ni documentos. No sustituye el reinicio completo solicitado por el operador.
 - `Limpiar-Payara.bat` muestra los archivos regenerables; `--aplicar` limpia únicamente `osgi-cache`, `generated`, `temp` y `logs` del dominio `sgd`. Si Payara estaba activo, lo detiene y lo vuelve a iniciar. No detiene PostgreSQL ni ejecuta sus comandos.
 - Tras reiniciar el piloto no ejecutar `SGD.bat todo` para cargar usuarios: puede restaurar un respaldo portable anterior. Usar `Cargar-Area` y abrir una sesión nueva con las nuevas claves.
+- Las 45 plantillas Word se cargan automáticamente en una instalación nueva desde `plantillas-docx` mediante `sgd.py`. En una base existente, después de actualizar las fuentes y con PostgreSQL iniciado, usar `Plantillas-SGD.bat --aplicar --confirmar PLANTILLAS:INIA`; respalda y agrega los formatos faltantes. Un `git pull` no cambia por sí solo los blobs de PostgreSQL.
 
 Documentación vigente: `manual/CARGA-POR-AREA.md`, `manual/LIMPIEZA-PAYARA.md`, `manual/VERSIONADO.md` y `manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx`.
