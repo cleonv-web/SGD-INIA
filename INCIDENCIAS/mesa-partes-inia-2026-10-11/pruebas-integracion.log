@@ -1,0 +1,7 @@
+OK tipo=009 persona=03 anexos=0 PDF/resumen/cargo/responsable
+OK tipo=001 persona=03 anexos=1 PDF/resumen/cargo/responsable
+OK tipo=002 persona=02 anexos=2 PDF/resumen/cargo/responsable
+OK tipo=003 persona=03 anexos=0 PDF/resumen/cargo/responsable
+OK tipo=020 persona=03 anexos=1 PDF/resumen/cargo/responsable
+OK tipo=234 persona=03 anexos=2 PDF/resumen/cargo/responsable
+OK fallo real de anexos revierte el expediente completo

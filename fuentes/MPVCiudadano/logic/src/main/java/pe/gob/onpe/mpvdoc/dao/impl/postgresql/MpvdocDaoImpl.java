@@ -19,6 +19,10 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.jdbc.core.support.SqlLobValue;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
@@ -44,12 +48,12 @@ import pe.gob.onpe.mpvdoc.dao.MpvdocDao;
 @Profile("postgresql")
 public class MpvdocDaoImpl extends SimpleJdbcDaoBase implements MpvdocDao{
      
-      private SimpleJdbcCall spdataSource;
+
          
     @Override
     public List<TipoDocumentoBean> listTipoDocumento() { 
         List<TipoDocumentoBean> list =  new ArrayList<TipoDocumentoBean>(); 
-        this.spdataSource = new SimpleJdbcCall(this.dataSource)
+        SimpleJdbcCall spdataSource = new SimpleJdbcCall(this.dataSource)
                  .withSchemaName("idosgd")
                 .withFunctionName("pk_sgd_mesa_virtual_lis_tipdoc") 
                 .withoutProcedureColumnMetaDataAccess()
@@ -59,7 +63,7 @@ public class MpvdocDaoImpl extends SimpleJdbcDaoBase implements MpvdocDao{
                 SqlParameterSource in = new MapSqlParameterSource()       
                 .addValue("pfiltro", "") ; 
         try {               
-            Map<String, Object> dbResults = this.spdataSource.execute(in);
+            Map<String, Object> dbResults = spdataSource.execute(in);
             List<Map<String, Object>> data = (List<Map<String, Object>>)dbResults.get("#result-set-1");
              if(data != null){
                 for(Map<String,Object> u : data) {
@@ -69,7 +73,7 @@ public class MpvdocDaoImpl extends SimpleJdbcDaoBase implements MpvdocDao{
                             list.add(consulta);
                 }
             } 
-            this.spdataSource =null;            
+
         } catch (Exception ex) { 
             list=null;
             ex.printStackTrace();
@@ -262,10 +266,33 @@ public class MpvdocDaoImpl extends SimpleJdbcDaoBase implements MpvdocDao{
         return vReturn;
     }
     @Override
-    public ResultMpvdocBean getGrabarExpediente(MpvdocBean mpvdocBean){
+    public ResultMpvdocBean getGrabarExpediente(final MpvdocBean mpvdocBean){
+        try {
+            TransactionTemplate transaction = new TransactionTemplate(new DataSourceTransactionManager(this.dataSource));
+            return transaction.execute(new TransactionCallback<ResultMpvdocBean>() {
+                public ResultMpvdocBean doInTransaction(TransactionStatus status) {
+                    // La funcion SQL no registra la razon social escrita manualmente.
+                    // Conservar el maestro existente; crear solo el RUC que falta.
+                    if ("02".equals(mpvdocBean.getIdTipoPersona())) {
+                        jdbcTemplate.update("INSERT INTO idosgd.lg_pro_proveedor(cpro_ruc,cpro_razsoc,dpro_fecins,cpro_domicil,cubi_coddep,cubi_codpro,cubi_coddis) VALUES (?, ?, now(), left(?,100), ?, ?, ?) ON CONFLICT (cpro_ruc) DO NOTHING",
+                            mpvdocBean.getRuc(), mpvdocBean.getRaz(), mpvdocBean.getDir(), mpvdocBean.getDep(), mpvdocBean.getPro(), mpvdocBean.getDis());
+                    }
+                    ResultMpvdocBean result = registrarExpediente(mpvdocBean);
+                    if (!"OK".equals(result.getResultado())) status.setRollbackOnly();
+                    return result;
+                }
+            });
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+            ResultMpvdocBean result = new ResultMpvdocBean();
+            result.setResultado("No se pudo registrar la presentacion completa. Intenta nuevamente.");
+            return result;
+        }
+    }
+    private ResultMpvdocBean registrarExpediente(MpvdocBean mpvdocBean){
         ResultMpvdocBean resultado= new ResultMpvdocBean();
         final LobHandler lobhandler = new DefaultLobHandler();
-        spdataSource = new SimpleJdbcCall(this.dataSource).withFunctionName("idosgd.pk_sgd_mesa_virtual_ciudadano")
+        SimpleJdbcCall spdataSource = new SimpleJdbcCall(this.dataSource).withFunctionName("idosgd.pk_sgd_mesa_virtual_ciudadano")
                         .withoutProcedureColumnMetaDataAccess()
                         .useInParameterNames("p_tipoper", "p_dni", "p_pat","p_mat","p_nom"
                                 ,"p_ruc","p_raz","p_tipodoc","p_nrodoc","p_asu"
@@ -318,7 +345,7 @@ public class MpvdocDaoImpl extends SimpleJdbcDaoBase implements MpvdocDao{
                 String [] resulArray=result.split("@");
                 if(resulArray!=null && resulArray.length>0){
                     resultado.setResultado(resulArray[0]); 
-                    if (resultado.getResultado().contains("OK")){
+                    if ("OK".equals(resultado.getResultado())){
                         resultado.setExpediente(resulArray[1]); 
                         resultado.setAnio(resulArray[2]); 
                         resultado.setEmision(resulArray[3]);
@@ -343,7 +370,7 @@ public class MpvdocDaoImpl extends SimpleJdbcDaoBase implements MpvdocDao{
     }
    private void getAnexos(DocumentoFilesStructBean filesProces, String anio, String emision){
        final LobHandler lobhandler = new DefaultLobHandler();
-        spdataSource = new SimpleJdbcCall(this.dataSource).withFunctionName("idosgd.pk_sgd_mesa_virtual_ciudadano_anexos")
+        SimpleJdbcCall spdataSource = new SimpleJdbcCall(this.dataSource).withFunctionName("idosgd.pk_sgd_mesa_virtual_ciudadano_anexos")
                         .withoutProcedureColumnMetaDataAccess()
                         .useInParameterNames("p_anio", "p_emision", "p_titulo","p_anexos","p_arcdat") 
                         .declareParameters(new SqlParameter("p_anio", Types.VARCHAR),
@@ -357,11 +384,8 @@ public class MpvdocDaoImpl extends SimpleJdbcDaoBase implements MpvdocDao{
                         .addValue("p_titulo", filesProces.getVctit())
                         .addValue("p_anexos", filesProces.getInid())
                         .addValue("p_arcdat", new SqlLobValue(filesProces.getVcarcda(), lobhandler)) ; 
-        try{             
-               spdataSource.execute(in);           
-        } catch (Exception e) {
-            e.printStackTrace();             
-        }
+        // Propagar fallos para revertir documento, expediente y anexos juntos.
+        spdataSource.execute(in);
    }
     @Override
     public String RegisternotificarCorreo(String v_nom, String p_Para, String detalleDoc, String asunto, String cuerpo) {

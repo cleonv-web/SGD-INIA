@@ -32,7 +32,10 @@ import pe.gob.onpe.mpvdoc.bean.DocumentoFilesStructBean;
 import pe.gob.onpe.mpvdoc.bean.MpvdocBean;
 import pe.gob.onpe.mpvdoc.bean.ResultMpvdocBean;
 import pe.gob.onpe.mpvdoc.bean.UbigeoBean;
-import pe.gob.onpe.mpvdoc.service.CaptchaSingletonService; 
+import pe.gob.onpe.mpvdoc.service.CaptchaSessionService;
+import org.codehaus.jackson.map.ObjectMapper;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import pe.gob.onpe.mpvdoc.web.util.Constantes;
 import pe.gob.onpe.mpvdoc.web.util.Utility;
 import pe.gob.onpe.mpvdoc.service.MpvdocService;
@@ -65,40 +68,9 @@ public class inicioController{
         model.addAttribute("SizeMaxAnexo",  applicationProperties.getFileSizeMaxAnexo()); 
         model.addAttribute("SizeMaxDocumento",  applicationProperties.getFileSizeMaxDocumento()); 
         model.addAttribute("LinkConsultaTuTramite",  applicationProperties.getLinkConsultaTuTramite()); 
-        String TerminosTitulo=new String(applicationProperties.getTerminosTitulo().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosTitulo",  TerminosTitulo);
-        String TerminosI=new String(applicationProperties.getTerminosI().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosI",  TerminosI);
-        String TerminosII=new String(applicationProperties.getTerminosII().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosII",  TerminosII);
-        String TerminosIII=new String(applicationProperties.getTerminosIII().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosIII", TerminosIII);
-        String TerminosIV=new String(applicationProperties.getTerminosIV().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosIV",  TerminosIV);
-        String TerminosV=new String(applicationProperties.getTerminosV().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosV",  TerminosV);
-        String getTerminosVI=new String(applicationProperties.getTerminosVI().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosVI",  getTerminosVI);
-        String getTerminosVII=new String(applicationProperties.getTerminosVII().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosVII",  getTerminosVII);
-        String getTerminosVIII=new String(applicationProperties.getTerminosVIII().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosVIII",  getTerminosVIII);
-        String getTerminosIX=new String(applicationProperties.getTerminosIX().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosIX",  getTerminosIX);
-        String getTerminosX=new String(applicationProperties.getTerminosX().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosX", getTerminosX);
-        String getTerminosXI=new String(applicationProperties.getTerminosXI().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosXI", getTerminosXI);
-        String getTerminosXII=new String(applicationProperties.getTerminosXII().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosXII",getTerminosXII);
-        String getTerminosXIII=new String(applicationProperties.getTerminosXIII().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosXIII", getTerminosXIII);
-        String getTerminosXIV=new String(applicationProperties.getTerminosXIV().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosXIV", getTerminosXIV);
-        String getTerminosXV=new String(applicationProperties.getTerminosXV().getBytes("ISO-8859-1"),"UTF-8");
-        model.addAttribute("TerminosXV",getTerminosXV);
         model.addAttribute("linkReporteCargo",applicationProperties.getLinkMesaPartesCiudadano()+"/cargo?");
         request.getSession().setAttribute("SessionDoc", null);
+        request.getSession().setAttribute("SessionDocName", null);
         request.getSession().setAttribute("SessionAnexos", null);
         return "inicio";
     }
@@ -126,7 +98,7 @@ public class inicioController{
     }    
     
 
-    @RequestMapping(method = RequestMethod.POST, params = "accion=goBuscaCiudadano")
+    @RequestMapping(method = RequestMethod.POST, params = "accion=goBuscaCiudadano", produces="application/json;charset=UTF-8")
     public @ResponseBody String goBuscaCiudadano(HttpServletRequest request, Model model){
         String result=""; 
         //String pnuDoc = ServletUtility.getInstancia().loadRequestParameter(request, "pnuDoc");
@@ -138,7 +110,7 @@ public class inicioController{
         }       
         return result;
     }
-     @RequestMapping(method = RequestMethod.POST, params = "accion=goBuscaProveedorJson")
+     @RequestMapping(method = RequestMethod.POST, params = "accion=goBuscaProveedorJson", produces="application/json;charset=UTF-8")
     public @ResponseBody String goBuscaProveedorJson(HttpServletRequest request, Model model){
         String result="";  
         String pnuRuc = request.getParameter("pnuRuc");
@@ -151,34 +123,29 @@ public class inicioController{
     }   
        
     
-    @RequestMapping(method = RequestMethod.POST,  params = "accion=goInicio") 
+    @RequestMapping(method = RequestMethod.POST,  params = "accion=goInicio", produces="application/json;charset=UTF-8")
     public @ResponseBody String goInicio(@RequestBody  MpvdocBean mpvdocBean, HttpServletRequest request, Model model){
         String mensaje = "NO_OK";  
         String expediente = "";  
         String anio = "";  
         String emision = "";  
         Boolean captchaValido =Boolean.FALSE; 
-        String captchaId = mpvdocBean.getCookieSessionId();
+
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpSession sesion = httpServletRequest.getSession(false);        
-        mpvdocBean.setTextoCaptcha(mpvdocBean.getTextoCaptcha().toUpperCase());
+        if (sesion == null) return "{\"coRespuesta\":\"0\",\"deRespuesta\":\"La sesión venció. Recarga la página antes de continuar.\"}";
         try{
             String textoCaptcha = mpvdocBean.getTextoCaptcha();
             String validaObli = validaCamposObligatorio(mpvdocBean, sesion);
             if(StringUtils.isEmpty(validaObli)){
-                try{
-                    captchaValido = CaptchaSingletonService.getInstance().validateResponseForID(captchaId, textoCaptcha.toUpperCase());
-                } catch (CaptchaServiceException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    captchaValido =Boolean.FALSE;
-                   // result.rejectValue("textoCaptcha", null, "Error al validar texto de la imagen.");
-                }           
+                captchaValido = CaptchaSessionService.validate(sesion, mpvdocBean.getCaptchaToken(), textoCaptcha);
                 if(captchaValido){
                     mpvdocBean.setArchivoBytes((byte[])sesion.getAttribute("SessionDoc"));
                     LinkedList<DocumentoFileBean> files = (LinkedList<DocumentoFileBean>)sesion.getAttribute("SessionAnexos");
                     LinkedList<DocumentoFilesStructBean> filesProcess= new LinkedList<DocumentoFilesStructBean>();
                     int totalAnexos=0;
-                    if(files!=null && mpvdocBean.getListAnexos()!=null &&  mpvdocBean.getListAnexos().size()>0){
+                    if(mpvdocBean.getListAnexos()!=null && mpvdocBean.getListAnexos().size()>0){
+                        if (files == null) files = new LinkedList<DocumentoFileBean>();
                         for (String idAnexo : mpvdocBean.getListAnexos()) {
                             for (DocumentoFileBean file : files) {
                                 if(file.getIdDocumento().equals(idAnexo)){
@@ -193,14 +160,15 @@ public class inicioController{
                         }
                         mpvdocBean.setFilesProcess(filesProcess);
                         if(mpvdocBean.getFilesProcess()!=null && mpvdocBean.getFilesProcess().size()!=mpvdocBean.getListAnexos().size()){
-                            mensaje = "Se generó erro al momento se subir el/los anexo/s. Vuelva subir de nuevo!";  
+                            mensaje = "No se encontraron todos los anexos de esta presentación. Vuelve a adjuntarlos antes de enviar.";
                         }
                     }
                     
                     if (mensaje.equals("NO_OK")) {                         
                         ResultMpvdocBean result =  mpvDocService.getGrabarExpediente(mpvdocBean);
                         if (result.getResultado().equals("OK") && mpvdocBean.getCorreo()!=null && mpvdocBean.getCorreo().length()>1) { 
-                            mpvDocService.RegisternotificarCorreo(mpvdocBean.getNom()+" "+mpvdocBean.getPat()+" "+mpvdocBean.getMat(),mpvdocBean.getCorreo(),"",applicationProperties.getEmailAsunto(),HtmlCorreo(result));                            
+                            try { mpvDocService.RegisternotificarCorreo(mpvdocBean.getNom()+" "+mpvdocBean.getPat()+" "+mpvdocBean.getMat(),mpvdocBean.getCorreo(),"",applicationProperties.getEmailAsunto(),HtmlCorreo(result)); }
+                            catch (Exception mailError) { LOGGER.error("Registro creado; notificación de correo pendiente", mailError); }
                         }
                          mensaje = result.getResultado();
                          expediente=result.getExpediente();
@@ -208,14 +176,15 @@ public class inicioController{
                          emision=result.getEmision();
                     }                       
                 }else{
-                    mensaje = "Código de Imagen Incorrecto.";
+                    mensaje = "El código de verificación es incorrecto o venció. Ingresa el nuevo código mostrado.";
                 }
             }else{
                 mensaje = "Campos Obligatorios: " + validaObli + ".";
             }
             
         }catch(Exception e){
-            e.printStackTrace();
+            LOGGER.error("No se pudo completar el registro de mesa de partes", e);
+            mensaje = "No se pudo completar el registro. Conserva tus archivos y vuelve a intentar.";
         }   
         String coRespuesta="0";
          if (mensaje.equals("OK")) {
@@ -223,20 +192,14 @@ public class inicioController{
         } else{
             coRespuesta = "0";
         }  
-        StringBuilder retval = new StringBuilder();
-        retval.append("{\"coRespuesta\":\"");
-        retval.append(coRespuesta);
-        retval.append("\",\"deRespuesta\":\"");
-        retval.append(mensaje);
-        retval.append("\",\"expediente\":\"");
-        retval.append(expediente);  
-        retval.append("\",\"iod\":\"");
-        retval.append(emision);  
-         retval.append("\",\"anio\":\"");
-        retval.append(anio);  
-        retval.append("\"}");
-        
-        return retval.toString();             
+        Map<String, String> response = new LinkedHashMap<String, String>();
+        response.put("coRespuesta", coRespuesta);
+        response.put("deRespuesta", mensaje);
+        response.put("expediente", expediente);
+        response.put("iod", emision);
+        response.put("anio", anio);
+        try { return new ObjectMapper().writeValueAsString(response); }
+        catch (IOException ex) { throw new IllegalStateException("No se pudo generar la respuesta", ex); }
     }
     private String HtmlCorreo(ResultMpvdocBean result){
         StringBuilder mensaje= new StringBuilder();
@@ -263,13 +226,15 @@ public class inicioController{
     }
     private String validaCamposObligatorio(MpvdocBean verificaDocBean,HttpSession sesion){
         String resultado = "";
-        String[] msj = new String[17];
-        int i = 0; 
-            if(verificaDocBean.getIdTipoPersona().contains("02") && StringUtils.isEmpty(verificaDocBean.getRuc())){
+        String[] msj = new String[30];
+        int i = 0;
+            if (!verificaDocBean.isAceptaTerminos()) { msj[i++] = "Aceptar los términos de presentación"; }
+            if (!"02".equals(verificaDocBean.getIdTipoPersona()) && !"03".equals(verificaDocBean.getIdTipoPersona())) { msj[i++] = "Tipo de persona"; }
+            if("02".equals(verificaDocBean.getIdTipoPersona()) && StringUtils.isEmpty(verificaDocBean.getRuc())){
                 msj[i] = "Nro de RUC";
                 i++;
             }
-             if(verificaDocBean.getIdTipoPersona().contains("02") && StringUtils.isEmpty(verificaDocBean.getRaz())){
+             if("02".equals(verificaDocBean.getIdTipoPersona()) && StringUtils.isEmpty(verificaDocBean.getRaz())){
                 msj[i] = "Razón Social";
                 i++;
             }
@@ -316,7 +281,7 @@ public class inicioController{
             }
             
             if(StringUtils.isEmpty(verificaDocBean.getTipoDocumento())){
-                msj[i] = "ipo de documento";
+                msj[i] = "Tipo de documento";
                 i++;
             }
             if(StringUtils.isEmpty(verificaDocBean.getNrodoc())){
@@ -337,11 +302,18 @@ public class inicioController{
                 i++;
             }
             byte[] decoded = (byte[])sesion.getAttribute("SessionDoc");
-            if(decoded == null){
+            if(decoded == null || StringUtils.isEmpty(verificaDocBean.getNombreArchivo())){
                 msj[i] = "Documento principal";
                 i++;
             }
             
+            if (decoded != null && (verificaDocBean.getNombreArchivo() == null || !verificaDocBean.getNombreArchivo().equals(sesion.getAttribute("SessionDocName")))) msj[i++] = "Volver a adjuntar el documento principal (la sesión de archivos cambió)";
+            if (verificaDocBean.getDni() != null && !verificaDocBean.getDni().matches("[0-9]{8}")) msj[i++] = "DNI de 8 dígitos";
+            if ("02".equals(verificaDocBean.getIdTipoPersona()) && verificaDocBean.getRuc() != null && !verificaDocBean.getRuc().matches("[0-9]{11}")) msj[i++] = "RUC de 11 dígitos";
+            if (verificaDocBean.getFolios() != null && !verificaDocBean.getFolios().matches("[1-9][0-9]{0,4}")) msj[i++] = "Folios: número entero mayor que cero";
+            if (verificaDocBean.getCorreo() != null && !verificaDocBean.getCorreo().matches("[^\\s@]+@[^\\s@]+\\.[^\\s@]+")) msj[i++] = "Correo electrónico válido";
+            if (verificaDocBean.getAsu() != null && verificaDocBean.getAsu().length() > 900) msj[i++] = "Asunto: máximo 900 caracteres";
+            if ("02".equals(verificaDocBean.getIdTipoPersona()) && verificaDocBean.getRaz() != null && verificaDocBean.getRaz().length() > 100) msj[i++] = "Razón social: máximo 100 caracteres";
             resultado = msj[0];
             
             if(i > 1){

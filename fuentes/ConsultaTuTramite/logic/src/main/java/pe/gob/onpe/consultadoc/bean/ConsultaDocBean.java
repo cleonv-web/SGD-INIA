@@ -21,6 +21,8 @@ public class ConsultaDocBean {
     private String sumilla;
     private String observacion;
     private String oficinaAtencion;
+    private String oficinaRegistro;
+    private boolean tieneDerivacion;
     private String estado;
     private String obsFinalizar; 
     private String anio; 
@@ -106,6 +108,11 @@ public class ConsultaDocBean {
     public String getOficinaAtencion() {
         return oficinaAtencion;
     }
+
+    public String getOficinaRegistro() { return oficinaRegistro; }
+    public void setOficinaRegistro(String oficinaRegistro) { this.oficinaRegistro = oficinaRegistro; }
+    public boolean isTieneDerivacion() { return tieneDerivacion; }
+    public void setTieneDerivacion(boolean tieneDerivacion) { this.tieneDerivacion = tieneDerivacion; }
 
     public void setOficinaAtencion(String oficinaAtencion) {
         this.oficinaAtencion = oficinaAtencion;

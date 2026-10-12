@@ -6,6 +6,10 @@
 package pe.gob.onpe.consultadoc.dao.impl.postgresql;
 
 import java.sql.Types;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +36,38 @@ import pe.gob.onpe.consultadoc.dao.ConsultaDocDao;
 @Repository("consultaDocDao")
 @Profile("postgresql")
 public class ConsultaDocDaoImpl extends SimpleJdbcDaoBase implements ConsultaDocDao{
+
+    private static final String RESUMEN_SQL = cargarResumenSql();
+
+    private static String cargarResumenSql() {
+        try {
+            return FileCopyUtils.copyToString(new InputStreamReader(
+                    new ClassPathResource("sql/consulta-resumen.sql").getInputStream(), "UTF-8"));
+        } catch (IOException ex) {
+            throw new IllegalStateException("No se pudo cargar la consulta de seguimiento", ex);
+        }
+    }
+
+    private static String texto(Map<String,Object> fila, String campo) {
+        Object valor = fila.get(campo);
+        return valor == null ? "" : valor.toString().trim();
+    }
+
+    private boolean completarResumen(ConsultaDocBean consulta) {
+        MapSqlParameterSource parametros = new MapSqlParameterSource()
+                .addValue("anio", consulta.getAnio()).addValue("emision", consulta.getNumeroEmision());
+        List<Map<String,Object>> detalles = namedParameterJdbcTemplate.queryForList(RESUMEN_SQL, parametros);
+        if (detalles.isEmpty()) return false;
+        Map<String,Object> detalle = detalles.get(0);
+        consulta.setFechaExpediente(texto(detalle, "fecha_expediente"));
+        consulta.setOficinaRegistro(texto(detalle, "oficina_registro"));
+        consulta.setOficinaAtencion(texto(detalle, "oficina_atencion"));
+        String estadoDestino = texto(detalle, "estado_destino");
+        consulta.setEstado(estadoDestino.isEmpty() ? texto(detalle, "estado_registro") : estadoDestino);
+        consulta.setObsFinalizar(texto(detalle, "obsfinalizar"));
+        consulta.setTieneDerivacion(Boolean.TRUE.equals(detalle.get("tiene_derivacion")));
+        return true;
+    }
     
     private transient final Log LOGGER = LogFactory.getLog(getClass());
       private SimpleJdbcCall spdataSource;
@@ -51,14 +87,15 @@ public class ConsultaDocDaoImpl extends SimpleJdbcDaoBase implements ConsultaDoc
                             consulta.setNroExpediente((String) u.get("rroexpediente")); 
                             consulta.setTipoDocumento((String) u.get("tipo_documento"));
                             consulta.setNroDoc((String) u.get("nrodoc"));
-                            consulta.setInstitucion((String) u.get("institucion"));
-                            consulta.setRemitente((String) u.get("remitente"));
-                            consulta.setFolios((String) u.get("folios"));
-                            consulta.setSumilla((String) u.get("sumilla"));
-                            consulta.setObservacion((String) u.get("observacion"));
+                            consulta.setInstitucion(texto(u, "institucion"));
+                            consulta.setRemitente(texto(u, "remitente"));
+                            consulta.setFolios(texto(u, "folios"));
+                            consulta.setSumilla(texto(u, "sumilla"));
+                            consulta.setObservacion(texto(u, "observacion"));
                             consulta.setOficinaAtencion((String) u.get("oficina_atencion"));
                             consulta.setEstado((String) u.get("estado"));
                             consulta.setObsFinalizar((String) u.get("obsfinalizar"));
+                            if (!completarResumen(consulta)) continue;
                             dataList.add(consulta);
                 }
             }

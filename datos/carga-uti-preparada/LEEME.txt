@@ -2,10 +2,9 @@ PREPARACIÓN PENDIENTE. NO SE CARGÓ NINGUNA BASE.
 1. Abrir usuarios-verificados.csv en VS Code; no usar Excel sin importar códigos como TEXTO.
 2. Los apellidos completos están conservados en apellido_paterno: separarlos/confirmarlos personalmente.
 3. Confirmar DNI real, cargo_codigo (4 dígitos), cargo_nombre y perfil de cada usuario.
-   Perfiles disponibles: USUARIO_AREA, SOPORTE_UTI, CONSULTA_TODA_AREA.
-   CONSULTA_TODA_AREA permite emisión, recepción y consultas con alcance de la oficina.
-   Usarlo para secretarias que elaboran documentos y hacen seguimiento; no es administrador.
-   UTI no es Mesa de Partes y este paquete no incluye ese perfil.
+   Perfiles disponibles de ejemplo: USUARIO_AREA, SOPORTE_UTI, MESA_PARTES.
+   acceso_documentos=personal es el valor inicial de los perfiles. Revisar este
+   alcance por separado; solo dependencia concede acceso a toda el area.
    Los perfiles del sistema anterior se muestran en pendientes.csv; no se tradujeron automáticamente.
 4. En incluir_sgd poner 0 para excluir cesados, cuentas genéricas y personas que no participarán.
    Poner 1 para incluir a una persona. Las filas con 0 se omiten, pueden conservar verificado=NO.
@@ -20,3 +19,13 @@ PREPARACIÓN PENDIENTE. NO SE CARGÓ NINGUNA BASE.
 6. Indicar verificado_por y aprobado=SI únicamente después de revisar toda el área.
 7. Ejecutar Cargar-Area con --carpeta para validar, sin --aplicar todavía.
 Conservar los cinco CSV originales. No publicar esta carpeta en Git.
+
+CODIGOS DE CARGO COMPLETADOS (11/10/2026):
+- ESPECIALISTA: 0003, existente y activo en idosgd.rhtm_cargos.
+- GERENTA: 0007, codigo nuevo disponible en el catalogo local al revisar.
+- ASISTENTE: 0008, codigo nuevo disponible en el catalogo local al revisar.
+Los nombres de cargo se conservaron exactamente como llegaron del origen.
+0007 y 0008 son propuestas para registrar esos cargos al aplicar la carga;
+no son cargos ya registrados en PostgreSQL. Confirmarlos al aprobar el area.
+El cargador comprobara nuevamente posibles colisiones al aplicar.
+Esta edicion no cambio aprobaciones, perfiles ni registros de la base.

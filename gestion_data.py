@@ -1,7 +1,8 @@
 """Carga y retiro de un área del piloto. La revisión por defecto es offline.
 
-No conecta a SQL Server. Sólo --aplicar conecta al PostgreSQL configurado.
+No conecta a SQL Server. --aplicar o --automatico conectan al PostgreSQL configurado.
 Usa biblioteca estándar, runtimes incluidos, respaldo y transacciones.
+El BAT sin argumentos usa --automatico para cargar la preparación aprobada.
 """
 from pathlib import Path
 import argparse, csv, hashlib, json, os, re, secrets, subprocess, sys
@@ -506,6 +507,53 @@ def make_passwords(users):
     return plain,encrypted
 
 
+def cargar_preparacion():
+    """Carga aprobada del preparador, sin pedir rutas ni códigos al operador."""
+    from validar_carga import validar
+    folder = DATA / 'carga-uti-preparada'
+    report = validar(folder)
+    require(not report['errores'], 'La preparación no está lista:\n' + '\n'.join(report['errores']))
+    area, users, fingerprint = read_bundle(folder)
+    print('Cargando área ' + area['codigo'] + ': ' + area['nombre'], flush=True)
+    print('Usuarios incluidos: ' + str(len(users)), flush=True)
+    import sgd as s
+    require(s.C.get('modo', 'completo') == 'completo' and s.C['host_bd'] in ['127.0.0.1', 'localhost'],
+            'La carga automática requiere el servidor completo con PostgreSQL local; usar el modo manual en servidores separados.')
+    datadir = DATA / 'postgresql'
+    require((datadir / 'PG_VERSION').is_file() and (datadir / 'PG_VERSION').read_text().strip() == '17',
+            'No existe una base PostgreSQL 17 instalada. No se inicializó ninguna base.')
+    if s.pg_tool('pg_ctl', ['-D', datadir, 'status'], check=False).returncode != 0:
+        print('Iniciando PostgreSQL existente...', flush=True)
+        s.pg_tool('pg_ctl', ['-D', datadir, '-l', s.LOG / 'postgresql-servidor.log',
+                             '-w', '-t', '30', 'start'], log='carga-postgresql-iniciar.log')
+    require(s.scalar("SELECT to_regclass('idosgd.instalacion_portable') IS NOT NULL") == 't',
+            'La base configurada no corresponde a una instalación SGD preparada. No se aplicó la carga.')
+    running = lambda: bool(re.search(r'(?mi)^\s*sgd\s+running\b', s.admin(['list-domains']).stdout))
+    was_running = running()
+    try:
+        if was_running:
+            print('Pausando el SGD durante la carga...', flush=True)
+            s.admin(['stop-domain', 'sgd'], log='carga-payara-detener.log')
+            require(not running(), 'El SGD sigue ejecutándose. No se aplicó la carga.')
+        # Detectar cambios durante la validación antes de invocar la carga existente.
+        require(read_bundle(folder)[2] == fingerprint,
+                'Los archivos preparados cambiaron durante la revisión. Ejecutar nuevamente el BAT.')
+        main(['cargar', '--carpeta', str(folder), '--aplicar', '--confirmar', 'CARGAR:' + area['codigo']])
+    except Exception as exc:
+        if was_running:
+            try:
+                s.iniciar(solo=True)
+            except Exception as restart:
+                raise RuntimeError('Error de carga: ' + str(exc) + '\nNo se pudo reanudar el SGD: ' + str(restart)) from exc
+        raise
+    print('Iniciando el SGD...', flush=True)
+    try:
+        s.iniciar(solo=True)
+    except Exception as exc:
+        raise RuntimeError('La carga fue aplicada, pero el SGD no pudo arrancar. Revisar el error; no repetir la carga: ' + str(exc)) from exc
+    print('Carga completada. SGD disponible: ' + s.C['url_publica'] + '/sisdoc/login.do', flush=True)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('accion',choices=['plantilla','cargar','limpiar','catalogos'])
@@ -514,7 +562,13 @@ def main(argv=None):
     parser.add_argument('--todo',action='store_true',help='Reiniciar toda la base local del piloto con respaldo previo')
     parser.add_argument('--aplicar',action='store_true')
     parser.add_argument('--confirmar',default='')
+    parser.add_argument('--automatico',action='store_true',help='Cargar la preparación aprobada y gestionar los servicios locales')
     args = parser.parse_args(argv)
+    if args.automatico:
+        require(args.accion == 'cargar' and not any([args.carpeta, args.area, args.todo, args.aplicar, args.confirmar]),
+                '--automatico solo se admite en cargar, sin otros parámetros')
+        cargar_preparacion()
+        return
     if args.todo:
         require(args.accion=='limpiar' and not args.area and not args.carpeta,
                 '--todo solo se permite en limpiar, sin --area ni --carpeta')

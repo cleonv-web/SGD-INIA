@@ -1,0 +1,22 @@
+-- Actualizacion de una base existente: ejecutar con psql -1 -v ON_ERROR_STOP=1.
+-- Respaldar antes. Solo habilita el registro de mesa_demo en la dependencia 49001.
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM IDOSGD.SEG_USUARIOS1 u
+        JOIN IDOSGD.TDTX_DEPENDENCIA_EMPLEADO e ON e.CO_EMP=u.CEMP_CODEMP
+        JOIN IDOSGD.RHTM_DEPENDENCIA d ON d.CO_DEPENDENCIA=e.CO_DEP
+        WHERE u.COD_USER='mesa_demo' AND u.CEMP_CODEMP='49001' AND u.ES_USUARIO='A'
+          AND e.CO_DEP='49001' AND e.ES_EMP='1'
+          AND d.IN_MESA_PARTES::text='1' AND d.IN_BAJA='0' AND d.DE_CORTA_DEPEN='MP-DEMO'
+    ) THEN
+        RAISE EXCEPTION 'La identidad activa de Mesa de Partes Demo no coincide; no se modifica ningun permiso';
+    END IF;
+END $$;
+INSERT INTO IDOSGD.TDTR_PERMISO_MP
+    (CO_EMP,CO_DEP,IN_CAMBIO_EST,ES_ELI,FE_USE_CRE,FE_USE_MOD,CO_USE_CRE,CO_USE_MOD)
+VALUES ('49001','49001','1','0',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'admin','admin')
+ON CONFLICT (CO_EMP,CO_DEP) DO UPDATE
+SET IN_CAMBIO_EST='1',ES_ELI='0',FE_USE_MOD=CURRENT_TIMESTAMP,CO_USE_MOD='admin'
+WHERE TDTR_PERMISO_MP.IN_CAMBIO_EST IS DISTINCT FROM '1'
+   OR TDTR_PERMISO_MP.ES_ELI IS DISTINCT FROM '0';

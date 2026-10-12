@@ -7,6 +7,7 @@
   "puerto_https": 8185,
   "puerto_admin": 4855,
   "url_publica": "http://127.0.0.1:8085",
+  "url_consulta_qr": "https://calidad.inia.gob.pe/consulta/inicio.do",
   "direccion_http": "0.0.0.0",
   "entidad": "INIA",
   "ruc": "20131365994",

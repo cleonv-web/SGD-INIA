@@ -1,116 +1,77 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package pe.gob.onpe.mpvdoc.web.controller;
 
-import com.octo.captcha.service.CaptchaServiceException;
 import java.io.IOException;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Random;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession; 
-import org.springframework.stereotype.Controller; 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod; 
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import pe.gob.onpe.mpvdoc.bean.DocumentoFileBean; 
+import java.util.*;
+import javax.servlet.http.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.*;
+import org.codehaus.jackson.map.ObjectMapper;
+import pe.gob.onpe.mpvdoc.bean.DocumentoFileBean;
+import pe.gob.onpe.mpvdoc.web.util.ApplicationProperties;
 
-/**
- *
- * @author WCONDORI
- */
 @Controller
-//@RequestMapping("/documento.do")
 public class DocumentoController {
-    
-       @RequestMapping(method = RequestMethod.POST, value = "/goUploadDoc")//accion=goUploadDoc
-    public @ResponseBody String goUploadDoc(MultipartHttpServletRequest request, HttpServletResponse response) {
-        Iterator<String> itr = request.getFileNames();
-        MultipartFile mpf = null;  
-        LinkedList<DocumentoFileBean> files = new LinkedList<DocumentoFileBean>();
-        DocumentoFileBean fileMeta = null; 
-        String base64Files=""; 
-        while (itr.hasNext()) {
-            mpf = request.getFile(itr.next()); 
-            fileMeta = new DocumentoFileBean();
-            fileMeta.setNombreArchivo(mpf.getOriginalFilename());
-            fileMeta.setTamanoArchivo(mpf.getSize() / 1024 + " Kb");
-            fileMeta.setTipoArchivo(mpf.getContentType());
-            try {
-               fileMeta.setArchivoBytes(mpf.getBytes());
-               //base64Files = Base64.getEncoder().encodeToString(mpf.getBytes());
-                //byte[] decoded = Base64.getDecoder().decode(base64Files.getBytes());
-               request.getSession().setAttribute("SessionDoc", mpf.getBytes());
-                //vreturn=anexoDocumentoService.insArchivoAnexo(coUsu,pNuAnn, pNuEmi, fileMeta);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+    @Autowired private ApplicationProperties applicationProperties;
+
+    @RequestMapping(method=RequestMethod.POST, value="/goUploadDoc", produces="application/json;charset=UTF-8")
+    public @ResponseBody String goUploadDoc(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException {
+        return upload(request, response, false);
+    }
+    @RequestMapping(method=RequestMethod.POST, value="/goUploadDocAnexos", produces="application/json;charset=UTF-8")
+    public @ResponseBody String goUploadDocAnexos(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException {
+        return upload(request, response, true);
+    }
+    @SuppressWarnings("unchecked")
+    @RequestMapping(method=RequestMethod.POST, value="/goRemoveAnexo", produces="application/json;charset=UTF-8")
+    public @ResponseBody String removeAnexo(@RequestParam("id") String id, HttpServletRequest request) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session != null) synchronized (session) {
+            LinkedList<DocumentoFileBean> files = (LinkedList<DocumentoFileBean>)session.getAttribute("SessionAnexos");
+            if (files != null) {
+                Iterator<DocumentoFileBean> iterator = files.iterator();
+                while (iterator.hasNext()) if (id.equals(iterator.next().getIdDocumento())) iterator.remove();
+                session.setAttribute("SessionAnexos", files);
             }
-            //2.4 add to files
-            files.add(fileMeta);
         }
-
-        // result will be like this
-        // [{"fileName":"app_engine-85x77.png","fileSize":"8 Kb","fileType":"image/png"},...]
-         
-        String nombreArchivo=fileMeta.getNombreArchivo();
-        String tamanoArchivo=fileMeta.getTamanoArchivo();
-        String tipoArchivo=fileMeta.getTipoArchivo();
-        
-        String res= "[{\"fileString\":\"%s\",\"name\":\"%s\",\"fileSize\":\"%s\",\"fileType\":\"%s\"}]";
-        res=String.format(res, base64Files,nombreArchivo,tamanoArchivo,tipoArchivo);
-        return res;        
+        return "{\"ok\":true}";
     }
-       @RequestMapping(method = RequestMethod.POST, value = "/goUploadDocAnexos") 
-    public @ResponseBody String goUploadDocAnexos(MultipartHttpServletRequest request, HttpServletResponse response) {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpSession sesion = httpServletRequest.getSession(false);
-        Iterator<String> itr = request.getFileNames();
-        MultipartFile mpf = null;  
-        LinkedList<DocumentoFileBean> files = (LinkedList<DocumentoFileBean>)sesion.getAttribute("SessionAnexos");
-        if(files == null){
-             files = new LinkedList<DocumentoFileBean>();
+    @SuppressWarnings("unchecked")
+    private String upload(MultipartHttpServletRequest request, HttpServletResponse response, boolean annex) throws IOException {
+        Iterator<String> names = request.getFileNames();
+        if (!names.hasNext()) return reject(response, "Selecciona un archivo.");
+        MultipartFile file = request.getFile(names.next());
+        String name = file.getOriginalFilename();
+        if (name == null) return reject(response, "El archivo no tiene nombre.");
+        name = name.replace('\\', '/'); name = name.substring(name.lastIndexOf('/') + 1);
+        long limit = annex ? Long.parseLong(applicationProperties.getFileSizeMaxAnexo()) * 1024 * 1024 : Long.parseLong(applicationProperties.getFileSizeMaxDocumento());
+        if (name.length() > 255 || file.isEmpty() || file.getSize() > limit || !name.toLowerCase(Locale.ROOT).matches(annex ? ".*\\.(pdf|doc|docx|jpg|jpeg)$" : ".*\\.pdf$"))
+            return reject(response, "Formato o tamaño de archivo no permitido.");
+        byte[] bytes = file.getBytes();
+        if (!annex && (bytes.length < 5 || bytes[0] != '%' || bytes[1] != 'P' || bytes[2] != 'D' || bytes[3] != 'F' || bytes[4] != '-'))
+            return reject(response, "El documento principal debe ser un PDF válido.");
+        HttpSession session = request.getSession();
+        Map<String, String> item = new LinkedHashMap<String, String>();
+        item.put("name", name); item.put("fileSize", file.getSize() / 1024 + " KB");
+        item.put("fileType", file.getContentType() == null ? "application/octet-stream" : file.getContentType());
+        synchronized (session) {
+            if (annex) {
+                LinkedList<DocumentoFileBean> files = (LinkedList<DocumentoFileBean>)session.getAttribute("SessionAnexos");
+                if (files == null) files = new LinkedList<DocumentoFileBean>();
+                if (files.size() >= 20) return reject(response, "Se alcanzó el máximo de 20 anexos por presentación.");
+                DocumentoFileBean meta = new DocumentoFileBean();
+                meta.setIdDocumento(UUID.randomUUID().toString()); meta.setNombreArchivo(name);
+                meta.setTamanoArchivo(item.get("fileSize")); meta.setTipoArchivo(item.get("fileType")); meta.setArchivoBytes(bytes);
+                files.add(meta); session.setAttribute("SessionAnexos", files); item.put("id", meta.getIdDocumento());
+            } else {
+                session.setAttribute("SessionDoc", bytes); session.setAttribute("SessionDocName", name); item.put("fileString", "");
+            }
         }
-        DocumentoFileBean fileMeta = null;  
-        while (itr.hasNext()) {
-            mpf = request.getFile(itr.next()); 
-            fileMeta = new DocumentoFileBean();
-            fileMeta.setNombreArchivo(mpf.getOriginalFilename());
-            fileMeta.setTamanoArchivo(mpf.getSize() / 1024 + " Kb");
-            fileMeta.setTipoArchivo(mpf.getContentType());
-            try {
-               fileMeta.setArchivoBytes(mpf.getBytes());                
-            } catch (IOException e) { 
-                e.printStackTrace();
-            } 
-            Random r2 = new Random(1000);
-            int n2 = r2.nextInt(1000);
-            Format f = new SimpleDateFormat("mmddyyyyhhmmssSSS");
-            String str = f.format(new Date());
-            fileMeta.setIdDocumento(str+n2); 
-            files.add(fileMeta);
-            request.getSession().setAttribute("SessionAnexos", files);
-        }
-
-        String nombreArchivo=fileMeta.getNombreArchivo();
-        String tamanoArchivo=fileMeta.getTamanoArchivo();
-        String tipoArchivo=fileMeta.getTipoArchivo();
-        
-        String res= "[{\"id\":\"%s\",\"name\":\"%s\",\"fileSize\":\"%s\",\"fileType\":\"%s\"}]";
-        res=String.format(res, fileMeta.getIdDocumento(),nombreArchivo,tamanoArchivo,tipoArchivo);
-        return res;        
+        return new ObjectMapper().writeValueAsString(Collections.singletonList(item));
     }
-    
-    
-    
+    private String reject(HttpServletResponse response, String text) throws IOException {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return new ObjectMapper().writeValueAsString(Collections.singletonMap("error", text));
+    }
 }

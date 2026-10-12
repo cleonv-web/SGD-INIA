@@ -14,6 +14,12 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 //@JsonIgnoreProperties(ignoreUnknown = true)
 public class MpvdocBean {
     private String cookieSessionId;
+    private String captchaToken;
+    private boolean aceptaTerminos;
+    public String getCaptchaToken() { return captchaToken; }
+    public void setCaptchaToken(String value) { captchaToken = value; }
+    public boolean isAceptaTerminos() { return aceptaTerminos; }
+    public void setAceptaTerminos(boolean value) { aceptaTerminos = value; }
     private String tipoDocumento;    
     private String idTipoPersona;      
     private String ruc;    

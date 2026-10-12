@@ -60,13 +60,18 @@ public class CargoSrvlt extends HttpServlet{
         ServletContext sc = request.getSession().getServletContext();
         String nuAnn = request.getParameter("cargNuAnn");
         String nuEmi = request.getParameter("cargNuEmi");
-        String nuAne = request.getParameter("cargExp");
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("X-Content-Type-Options", "nosniff");
+        if (nuAnn == null || !nuAnn.matches("[0-9]{4}") || nuEmi == null || !nuEmi.matches("[0-9]{1,10}")) {
+            sendError(response, 400, "Datos de constancia incorrectos.");
+            return;
+        }
         String rutaReporte = sc.getRealPath("/reports/");
         
         
         String logo = applicationProperties.getLogoReporteB64();                
         ByteArrayInputStream bis = new ByteArrayInputStream(Base64.decodeBase64(logo));
-        System.out.println("logo=>>>"+logo);
+
         Map parametros = new HashMap(); 
         parametros.put("P_LOGO_DIR", bis.available()==0?null:bis);  
         parametros.put("P_DE_DEPENDENCIA", "");
@@ -81,38 +86,54 @@ public class CargoSrvlt extends HttpServlet{
             documento.setNuAnn(nuAnn);
             documento.setNuEmi(nuEmi);
             lista = this.mpvdocService.getListaReporteBusquedaVoucher(documento);
-            if(lista==null){
-             System.out.println("lista=>>>null");
+            if (lista == null) {
+                sendError(response, 500, "No se pudo consultar la constancia.");
+                return;
             }
-            else {
-             System.out.println("lista=>>>"+lista.size());
+            if (lista.isEmpty()) {
+                sendError(response, 404, "No existe la constancia solicitada.");
+                return;
             }
             //eserror = "0";
         } catch(Exception ex) {  
             System.out.println("error-1");
             ex.printStackTrace();
+            sendError(response, 500, "No se pudo consultar la constancia.");
+            return;
             //eserror = "1";
             //deRespuesta = ex.getMessage();
         }
         try{    
             Utilidades util = new Utilidades();
+            if (bis.available() == 0) throw new IOException("Falta el logo institucional.");
             byte[] archivo = util.GenerarReporteLista(rutaJasper, lista, "TDR15", parametros, tipoArchivo);                
-            response.setHeader("Content-Type", "application/octet-stream");
+            response.setContentType("application/pdf");
             response.setHeader("Content-Length", String.valueOf(archivo.length));
-            response.setHeader("Content-Disposition", "attachment; filename=\"mpv_ciudadano_cargo.pdf\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"cargo-inia.pdf\"");
             response.getOutputStream().write(archivo);
             response.getOutputStream().flush();
         
          } catch (JRException ex) {
             ex.printStackTrace();
-            System.out.println("error-2");
+            sendError(response, 500, "No se pudo generar la constancia.");
         } catch (FileNotFoundException ex) {
              ex.printStackTrace();
-            System.out.println("error-3");
+            sendError(response, 500, "No se pudo generar la constancia.");
         } catch (IOException ex) {
              ex.printStackTrace();
-            System.out.println("error-4");
+            sendError(response, 500, "No se pudo generar la constancia.");
         }
         
+    }
+    private void sendError(HttpServletResponse response, int status, String message) {
+        try {
+            if (!response.isCommitted()) {
+                response.resetBuffer();
+                response.setStatus(status);
+                response.setContentType("text/plain;charset=UTF-8");
+                response.getWriter().write(message);
+            }
+        }
+        catch (IOException ex) { Logger.getLogger(CargoSrvlt.class.getName()).log(Level.WARNING, "No se pudo devolver el error del cargo.", ex); }
     }
 }

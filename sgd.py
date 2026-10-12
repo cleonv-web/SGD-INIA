@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 from herramientas.memoria_payara import configurar_heap
 from herramientas.configuracion_instalacion import cargar_configuracion
+from herramientas.configuracion_mpd import configurar_mpd, configurar_logo_sgd
 C = cargar_configuracion(ROOT, crear=(__name__ == '__main__' and len(sys.argv) > 1
                                      and sys.argv[1] in ('instalar', 'todo')))
 DOMAIN = ROOT/'payara/payara5/glassfish/domains/sgd'
@@ -335,14 +336,21 @@ def domain_properties():
         (DOMAIN/'reportes').as_posix(),C['entidad'],C['ruc']],log='payara-propiedades.log')
     edits={'AD_VALIDACION_ACTIVA':'0','AD_HOST':'127.0.0.1','no_entidad':C['entidad'],'web_socket_server':C['url_publica'].replace('http:','ws:').replace('https:','wss:')+'/wstradoc/chat/',
         'url_mesa_virtual':C['url_publica']+'/mpd/inicio.do','url_consulta_avanzada':C['url_publica']+'/consulta/inicio.do',
-        'url_sgdRestTask':C['url_publica']+'/sgdNotificador/rest'}
+        'url_sgdRestTask':C['url_publica']+'/sgdNotificador/rest',
+        'url_consulta_qr':C.get('url_consulta_qr') or 'https://calidad.inia.gob.pe/consulta/inicio.do'}
     f=DOMAIN/'sgdproperties/application.properties';s=f.read_text(encoding='utf-8')
-    for k,value in edits.items():s=re.sub(r'^'+k+r'\s*=.*$',lambda m:k+'='+value,s,flags=re.M)
+    for k,value in edits.items():
+        if re.search(r'^'+k+r'\s*=',s,flags=re.M):
+            s=re.sub(r'^'+k+r'\s*=.*$',lambda m:k+'='+value,s,flags=re.M)
+        else:
+            s+='\n'+k+'='+value+'\n'
     f.write_text(s,encoding='utf-8')
     for f in DOMAIN.glob('*properties/application.properties'):
         s=f.read_text(encoding='utf-8')
         s=re.sub(r'^sigla_institucion\s*=.*$',lambda m:'sigla_institucion='+C['entidad'],s,flags=re.M)
         f.write_text(s,encoding='utf-8')
+    configurar_mpd(DOMAIN, C['url_publica'])
+    configurar_logo_sgd(DOMAIN)
     driver=ROOT/'payara/driver/postgresql-42.7.8.jar';target=DOMAIN/'lib/postgresql-42.7.8.jar'
     if not target.exists() or hashlib.sha256(driver.read_bytes()).digest()!=hashlib.sha256(target.read_bytes()).digest():shutil.copy2(driver,target)
 

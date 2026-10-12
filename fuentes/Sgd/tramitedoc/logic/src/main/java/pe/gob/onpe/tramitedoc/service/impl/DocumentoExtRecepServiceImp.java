@@ -1338,6 +1338,7 @@ public class DocumentoExtRecepServiceImp implements DocumentoExtRecepService{
             deNoDoc = "temp|VOUCHER_" + fecha + extensionArch;
             
             Utilidades util = new Utilidades();
+            parametros.put("P_CONSULTA_URL", applicationProperties.urlConsultaQr());
             archivo = util.GenerarReporteLista(documento.getRutaReporteJasper(), lista, coReporte, parametros, tipoArchivo);
             
             if (archivo == null) {

@@ -13,10 +13,7 @@
     <c:set var="resourceURL" value="resources-${resourceVersion}" scope="request"/>
     <c:set var="versionWR" value="${webResourcesVersion}" scope="request"/>
     
-    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/default.css?v=${versionWR}" />
-    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/stylegobpe.css?v=${versionWR}" />
     <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/css/bootstrap.css?v=${versionWR}" />
-    <link rel="stylesheet" type="text/css" media="screen" href="${resourceURL}/themes/custom-theme/skin.css?v=${versionWR}" />  
 
     <script type="text/javascript">var resourceURL="${resourceURL}"</script>
     
@@ -39,5 +36,7 @@
     
    
     <script type="text/javascript">var pRutaContexto = "${ctx}";var pAppVersion="${applicationVersion}";</script>
+    <link rel="stylesheet" href="${ctx}/${resourceURL}/css/consulta-inia.css?v=20261011-3"/>
+    <script src="${ctx}/${resourceURL}/js/consulta-inia.js?v=20261011-3" type="text/javascript"><jsp:text/></script>
 
 </jsp:root>

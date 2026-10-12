@@ -7,6 +7,7 @@ from pathlib import Path
 import argparse
 import json
 import secrets
+import subprocess
 import sys
 from datetime import datetime, timezone
 
@@ -137,6 +138,105 @@ SELECT '__PILOTO_RESULTADO__'||datos::text FROM recarga_resultado;
 ''' % (carga.q(database), ',\n'.join(rows), carga.q(execution))
 
 
+def usuarios_para_claves(area):
+    """Sólo cuentas activas y rastreadas de un área ya cargada."""
+    home, args, env = carga.pg_settings()
+    query = '''BEGIN READ ONLY;
+SELECT coalesce(json_agg(t),'[]'::json) FROM (
+ SELECT DISTINCT u.cod_user AS usuario,u.cemp_codemp AS codigo_empleado
+ FROM idosgd.seg_usuarios1 u
+ JOIN idosgd.tdtx_dependencia_empleado d ON d.co_emp=u.cemp_codemp
+ JOIN idosgd.seg_user_aplica a ON a.cod_user=u.cod_user AND a.cod_aplica='9'
+ WHERE d.co_dep=%s AND d.es_emp='1' AND u.es_usuario='A' AND a.es_activo='1'
+ AND EXISTS(SELECT 1 FROM idosgd.piloto_usos p WHERE p.area=d.co_dep
+   AND p.tabla='seg_usuarios1' AND p.clave=jsonb_build_object('cod_user',u.cod_user))
+ ORDER BY u.cod_user
+) t;
+COMMIT;''' % carga.q(area)
+    p = subprocess.run([str(home/'bin'/('psql.exe' if sys.platform=='win32' else 'psql')),
+                        *args,'-X','-q','-At','-v','ON_ERROR_STOP=1','-c',query],
+                       env=env, capture_output=True, text=True, encoding='utf-8')
+    carga.require(p.returncode == 0, 'No se pudo consultar el área cargada; no se restablecieron claves.')
+    users = json.loads(p.stdout)
+    carga.require(users, 'El área no tiene cuentas activas y rastreadas para restablecer.')
+    for user in users:
+        carga.text(user['usuario'], 'usuario', 20)
+        carga.code(user['codigo_empleado'], 'empleado', 5)
+    return users
+
+
+def claves_sql(area, users, encrypted, database):
+    rows = ',\n'.join('(%s,%s,%s)' % (carga.q(u['usuario']), carga.q(u['codigo_empleado']),
+                                    carga.q(encrypted[u['usuario']])) for u in users)
+    return '''BEGIN;
+SET LOCAL lock_timeout='15s';
+LOCK TABLE idosgd.seg_usuarios1,idosgd.tdtx_dependencia_empleado,
+ idosgd.seg_user_aplica,idosgd.piloto_usos IN SHARE ROW EXCLUSIVE MODE;
+CREATE TEMP TABLE claves_destino(usuario text PRIMARY KEY,empleado text,cifrado text) ON COMMIT DROP;
+INSERT INTO claves_destino VALUES %s;
+DO $reset$
+DECLARE item record; total integer;
+BEGIN
+ IF current_database()<>%s THEN RAISE EXCEPTION 'Base destino distinta de la prevista'; END IF;
+ FOR item IN SELECT * FROM claves_destino LOOP
+   IF NOT EXISTS(SELECT 1 FROM idosgd.seg_usuarios1 u
+     JOIN idosgd.tdtx_dependencia_empleado d ON d.co_emp=u.cemp_codemp
+     JOIN idosgd.seg_user_aplica a ON a.cod_user=u.cod_user AND a.cod_aplica='9'
+     WHERE u.cod_user=item.usuario AND u.cemp_codemp=item.empleado AND u.es_usuario='A'
+     AND d.co_dep=%s AND d.es_emp='1' AND a.es_activo='1'
+     AND EXISTS(SELECT 1 FROM idosgd.piloto_usos p WHERE p.area=d.co_dep
+       AND p.tabla='seg_usuarios1' AND p.clave=jsonb_build_object('cod_user',u.cod_user))) THEN
+     RAISE EXCEPTION 'Cuenta sin identidad, acceso activo o pertenencia rastreada al area';
+   END IF;
+ END LOOP;
+ UPDATE idosgd.seg_usuarios1 u SET cclave=c.cifrado,nu_intento=0,in_acceso='1',
+   dfe_mod_clave=current_timestamp,cuser_mod='admin',dfec_mod=current_timestamp
+ FROM claves_destino c WHERE u.cod_user=c.usuario AND u.cemp_codemp=c.empleado;
+ GET DIAGNOSTICS total=ROW_COUNT;
+ IF total<>(SELECT count(*) FROM claves_destino) THEN RAISE EXCEPTION 'Cantidad de cuentas distinta'; END IF;
+END $reset$;
+SELECT '__PILOTO_RESULTADO__'||jsonb_build_object('claves_restablecidas',count(*))::text FROM claves_destino;
+COMMIT;
+''' % (rows, carga.q(database), carga.q(area))
+
+
+def restablecer_claves(area, aplicar=False, confirmar=''):
+    area = carga.code(area or '', 'area', 5)
+    carga.require(area not in carga.RESERVED, 'No restablecer cuentas de laboratorio con esta opción.')
+    if not aplicar:
+        print('PLAN OFFLINE: restablecer claves e intentos de cuentas activas del área ' + area)
+        print('Para aplicar: --restablecer-claves --area ' + area + ' --aplicar --confirmar CLAVES:' + area)
+        return 0
+    carga.require(confirmar == 'CLAVES:' + area, 'Confirmación incorrecta; se requiere CLAVES:' + area)
+    config = json.loads((ROOT/'configuracion.json').read_text(encoding='utf-8'))
+    users = usuarios_para_claves(area)
+    execution = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')+'-'+secrets.token_hex(3)
+    work = carga.DATA/('restablecer-claves-'+area+'-'+execution)
+    carga.private_folder(work)
+    summary = {'estado': 'PENDIENTE', 'area': area, 'usuarios': len(users), 'base': config['base'],
+               'alcance': 'Sólo claves e intentos; conservar cuentas, permisos y documentos'}
+    carga.private_write(work/'resultado.json', json.dumps(summary, ensure_ascii=False, indent=2))
+    print('Creando respaldo antes de restablecer las ' + str(len(users)) + ' cuentas...')
+    target = carga.backup(work)
+    plain, encrypted = carga.make_passwords(users)
+    carga.private_write(work/'CLAVES-PROVISIONALES-PRIVADAS.json', json.dumps(plain, ensure_ascii=False, indent=2))
+    result = carga.execute_sql(claves_sql(area, users, encrypted, config['base']), work)
+    carga.require(result.get('claves_restablecidas') == len(users),
+                  'Falta el resultado confirmado; conservar las claves provisionales y comprobar el estado.')
+    summary.update(estado='TRANSACCION CONFIRMADA', resultado=result, respaldo=str(target))
+    carga.private_write(work/'resultado.json', json.dumps(summary, ensure_ascii=False, indent=2))
+    (work/'CLAVES-PROVISIONALES-PRIVADAS.json').rename(work/'CLAVES-GENERADAS-PRIVADAS.json')
+    url = config['url_publica'].rstrip('/')+'/sisdoc/login.do'
+    text = 'ACCESOS NUEVOS - SGD LOCAL - AREA '+area+'\nURL: '+url+'\n\n'
+    text += ''.join('Usuario: '+u+'\nClave: '+p+'\n\n' for u,p in plain.items())
+    text += 'Usar estas claves en el SGD local indicado arriba. Las claves anteriores fueron sustituidas.\n'
+    carga.private_write(work/'ACCESOS-NUEVOS.txt', text)
+    print('Claves restablecidas: ' + str(len(users)))
+    print('Accesos privados: ' + str(work/'ACCESOS-NUEVOS.txt'))
+    print('Respaldo: ' + str(target))
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     source = parser.add_mutually_exclusive_group()
@@ -144,7 +244,13 @@ def main(argv=None):
     source.add_argument('--raiz', type=Path, help='Subcarpetas inmediatas con oficinas revisadas')
     parser.add_argument('--aplicar', action='store_true')
     parser.add_argument('--confirmar', default='')
+    parser.add_argument('--restablecer-claves', action='store_true', help='Cambiar claves de cuentas activas de un área cargada')
+    parser.add_argument('--area', help='Código de cinco dígitos para restablecer claves')
     args = parser.parse_args(argv)
+    if args.restablecer_claves:
+        carga.require(not args.carpeta and not args.raiz, 'Restablecer claves usa --area, sin --carpeta ni --raiz.')
+        return restablecer_claves(args.area, args.aplicar, args.confirmar)
+    carga.require(not args.area, '--area sólo corresponde a --restablecer-claves.')
     items = bundles(args.carpeta, args.raiz)
     config = json.loads((ROOT / 'configuracion.json').read_text(encoding='utf-8'))
     carga.require(config.get('modo') != 'solo_payara', 'Ejecutar desde el paquete de la base de datos.')

@@ -1,6 +1,28 @@
 # Carga y retiro de áreas del piloto SGD INIA
 
-Los utilitarios trabajan con los archivos que tú revisas y apruebas. No consultan SQL Server. La revisión inicial es offline; únicamente `--aplicar` conecta a PostgreSQL. Ninguna carga o limpieza real se ejecutó durante su preparación.
+Los utilitarios trabajan con los archivos que tú revisas y apruebas. No consultan SQL Server. La revisión inicial es offline; `--aplicar` y la carga automática conectan a PostgreSQL.
+
+## Cargar con un solo comando en Windows
+
+Después de completar los archivos y obtener `VALIDACION CORRECTA`, ejecutar:
+
+```powershell
+.\Cargar-Area.bat
+```
+
+El BAT existente toma `datos/carga-uti-preparada`, lee el código de su `area.json` y valida otra vez. Inicia PostgreSQL existente si está detenido, pausa el SGD, crea el respaldo y aplica la misma carga transaccional del modo manual. Al terminar arranca el SGD. No pide rutas ni códigos, ni cambia las aprobaciones de los archivos. Si ya estaba abierto, conviene terminar el trabajo de los usuarios antes de ejecutar.
+
+Si falta revisar algo, se detiene antes de cambiar los servicios o la base. Si falla la carga, intenta reanudar el SGD cuando estaba ejecutándose; si la carga ya terminó pero falla el arranque, lo informa por separado. La operación no inicializa ni recrea bases. Este modo corresponde al servidor completo con PostgreSQL local. Con argumentos explícitos se conserva el modo manual descrito más abajo; sin `--aplicar`, ese modo sigue siendo offline.
+
+## Restablecer accesos de un área ya cargada
+
+El utilitario existente `Recargar-Usuarios.bat` permite restablecer las claves de las cuentas activas y rastreadas de un área sin recargar sus permisos ni documentos. Por ejemplo, para UTI (`00217`):
+
+```powershell
+.\Recargar-Usuarios.bat --restablecer-claves --area 00217 --aplicar --confirmar CLAVES:00217
+```
+
+Primero respalda la base; luego comprueba nuevamente identidad, pertenencia al área y acceso activo dentro de la transacción. Cambia claves y pone intentos en cero. La carpeta privada del resultado contiene `ACCESOS-NUEVOS.txt` y `CLAVES-GENERADAS-PRIVADAS.json` sólo después de confirmar la operación. Si falla o no se conoce el resultado de la transacción, conserva `CLAVES-PROVISIONALES-PRIVADAS.json` para comprobar el estado; no distribuirlas como accesos confirmados. Estas cuentas pertenecen al SGD local, no a la Mesa de Partes pública de internet. Sin `--aplicar`, esta opción sólo describe el plan offline.
 
 ## Áreas para comenzar
 
@@ -75,7 +97,7 @@ Sin argumentos revisa `datos/carga-uti-preparada`; también puedes hacer doble c
 
 Sólo continuar si muestra **VALIDACION CORRECTA** y todas las comprobaciones indican OK. Si aparece ERROR, corregir el campo indicado y repetir este mismo comando. Guarda el último informe en `datos/validacion-carga/resultado.json`, sin DNI, nombres de personas, usuarios, claves ni SQL ejecutable. Incluye huellas de los archivos revisados. No modifica los CSV/JSON ni conecta a SQL Server o PostgreSQL. La conectividad, permisos, padre activo y colisiones con registros actuales se comprueban en la carga real; una validación offline correcta no certifica esos puntos. La aplicación real se explica a continuación.
 
-Para consultar opciones locales se conserva `Cargar-Area.bat --catalogos` o `bash Cargar-Area.sh --catalogos`. La revisión anterior de Cargar-Area sin --aplicar también sigue disponible para generar un plan; no hace falta ejecutarla adicionalmente después de Validar-Carga.
+Para consultar opciones locales se conserva `Cargar-Area.bat --catalogos` o `bash Cargar-Area.sh --catalogos`. La revisión con `Cargar-Area.bat --carpeta RUTA`, sin `--aplicar`, también sigue disponible para generar un plan; no hace falta ejecutarla adicionalmente después de Validar-Carga.
 
 ### Alternativa manual con plantillas vacías
 

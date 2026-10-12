@@ -17,9 +17,10 @@
 
 - `Limpiar-BD.bat --area CODIGO` retira un área rastreada solo si no tiene documentos ni referencias que impidan el retiro. Por defecto genera un plan offline.
 - `Limpiar-BD.bat --todo --aplicar --confirmar REINICIAR:idosgd_inia` reinicia TODA la base local del piloto, incluso documentos y usuarios reales, con respaldo obligatorio y archivo de los documentos anteriores. Recrea cuatro cuentas de laboratorio. Después se cargan nuevamente las áreas revisadas.
-- `Recargar-Usuarios` ajusta alcances de acceso sin eliminar cuentas, contraseñas ni documentos. No sustituye el reinicio completo solicitado por el operador.
+- `Recargar-Usuarios` ajusta alcances de acceso sin eliminar cuentas, contraseñas ni documentos. La opción explícita `--restablecer-claves --area CODIGO` cambia sólo claves e intentos de cuentas activas rastreadas del área, con respaldo previo; no modifica permisos. No sustituye el reinicio completo solicitado por el operador.
 - `Limpiar-Payara.bat` muestra los archivos regenerables; `--aplicar` limpia únicamente `osgi-cache`, `generated`, `temp` y `logs` del dominio `sgd`. Si Payara estaba activo, lo detiene y lo vuelve a iniciar. No detiene PostgreSQL ni ejecuta sus comandos.
 - Tras reiniciar el piloto no ejecutar `SGD.bat todo` para cargar usuarios: puede restaurar un respaldo portable anterior. Usar `Cargar-Area` y abrir una sesión nueva con las nuevas claves.
 - Las 45 plantillas Word se cargan automáticamente en una instalación nueva desde `plantillas-docx` mediante `sgd.py`. En una base existente, después de actualizar las fuentes y con PostgreSQL iniciado, usar `Plantillas-SGD.bat --aplicar --confirmar PLANTILLAS:INIA`; respalda y agrega los formatos faltantes. Un `git pull` no cambia por sí solo los blobs de PostgreSQL.
+- Para actualizar el portal ciudadano INIA después de un pull, usar `Actualizar-MPD.bat`. Compila y despliega únicamente MPD y deriva sus enlaces de `url_publica`; no ejecuta SQL ni reinstala la base o los usuarios. Detalle y pruebas: `manual/MESA-PARTES-INIA.md`.
 
 Documentación vigente: `manual/CARGA-POR-AREA.md`, `manual/LIMPIEZA-PAYARA.md`, `manual/VERSIONADO.md` y `manual/Manual-Instalacion-SGD-INIA-PG-Actualizado.docx`.

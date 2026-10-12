@@ -1,4 +1,4 @@
-<html xmlns:jsp="http://java.sun.com/JSP/Page" 
+<html lang="es" xmlns:jsp="http://java.sun.com/JSP/Page"
 xmlns:c="http://java.sun.com/jsp/jstl/core" 
 xmlns:tiles="http://tiles.apache.org/tags-tiles" 
 xmlns:spring="http://www.springframework.org/tags" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" >  
@@ -12,11 +12,11 @@ xmlns:spring="http://www.springframework.org/tags" xmlns:util="urn:jsptagdir:/WE
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <link rel="shortcut icon" href="../favicon.ico"/>
+        <meta name="description" content="Consulta el estado de tu expediente en el Instituto Nacional de Innovación Agraria — INIA."/>
         
         <util:load-scripts />
     <title>
-        <spring:message code="application_name"/><tiles:insertAttribute name="title" ignore="true" />
+        Consulta de expediente | INIA<tiles:insertAttribute name="title" ignore="true" />
     </title>
     </head>
     <body>

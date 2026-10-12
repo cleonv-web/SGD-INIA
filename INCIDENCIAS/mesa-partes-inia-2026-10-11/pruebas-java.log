@@ -1,0 +1,10 @@
+JUnit version 4.11
+..........rutareporte=>>>null/TDR15.jasper
+.
+Time: 0.375
+
+OK (11 tests)
+
+log4j:WARN No appenders could be found for logger (pe.gob.onpe.mpvdoc.web.controller.inicioController).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.

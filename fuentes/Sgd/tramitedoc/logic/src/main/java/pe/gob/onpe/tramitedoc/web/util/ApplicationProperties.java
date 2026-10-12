@@ -277,6 +277,10 @@ public class ApplicationProperties {
      public String urlConsultaAvanzada() {
         return properties.getProperty("url_consulta_avanzada");
     }
+
+    public String urlConsultaQr() {
+        return properties.getProperty("url_consulta_qr", ConsultaExpedienteQr.URL_DEFAULT);
+    }
      
      public String urlMesaVirtual() {
         return properties.getProperty("url_mesa_virtual");

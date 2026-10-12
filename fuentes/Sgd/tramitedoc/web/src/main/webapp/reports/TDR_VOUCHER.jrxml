@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TDR15" pageWidth="183" pageHeight="183" whenNoDataType="AllSectionsNoDetail" columnWidth="167" leftMargin="9" rightMargin="7" topMargin="7" bottomMargin="7" isFloatColumnFooter="true" uuid="bd10e517-8410-4561-a727-95a4894f28a6">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TDR15" pageWidth="183" pageHeight="273" whenNoDataType="AllSectionsNoDetail" columnWidth="167" leftMargin="9" rightMargin="7" topMargin="7" bottomMargin="7" isFloatColumnFooter="true" uuid="bd10e517-8410-4561-a727-95a4894f28a6">
 	<property name="ireport.zoom" value="4.0000000000000036"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="54"/>
@@ -7,6 +7,7 @@
 	<parameter name="NU_ANN" class="java.lang.String"/>
 	<parameter name="NU_EMI" class="java.lang.String"/>
 	<parameter name="P_LOGO_DIR" class="java.io.InputStream"/>
+	<parameter name="P_CONSULTA_URL" class="java.lang.String"><defaultValueExpression><![CDATA[pe.gob.onpe.tramitedoc.web.util.ConsultaExpedienteQr.URL_DEFAULT]]></defaultValueExpression></parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -32,7 +33,7 @@
 	<field name="deAne" class="java.lang.String"/>
 	<field name="obsVoucherMP" class="java.lang.String"/>
 	<pageHeader>
-		<band height="164">
+		<band height="259">
 			<image hAlign="Center">
 				<reportElement x="0" y="0" width="167" height="20" uuid="188e4b8d-6606-4c67-972a-b7e3bc3f4844"/>
 				<imageExpression><![CDATA[$P{P_LOGO_DIR}]]></imageExpression>
@@ -63,75 +64,15 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="5" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Consultas: "+$F{pagWeb}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Consultas: " + pe.gob.onpe.tramitedoc.web.util.ConsultaExpedienteQr.dominio($P{P_CONSULTA_URL})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="128" width="167" height="8" uuid="4f01e4c9-9403-4f1a-9e6f-6c3de1b2ad18"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="SansSerif" size="5" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Teléfonos: "+$F{fonoInstitucion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{fonoInstitucion} == null || $F{fonoInstitucion}.trim().length() == 0) ? "" : "Teléfonos: " + $F{fonoInstitucion}]]></textFieldExpression>
 			</textField>
-			<componentElement>
-				<reportElement x="0" y="142" width="167" height="3" uuid="5f3c9a6c-7e6c-4671-9199-aced8bc888f3"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="160" width="167" height="3" uuid="98e5878a-a681-4a2e-b80f-dd15a68dcf6a"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="144" width="167" height="3" uuid="9cf4a9f3-bb86-492c-af11-ce2c4a8fd3a5"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="146" width="167" height="3" uuid="95e4f6cd-7ce7-41ac-b60e-344b7cf004de"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="148" width="167" height="3" uuid="d8ec1e03-a913-4c99-9f75-f825761dbad3"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="156" width="167" height="3" uuid="2bcf9c6e-6dff-4649-81b2-3d572473b4be"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="150" width="167" height="3" uuid="37bdf1fb-9b60-46b6-98a7-62417e66a7d3"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="152" width="167" height="3" uuid="6ee1dec7-e818-4639-9a87-37fd8bed4a7f"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="154" width="167" height="3" uuid="1e2f6f27-8145-4066-a5f2-09f4bf5ccbb1"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
-			<componentElement>
-				<reportElement x="0" y="158" width="167" height="3" uuid="6e81012b-8b3c-4f30-98ac-099cda8a9e87"/>
-				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="5">
-					<jr:codeExpression><![CDATA[$F{nuCorrExp}]]></jr:codeExpression>
-				</jr:barbecue>
-			</componentElement>
 			<textField isBlankWhenNull="true">
 				<reportElement x="74" y="87" width="93" height="8" uuid="2bf53912-f7d8-40db-9186-86105386aa10"/>
 				<textElement markup="none">
@@ -258,6 +199,14 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{obsVoucherMP}]]></textFieldExpression>
 			</textField>
-		</band>
+
+<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="false" hyperlinkType="Reference">
+<reportElement x="41" y="148" width="84" height="84"/>
+<imageExpression><![CDATA[pe.gob.onpe.tramitedoc.web.util.ConsultaExpedienteQr.imagen($P{P_CONSULTA_URL}, $F{nuExpediente})]]></imageExpression>
+<hyperlinkReferenceExpression><![CDATA[pe.gob.onpe.tramitedoc.web.util.ConsultaExpedienteQr.enlace($P{P_CONSULTA_URL}, $F{nuExpediente})]]></hyperlinkReferenceExpression>
+</image>
+<staticText><reportElement x="0" y="235" width="167" height="11"/><textElement textAlignment="Center" verticalAlignment="Middle"><font size="6" isBold="true" pdfFontName="Helvetica-Bold"/></textElement><text><![CDATA[Escanea para consultar tu expediente]]></text></staticText>
+<textField><reportElement x="0" y="247" width="167" height="10"/><textElement textAlignment="Center" verticalAlignment="Middle"><font size="6"/></textElement><textFieldExpression><![CDATA[pe.gob.onpe.tramitedoc.web.util.ConsultaExpedienteQr.dominio($P{P_CONSULTA_URL})]]></textFieldExpression></textField>
+</band>
 	</pageHeader>
 </jasperReport>
