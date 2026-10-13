@@ -211,6 +211,10 @@ def compilar():
         if not (src/'pom.xml').exists():raise RuntimeError('Falta fuente '+project+'. No se reemplaza una fuente existente por su WAR antiguo.')
         print('Compilando desde fuentes: '+name,flush=True)
         maven(['clean','install','-DskipTests'],src,f'compilar-{name}.log')
+        if name == 'mpd':
+            from herramientas.compilar_cargo_mpd import compilar_cargo_mpd
+            compilar_cargo_mpd()
+            maven(['package', '-DskipTests'], src / 'web', 'empaquetar-mpd-qr.log')
         output=ROOT/'binarios'/f'{name}.war';shutil.copy2(src/war,output)
         source_hash=hashlib.sha256();source_root=src.parent if name=='sgd' else src
         for f in sorted(source_root.rglob('*')):
@@ -349,7 +353,7 @@ def domain_properties():
         s=f.read_text(encoding='utf-8')
         s=re.sub(r'^sigla_institucion\s*=.*$',lambda m:'sigla_institucion='+C['entidad'],s,flags=re.M)
         f.write_text(s,encoding='utf-8')
-    configurar_mpd(DOMAIN, C['url_publica'])
+    configurar_mpd(DOMAIN, C['url_publica'], C.get('url_consulta_qr'))
     configurar_logo_sgd(DOMAIN)
     driver=ROOT/'payara/driver/postgresql-42.7.8.jar';target=DOMAIN/'lib/postgresql-42.7.8.jar'
     if not target.exists() or hashlib.sha256(driver.read_bytes()).digest()!=hashlib.sha256(target.read_bytes()).digest():shutil.copy2(driver,target)

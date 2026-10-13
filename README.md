@@ -30,10 +30,13 @@ PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, 
 | Validar archivos de una carga | Validar-Carga.bat | bash Validar-Carga.sh |
 | Respaldar | SGD.bat respaldar | bash SGD.sh respaldar |
 | Reiniciar toda la base local del piloto | Limpiar-BD.bat --todo | bash Limpiar-BD.sh --todo |
+| Limpiar trámites conservando usuarios | Doble clic en Limpiar-Tramites.exe | Utilitario Python para administración. |
 | Revisar/limpiar temporales de Payara | Limpiar-Payara.bat [--aplicar] | Utilitario de limpieza disponible para Windows. |
 | Empaquetar sin datos ni claves | SGD.bat empaquetar | bash SGD.sh empaquetar |
 
 PowerShell: powershell -NoProfile -ExecutionPolicy Bypass -File .\SGD.ps1 instalar -Equipo servidor. Los lanzadores BAT de instalación, inicio y parada esperan una tecla al terminar. Después de reiniciar el equipo arrancar con Iniciar-SGD.
+
+Para borrar solo trámites de todas las áreas y años conservando cuentas, claves, oficinas, permisos y plantillas, el operador hace doble clic en `Limpiar-Tramites.exe`, sin comandos ni parámetros. Cierra los componentes y conexiones antes de respaldar y limpiar, y después habilita el SGD y reabre los clientes previamente cerrados. Procedimiento: [LIMPIEZA-TRAMITES.md](manual/LIMPIEZA-TRAMITES.md).
 
 Después de modificar fuentes, ejecutar Actualizar-SGD.bat (Windows) o bash Actualizar-SGD.sh (Linux). Compilar por sí solo genera los WAR; también es necesario desplegar para ver los cambios. Al terminar, abrir el SGD y recargar con Ctrl+F5.
 

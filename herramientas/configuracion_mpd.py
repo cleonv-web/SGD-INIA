@@ -18,7 +18,7 @@ def configurar_logo_sgd(dominio):
     archivo.write_text(texto, encoding='utf-8')
 
 
-def configurar_mpd(dominio, url_publica):
+def configurar_mpd(dominio, url_publica, url_consulta_qr=None):
     archivo = dominio / 'mpvproperties/application.properties'
     if not archivo.is_file():
         raise RuntimeError('Falta application.properties de MPD.')
@@ -28,6 +28,7 @@ def configurar_mpd(dominio, url_publica):
         'B64_LOGO_REPORTE': base64.b64encode(logo).decode('ascii'),
         'MESA_PARTES_CIUDADANO': base + '/mpd',
         'CONSULTA_TU_TRAMITE': base + '/consulta/inicio.do',
+        'url_consulta_qr': url_consulta_qr or 'https://calidad.inia.gob.pe/consulta/inicio.do',
         'EMAIL_ASUNTO': 'Mesa de Partes Digital INIA',
         'EMAIL_CONTENIDO_II': 'Hemos registrado su presentación ante el Instituto Nacional de Innovación Agraria, con el número de expediente',
         'EMAIL_CONTENIDO_VI': 'Mesa de Partes - INIA',

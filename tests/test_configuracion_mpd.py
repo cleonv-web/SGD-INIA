@@ -38,11 +38,21 @@ class ConfiguracionMpdTest(unittest.TestCase):
             self.assertIn('CONSULTA_TU_TRAMITE=https://sgd.inia.test:8443/consulta/inicio.do\n', first)
             self.assertIn('clave_prueba=conservar', first)
             self.assertIn('FILE_SIZE_MAX=52428800', first)
+            self.assertIn('url_consulta_qr=https://calidad.inia.gob.pe/consulta/inicio.do', first)
             self.assertIn(r'Innovaci\u00f3n Agraria', first)
             self.assertNotIn('localhost', first)
             encoded = next(line.split('=', 1)[1] for line in first.splitlines() if line.startswith('B64_LOGO_REPORTE='))
             logo = Path(__file__).resolve().parents[1] / 'fuentes/MPVCiudadano/web/src/main/resources/META-INF/web-resources/images/inia-logo.png'
             self.assertEqual(logo.read_bytes(), base64.b64decode(encoded))
+
+    def test_qr_respeta_url_configurada(self):
+        with tempfile.TemporaryDirectory() as temp:
+            domain = Path(temp)
+            (domain / 'mpvproperties').mkdir()
+            archivo = domain / 'mpvproperties/application.properties'
+            archivo.write_text('FILE_SIZE_MAX=52428800\n', encoding='utf-8')
+            configurar_mpd(domain, 'https://portal.inia.test', 'https://consulta.inia.test/consulta/inicio.do')
+            self.assertIn('url_consulta_qr=https://consulta.inia.test/consulta/inicio.do', archivo.read_text(encoding='utf-8'))
 
 if __name__ == '__main__':
     unittest.main()

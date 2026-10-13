@@ -22,4 +22,4 @@ Las pruebas Java verifican la URL completa, los ceros del expediente, configurac
 
 `herramientas/CompilarCargosQr.java` genera muestras ficticias en `logs/cargos-qr/muestras`. `tests/verificar_cargos_qr.py` renderiza cada PDF a 150 y 300 dpi, decodifica el QR y verifica su enlace pulsable. Comprueba además cuatro casos HTTP del formulario desplegado. Estas pruebas visuales requieren las bibliotecas de revisión `pypdfium2`, `Pillow`, `pypdf` y `zxing-cpp`; no son dependencias del servidor.
 
-Este cambio cubre los cargos emitidos desde el SGD (Mesa de Partes). La constancia propia del portal MPD es otro flujo y plantilla.
+Desde el 13/10/2026 también se reemplaza Code39 en la constancia propia de MPD. El portal tiene su propia plantilla `fuentes/MPVCiudadano/web/src/main/webapp/reports/TDR15.jrxml` y clase QR; utiliza el mismo `url_consulta_qr` de `configuracion.json`, sin incluir la clave. `Actualizar-MPD.bat` y la compilación completa recompilan ese Jasper antes de empaquetar, usando las dependencias offline. La actualización de los cargos del SGD sigue realizándose con `Actualizar-Cargos-QR.bat`.

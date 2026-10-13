@@ -4,7 +4,7 @@
     $(function () {
         var form = document.getElementById('mpvdocBean');
         if (!form) return;
-        var context = form.getAttribute('action').replace(/\/inicio\.do(?:\?.*)?$/, '');
+        var context = form.getAttribute('data-context');
         var step = 0, principal = null, anexos = [], uploading = 0, sending = false;
         var captchaToken = '', captchaUrl = '', captchaRequest = null, captchaSequence = 0;
         var maxDoc = Number($('#fileSizeMaxDocumento').val()), maxAnnex = Number($('#fileSizeMaxAnexo').val()) * 1024 * 1024;
@@ -98,7 +98,7 @@
             var xhr = new XMLHttpRequest(); captchaRequest = xhr; xhr.open('GET',context + '/jcaptcha?t=' + Date.now(),true); xhr.responseType = 'blob'; xhr.timeout = 20000;
             function failed() { if (sequence !== captchaSequence) return; $('#refreshCaptcha').prop('disabled',false); $('#captchaStatus').text('No se pudo cargar la imagen. Solicita otro código.'); }
             xhr.onload = function () {
-                if (sequence !== captchaSequence) return; var token = xhr.getResponseHeader('X-Captcha-Token'); if (xhr.status !== 200 || !token || !xhr.response || xhr.response.type !== 'image/png') { failed(); return; }
+                if (sequence !== captchaSequence) return; var token = xhr.getResponseHeader('X-Captcha-Token'); if (xhr.status !== 200 || !token || !xhr.response || !/^image\/png(?:\s*;|$)/i.test(xhr.response.type)) { failed(); return; }
                 var nextUrl = URL.createObjectURL(xhr.response), image = document.getElementById('imagenCaptcha');
                 image.onload = function () { if (sequence !== captchaSequence) { URL.revokeObjectURL(nextUrl); return; } if (captchaUrl) URL.revokeObjectURL(captchaUrl); captchaUrl = nextUrl; captchaToken = token; $('#imagenCaptcha').prop('hidden',false); $('#captchaStatus').prop('hidden',true); $('#refreshCaptcha').prop('disabled',false); };
                 image.onerror = function () { URL.revokeObjectURL(nextUrl); failed(); }; image.src = nextUrl;

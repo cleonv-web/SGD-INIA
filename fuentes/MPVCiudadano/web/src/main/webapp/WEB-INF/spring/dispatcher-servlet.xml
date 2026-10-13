@@ -70,7 +70,9 @@
     </bean>
   
    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize" value="#{applicationProps['FILE_SIZE_MAX']}" />
+        <!-- El límite por archivo se comprueba en el controlador. Reservar espacio
+             para el envoltorio multipart y permitir anexos con su propio límite. -->
+        <property name="maxUploadSize" value="#{T(java.lang.Math).max(T(java.lang.Long).parseLong(applicationProps['FILE_SIZE_MAX']), T(java.lang.Long).parseLong(applicationProps['FILE_SIZE_MAX_ANEXO']) * 1024 * 1024) + 65536}" />
         <property name="maxInMemorySize" value="#{applicationProps['FILE_SIZE_MAX']}" />
     </bean>
     

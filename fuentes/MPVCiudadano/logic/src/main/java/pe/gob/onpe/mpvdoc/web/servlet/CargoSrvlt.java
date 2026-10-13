@@ -76,6 +76,7 @@ public class CargoSrvlt extends HttpServlet{
         parametros.put("P_LOGO_DIR", bis.available()==0?null:bis);  
         parametros.put("P_DE_DEPENDENCIA", "");
         parametros.put("P_USER", "");
+        parametros.put("P_CONSULTA_URL", applicationProperties.getUrlConsultaQr());
         String rutaJasper = rutaReporte + "/TDR15.jasper";
         int tipoArchivo = 2; // PDF
         List<DocumentoBean> lista=null;

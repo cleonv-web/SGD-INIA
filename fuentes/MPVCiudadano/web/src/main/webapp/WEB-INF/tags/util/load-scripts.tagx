@@ -4,5 +4,5 @@
 <c:set var="resourceURL" value="resources-${resourceVersion}" scope="request"/>
 <link rel="stylesheet" href="${ctx}/${resourceURL}/css/portal-inia.css?v=20261011-2"/>
 <script src="${ctx}/${resourceURL}/js/jquery-1.10.1.min.js" type="text/javascript"><jsp:text> </jsp:text></script>
-<script src="${ctx}/${resourceURL}/js/portal-inia.js?v=20261011-2" type="text/javascript" defer="defer"><jsp:text> </jsp:text></script>
+<script src="${ctx}/${resourceURL}/js/portal-inia.js?v=20261013-1" type="text/javascript" defer="defer"><jsp:text> </jsp:text></script>
 </jsp:root>

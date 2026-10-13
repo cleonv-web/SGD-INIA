@@ -75,6 +75,9 @@ public class ApplicationProperties {
     public String getLinkConsultaTuTramite() {
         return properties.getProperty("CONSULTA_TU_TRAMITE");
     }
+    public String getUrlConsultaQr() {
+        return properties.getProperty("url_consulta_qr", ConsultaExpedienteQr.URL_DEFAULT);
+    }
     public String getTerminosTitulo() {
         return properties.getProperty("TERMINO_TITULO");
     }

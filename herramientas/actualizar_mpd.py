@@ -8,6 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import sgd
 from herramientas.configuracion_mpd import configurar_mpd
+from herramientas.compilar_cargo_mpd import compilar_cargo_mpd
 
 
 def actualizar():
@@ -16,9 +17,11 @@ def actualizar():
     fuente = sgd.ROOT / 'fuentes/MPVCiudadano'
     print('Compilando Mesa de Partes INIA desde fuentes, sin modificar la base...', flush=True)
     sgd.maven(['clean', 'install', '-DskipTests'], fuente, 'compilar-mpd-inia.log')
+    compilar_cargo_mpd()
+    sgd.maven(['package', '-DskipTests'], fuente / 'web', 'empaquetar-mpd-qr.log')
     destino = sgd.ROOT / 'binarios/mpd.war'
     shutil.copy2(fuente / 'web/target/mpvdoc-web-1.0.war', destino)
-    configurar_mpd(sgd.DOMAIN, sgd.C['url_publica'])
+    configurar_mpd(sgd.DOMAIN, sgd.C['url_publica'], sgd.C.get('url_consulta_qr'))
     estado = sgd.admin(['list-domains'], check=False).stdout
     if not any(line.strip().startswith('sgd running') for line in estado.splitlines()):
         sgd.admin(['start-domain', 'sgd'], log='payara-iniciar-mpd.log')
