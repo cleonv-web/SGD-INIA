@@ -1,6 +1,6 @@
 # Limpiar trámites conservando los usuarios
 
-El operador hace **doble clic en `Limpiar-Tramites.exe`**, sin comandos ni parámetros. Vacía los trámites de **todas las áreas y todos los años** del piloto local. Conserva usuarios, claves, contadores de acceso, empleados, oficinas, permisos, configuración personal, grupos de destinatarios, plantillas Word, catálogos, ciudadanos y proveedores. Conserva la auditoría general, los respaldos anteriores y el seguimiento de las cargas por área.
+El operador hace **doble clic en `Limpiar-Tramites.exe`**, sin comandos ni parámetros. Vacía los trámites de **todas las áreas y todos los años** y los ciudadanos/proveedores almacenados para autocompletar la MPV. Conserva las cuentas internas del SGD, claves, contadores de acceso, empleados, oficinas, permisos, configuración personal, grupos de destinatarios, plantillas Word y catálogos. Conserva la auditoría general, los respaldos anteriores y el seguimiento de las cargas por área.
 
 Solo admite la instalación existente `idosgd_inia`, host `127.0.0.1`, puerto `55432`, modo `completo`. Inicia el PostgreSQL existente si estaba detenido. No reinstala la base ni recarga cuentas. El ejecutable permanece en la raíz de la instalación y utiliza sus runtimes y módulos incluidos; no es un portable independiente de la instalación.
 
@@ -31,7 +31,9 @@ El script Python sin argumentos sigue siendo un plan offline. Los modos de sopor
 
 ## Alcance
 
-Vacía expedientes, emisiones, destinos, bandejas, movimientos, referencias, avances, vistos buenos, requisitos presentados, documentos binarios, anexos, historiales documentales, guías, mensajería, fiscalizaciones, notificaciones documentales, intercambios documentales de interoperabilidad, resúmenes y el índice de texto de remitos. Las 41 tablas se enumeran explícitamente en `limpiar_tramites.py`; no se seleccionan por prefijo.
+Vacía expedientes, emisiones, destinos, bandejas, movimientos, referencias, avances, vistos buenos, requisitos presentados, documentos binarios, anexos, historiales documentales, guías, mensajería, fiscalizaciones, notificaciones documentales, intercambios documentales de interoperabilidad, resúmenes y el índice de texto de remitos. Vacía además `idtanirs`, `tdtx_ani_simil`, `lg_pro_proveedor` y el índice de proveedores, para que una prueba nueva no recupere nombres de pruebas anteriores. Las 49 tablas se enumeran explícitamente en `limpiar_tramites.py`; no se seleccionan por prefijo. Estos solicitantes son registros de ciudadanos y organizaciones externas, distintos de los usuarios/empleados internos del SGD.
+
+La primera versión conservaba estos solicitantes. Una limpieza realizada con esa versión no los eliminó. La versión corregida no modifica por sí sola una base ya limpiada: ejecutar nuevamente el EXE borraría también los trámites nuevos. Para conservar un expediente nuevo y corregir un ciudadano concreto debe utilizarse una corrección específica, con respaldo y datos correctos verificados; no repetir una limpieza global.
 
 Aparta los archivos de `datos/documentos` a `datos/limpieza-tramites-FECHA-ID/documentos-anteriores`, con verificación SHA256. Conserva las carpetas originales. Las rutas configuradas deben pertenecer a `datos/documentos`; las rutas externas y enlaces detienen el procedimiento. No limpia temporales de Payara ni archivos guardados fuera de la carpeta documental.
 

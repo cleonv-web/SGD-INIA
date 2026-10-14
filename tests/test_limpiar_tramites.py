@@ -200,7 +200,9 @@ SELECT setval('idosgd.sec_remitos_nu_emi',777,true);
         self.assertTrue(self.running)
         report = json.loads((work/'resultado.json').read_text(encoding='utf-8'))
         self.assertEqual(report['estado'],'COMPLETADO')
-        self.assertGreater(len(report['comprobacion']['tablas_conservadas']),50)
+        protected={item['tabla'] for item in report['comprobacion']['tablas_conservadas']}
+        self.assertTrue({'seg_usuarios1','rhtm_per_empleados','rhtm_dependencia',
+                         'tdtr_permisos','tdtr_plantilla_docx'}.issubset(protected))
         # Restaurar el dump en otra base temporal demuestra que es recuperable.
         restored = self.db+'_restore'
         self.run_tool('createdb','-h','127.0.0.1','-p',self.port,'-U','postgres',restored)
@@ -219,6 +221,30 @@ SELECT setval('idosgd.sec_remitos_nu_emi',777,true);
         self.assertEqual(self.count(),'1')
         self.assertTrue((self.docs/'qa.pdf').exists())
         self.assertTrue(self.running)
+
+    def test_limpia_solicitantes_anteriores_y_registro_nuevo_guarda_nombres(self):
+        before=self.user()
+        self.query(self.db,"""
+INSERT INTO idosgd.tdtx_ani_simil(nulem,deapp,deapm,denom)
+ VALUES('91919191','Anterior','Anterior','Dato anterior');
+INSERT INTO idosgd.lg_pro_proveedor(cpro_ruc,cpro_razsoc,dpro_fecins)
+ VALUES('89999999999','Proveedor anterior QA',now());
+""")
+        self.assertEqual(self.query(self.db,"SELECT denom FROM idosgd.idtanirs WHERE nulem='91919191';").stdout.strip(),
+                         'Dato anterior')
+        self.apply()
+        for table in ['idtanirs','tdtx_ani_simil','lg_pro_proveedor']:
+            self.assertEqual(self.query(self.db,'SELECT count(*) FROM idosgd.'+table+';').stdout.strip(),'0')
+        # La función real que usa MPV recibe los datos nuevos en una base limpia.
+        response=self.query(self.db,"""SELECT idosgd.pk_sgd_mesa_virtual_ciudadano(
+ '03','91919191','ApellidoQA','SegundoQA','NombreQA','','','003','QA-1',
+ 'Registro ficticio tras limpieza','qa.pdf',decode('25504446','hex'),'Direccion QA',
+ '1','qa@ejemplo.invalid','999999999','15','01','01');""").stdout.strip()
+        self.assertTrue(response.startswith('OK@'),response)
+        for table in ['idtanirs','tdtx_ani_simil']:
+            self.assertEqual(self.query(self.db,"SELECT deapp||'|'||deapm||'|'||denom FROM idosgd."+table+
+                             " WHERE nulem='91919191';").stdout.strip(),'ApellidoQA|SegundoQA|NombreQA')
+        self.assertEqual(self.user(),before)
 
     def test_error_respaldo_no_mueve_archivos_ni_limpia(self):
         with patch.object(g,'backup',side_effect=RuntimeError('fallo QA')):

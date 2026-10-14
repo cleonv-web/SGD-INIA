@@ -36,7 +36,7 @@ PostgreSQL 17.11 nativo, Java 8, Payara 5, Python, Maven, dependencias offline, 
 
 PowerShell: powershell -NoProfile -ExecutionPolicy Bypass -File .\SGD.ps1 instalar -Equipo servidor. Los lanzadores BAT de instalación, inicio y parada esperan una tecla al terminar. Después de reiniciar el equipo arrancar con Iniciar-SGD.
 
-Para borrar solo trámites de todas las áreas y años conservando cuentas, claves, oficinas, permisos y plantillas, el operador hace doble clic en `Limpiar-Tramites.exe`, sin comandos ni parámetros. Cierra los componentes y conexiones antes de respaldar y limpiar, y después habilita el SGD y reabre los clientes previamente cerrados. Procedimiento: [LIMPIEZA-TRAMITES.md](manual/LIMPIEZA-TRAMITES.md).
+Para borrar trámites de todas las áreas y años y los solicitantes guardados para autocompletar la MPV, conservando cuentas SGD, claves, empleados, oficinas, permisos y plantillas, el operador hace doble clic en `Limpiar-Tramites.exe`, sin comandos ni parámetros. Cierra los componentes y conexiones antes de respaldar y limpiar, y después habilita el SGD y reabre los clientes previamente cerrados. Procedimiento: [LIMPIEZA-TRAMITES.md](manual/LIMPIEZA-TRAMITES.md).
 
 Después de modificar fuentes, ejecutar Actualizar-SGD.bat (Windows) o bash Actualizar-SGD.sh (Linux). Compilar por sí solo genera los WAR; también es necesario desplegar para ver los cambios. Al terminar, abrir el SGD y recargar con Ctrl+F5.
 

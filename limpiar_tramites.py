@@ -32,6 +32,11 @@ TABLAS = (
     'iotdtd_anexo', 'iotdtd_doc_principal', 'iotdtm_doc_externo',
     'dr$ctx_remitos_t1$i', 'dr$ctx_remitos_t1$k',
     'dr$ctx_remitos_t1$n', 'dr$ctx_remitos_t1$r',
+    # Solicitantes guardados por MPV: no son cuentas ni empleados del SGD.
+    # Deben quedar vacíos para que una prueba nueva no reutilice nombres anteriores.
+    'idtanirs', 'tdtx_ani_simil', 'lg_pro_proveedor',
+    'dr$ctx_proveedor_t1$i', 'dr$ctx_proveedor_t1$k',
+    'dr$ctx_proveedor_t1$n', 'dr$ctx_proveedor_t1$p', 'dr$ctx_proveedor_t1$r',
 )
 REQUERIDAS = {'seg_usuarios1', 'rhtm_per_empleados', 'rhtm_dependencia',
               'tdtr_permisos', 'tdtr_plantilla_docx', 'instalacion_portable'}
@@ -289,7 +294,8 @@ def cerrar_conexiones_bd(s):
 def limpiar(*, aplicar=False, confirmar='', reanudar_todo=False, _sgd=None):
     if not aplicar:
         print('PLAN OFFLINE: vaciar trámites de TODAS las áreas y TODOS los años.')
-        print('Conservar usuarios, claves, permisos, oficinas, plantillas, catálogos, remitentes y auditoría general.')
+        print('Conservar cuentas SGD, claves, empleados, permisos, oficinas, plantillas, catálogos y auditoría general.')
+        print('Vaciar también ciudadanos y proveedores de la MPV para no reutilizar datos de pruebas anteriores.')
         print('Archivar datos/documentos con SHA256 y respaldar la base completa; conservar secuencias.')
         print('Al aplicar: cerrar Payara, Tramitedoc, Word y conexiones a esta base antes de respaldar/borrar.')
         print('Tablas documentales: ' + ', '.join(TABLAS))
@@ -390,7 +396,7 @@ def limpiar(*, aplicar=False, confirmar='', reanudar_todo=False, _sgd=None):
         phase = 'COMPLETADO'
         report(phase, archivos=len(manifest), comprobacion=result)
         safe_to_restart = True
-        print('Trámites eliminados; usuarios y configuración conservados.', flush=True)
+        print('Trámites y solicitantes MPV eliminados; cuentas SGD y configuración conservadas.', flush=True)
         print('Respaldo y archivos anteriores: ' + str(work), flush=True)
     except Exception as exc:
         if work.exists():
