@@ -1,14 +1,14 @@
 {
-  "codigo": "00195",
-  "nombre": "GERENCIA GENERAL",
-  "sigla": "MIDAGRI-INIA-GG",
-  "nombre_corto": "GG",
+  "codigo": "00217",
+  "nombre": "UNIDAD DE TECNOLOGIA DE LA INFORMACION",
+  "sigla": "MIDAGRI-INIA-GG/UTI",
+  "nombre_corto": "UTI",
   "padre": "00000",
-  "nivel": 1,
+  "nivel": 2,
   "mesa_partes": false,
-  "titular_empleado": "00008",
+  "titular_empleado": "00237",
   "aprobado": "SI",
-  "verificado_por": "Carlos León",
+  "verificado_por": "Carlos Leon",
   "sede": {
     "codigo": "001",
     "nombre": "INSTITUTO NACIONAL DE INNOVACIÓN AGRARIA",
@@ -27,8 +27,8 @@
   "perfiles": {
     "USUARIO_AREA": {
       "administrador": false,
-      "acceso_documentos": "personal",
       "firma": false,
+      "acceso_documentos": "personal",
       "opciones": [
         "M02",
         "M0201",
@@ -38,6 +38,19 @@
         "M0301",
         "M030101",
         "M030102"
+      ]
+    },
+    "SOPORTE_UTI": {
+      "administrador": false,
+      "firma": false,
+      "acceso_documentos": "personal",
+      "opciones": [
+        "M01",
+        "M0113",
+        "M0119",
+        "M0123",
+        "M0132",
+        "M0134"
       ]
     },
     "CONSULTA_TODA_AREA": {
@@ -53,7 +66,8 @@
         "M0301",
         "M030101",
         "M030102"
-      ]
+      ],
+      "derivar_especialista": true
     }
   }
 }

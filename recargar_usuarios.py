@@ -25,7 +25,7 @@ def bundles(folder=None, parent=None):
                          if (p.parent / 'usuarios-verificados.csv').is_file())
         carga.require(folders, 'No hay oficinas con area.json y usuarios-verificados.csv en la raiz.')
     else:
-        folders = [Path(folder or ROOT / 'datos/carga-uti-preparada').resolve()]
+        folders = [Path(folder or ROOT / 'datos/carga-util-preparada').resolve()]
     result = []
     areas = set()
     for path in folders:

@@ -2,9 +2,9 @@
 setlocal
 set "PYTHONUTF8=1"
 chcp 65001 >nul
-rem Sin argumentos carga la preparacion aprobada y gestiona los servicios locales.
+rem Sin argumentos carga datos\carga-util-preparada y gestiona los servicios locales.
 rem Con argumentos se conserva el modo manual: sin --aplicar es revision offline.
-rem Plantillas: Cargar-Area.bat --plantilla --carpeta datos\carga-uti
+rem Plantillas: Cargar-Area.bat --plantilla --carpeta datos\carga-util
 if "%~1"=="" goto automatico
 if /I "%~1"=="--plantilla" goto plantilla
 if /I "%~1"=="--catalogos" goto catalogos

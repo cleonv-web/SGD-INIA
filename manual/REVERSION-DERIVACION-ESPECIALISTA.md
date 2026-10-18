@@ -8,7 +8,7 @@ adicionales de la funcionalidad descartada, incluido su actualizador y su SQL de
 activación. El SGD se recompiló desde las fuentes restauradas.
 
 Se conserva el cambio independiente que incorpora `232 — PROVEIDO` a
-`datos/carga-uti-preparada/area.json`. No se cambiaron las reglas originales de
+`datos/carga-util-preparada/area.json`. No se cambiaron las reglas originales de
 emisión, firma ni los permisos de PROVEÍDO.
 
 ## Base existente del piloto

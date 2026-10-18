@@ -18,7 +18,7 @@ class LimpiezaPayaraTests(unittest.TestCase):
                          'reportes/reporte.pdf','sgdproperties/application.properties']:
             path=self.domain/relative; path.parent.mkdir(parents=True,exist_ok=True)
             path.write_bytes(b'CONSERVAR QA'); self.protected[path]=path.read_bytes()
-        for relative in ['datos/documentos/documento.docx','datos/carga-uti-preparada/area.json',
+        for relative in ['datos/documentos/documento.docx','datos/carga-util-preparada/area.json',
                          'payara/payara5/glassfish/modules/modulo.jar']:
             path=self.root/relative;path.parent.mkdir(parents=True,exist_ok=True)
             path.write_bytes(b'CONSERVAR QA');self.protected[path]=path.read_bytes()
@@ -91,7 +91,7 @@ class ReglasGitTests(unittest.TestCase):
             root=Path(folder)
             (root/'.gitignore').write_bytes((ROOT/'.gitignore').read_bytes())
             subprocess.run(['git','init','-q',str(root)],check=True,capture_output=True)
-            allowed=['datos/carga-uti-preparada/area.json','datos/carga-uti-preparada/usuarios-verificados.csv',
+            allowed=['datos/carga-util-preparada/area.json','datos/carga-util-preparada/usuarios-verificados.csv',
                 'datos/carga-oficina-2/pendientes.csv','datos/cargas/oficina-3/area.json',
                 'datos/exportacion-uti/trabajadores.csv','INCIDENCIAS/tema/correccion.sql',
                 'java/windows/jdk8/bin/java.exe','java/linux-x64.tar.gz',
@@ -108,8 +108,8 @@ class ReglasGitTests(unittest.TestCase):
                 'payara/payara5/mq/lib/imqhttps.war','cliente-windows/InstallerFirmaONPE_v1.2.7-24-05-2022.msi']
             ignored=['datos/documentos/doc.pdf','datos/documentos/doc.docx','datos/credenciales.json',
                 'datos/postgresql/base/1/data','datos/reinicio-piloto-QA/documentos-anteriores/doc.docx',
-                'datos/piloto-QA/CLAVES-GENERADAS-PRIVADAS.json','datos/carga-uti-preparada/CLAVES-GENERADAS-PRIVADAS.json',
-                'datos/carga-uti-preparada/respaldo.dump','logs/ULTIMO-ERROR.txt','output/prueba.pdf',
+                'datos/piloto-QA/CLAVES-GENERADAS-PRIVADAS.json','datos/carga-util-preparada/CLAVES-GENERADAS-PRIVADAS.json',
+                'datos/carga-util-preparada/respaldo.dump','logs/ULTIMO-ERROR.txt','output/prueba.pdf',
                 'binarios/sgd.war','binarios/sgd-viejo.war','binarios/proveedor/sgd.war',
                 'fuentes/Sgd/target/sgd.war','payara/payara5/glassfish/domains/sgd/config/domain.xml',
                 'payara/payara5/glassfish/domains/sgd/temp/doc.docx','payara/payara5/glassfish/domains/sgd/osgi-cache/bundle.jar',

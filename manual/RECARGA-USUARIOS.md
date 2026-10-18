@@ -26,7 +26,7 @@ No usa Limpiar-BD, ni recrea usuarios, ni repite los SQL de instalación.
 
 Descargar los utilitarios corregidos en la instalación que administra la base.
 Conservar los archivos privados y los runtimes de ese destino. Usar los archivos
-revisados `datos/carga-uti-preparada/area.json` y `usuarios-verificados.csv`.
+revisados `datos/carga-util-preparada/area.json` y `usuarios-verificados.csv`.
 El CSV mantiene las identidades y la columna `perfil`; el JSON define el alcance
 de cada perfil. En esta carga los nueve seleccionados usan `USUARIO_AREA`, que
 con el cargador corregido queda personal. Si alguna persona debe ver documentos
@@ -37,7 +37,7 @@ Primero preparar el plan sin conectar a PostgreSQL:
 
 ```powershell
 Set-Location C:\SGD\SGD-INIA-INSTALL_PG
-.\Recargar-Usuarios.bat --carpeta datos\carga-uti-preparada
+.\Recargar-Usuarios.bat --carpeta datos\carga-util-preparada
 if ($LASTEXITCODE -ne 0) { throw 'Revisar los archivos antes de recargar.' }
 ```
 
@@ -46,7 +46,7 @@ destino y los alcances. Para aplicar, con PostgreSQL iniciado y durante una
 pausa de uso del SGD:
 
 ```powershell
-.\Recargar-Usuarios.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar RECARGAR:USUARIOS
+.\Recargar-Usuarios.bat --carpeta datos\carga-util-preparada --aplicar --confirmar RECARGAR:USUARIOS
 if ($LASTEXITCODE -ne 0) { throw 'La recarga no terminó correctamente; revisar su log.' }
 ```
 

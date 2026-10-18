@@ -61,8 +61,8 @@ class CargaAutomaticaTests(unittest.TestCase):
 
     def test_carpeta_y_area_automaticas_con_pausa_y_arranque(self):
         g.cargar_preparacion()
-        self.validation.assert_called_once_with(self.data / 'carga-uti-preparada')
-        self.load.assert_called_once_with(['cargar', '--carpeta', str(self.data / 'carga-uti-preparada'),
+        self.validation.assert_called_once_with(self.data / 'carga-util-preparada')
+        self.load.assert_called_once_with(['cargar', '--carpeta', str(self.data / 'carga-util-preparada'),
                                           '--aplicar', '--confirmar', 'CARGAR:00195'])
         self.assertEqual(self.events, ['postgres-status', 'list-domains', 'stop-domain',
                                       'list-domains', 'aplicar', 'reanudar'])

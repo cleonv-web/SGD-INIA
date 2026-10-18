@@ -48,11 +48,11 @@ Este procedimiento elimina de la base activa todos los documentos y usuarios rea
     Set-Location C:\SGD\SGD-INIA-INSTALL_PG -ErrorAction Stop
     .\SGD.bat detener
     if ($LASTEXITCODE -ne 0) { throw 'Falló la parada.' }
-    .\Validar-Carga.bat --carpeta datos\carga-uti-preparada
+    .\Validar-Carga.bat --carpeta datos\carga-util-preparada
     if ($LASTEXITCODE -ne 0) { throw 'Falló la validación.' }
     .\Limpiar-BD.bat --todo --aplicar --confirmar REINICIAR:idosgd_inia
     if ($LASTEXITCODE -ne 0) { throw 'Falló la limpieza. No continuar.' }
-    .\Cargar-Area.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar CARGAR:00217
+    .\Cargar-Area.bat --carpeta datos\carga-util-preparada --aplicar --confirmar CARGAR:00217
     if ($LASTEXITCODE -ne 0) { throw 'Falló la carga.' }
     .\SGD.bat iniciar
     if ($LASTEXITCODE -ne 0) { throw 'Falló el inicio.' }

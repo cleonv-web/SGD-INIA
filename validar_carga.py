@@ -145,7 +145,7 @@ def validar(folder, root=ROOT):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--carpeta', type=Path, default=ROOT / 'datos/carga-uti-preparada',
+    parser.add_argument('--carpeta', type=Path, default=ROOT / 'datos/carga-util-preparada',
                         help='Carpeta revisada con area.json y usuarios-verificados.csv')
     args = parser.parse_args(argv)
     report = validar(args.carpeta.resolve())

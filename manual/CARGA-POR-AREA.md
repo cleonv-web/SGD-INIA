@@ -10,7 +10,7 @@ Después de completar los archivos y obtener `VALIDACION CORRECTA`, ejecutar:
 .\Cargar-Area.bat
 ```
 
-El BAT existente toma `datos/carga-uti-preparada`, lee el código de su `area.json` y valida otra vez. Inicia PostgreSQL existente si está detenido, pausa el SGD, crea el respaldo y aplica la misma carga transaccional del modo manual. Al terminar arranca el SGD. No pide rutas ni códigos, ni cambia las aprobaciones de los archivos. Si ya estaba abierto, conviene terminar el trabajo de los usuarios antes de ejecutar.
+El BAT existente toma `datos/carga-util-preparada`, lee el código de su `area.json` y valida otra vez. Inicia PostgreSQL existente si está detenido, pausa el SGD, crea el respaldo y aplica la misma carga transaccional del modo manual. Al terminar arranca el SGD. No pide rutas ni códigos, ni cambia las aprobaciones de los archivos. Si ya estaba abierto, conviene terminar el trabajo de los usuarios antes de ejecutar.
 
 Si falta revisar algo, se detiene antes de cambiar los servicios o la base. Si falla la carga, intenta reanudar el SGD cuando estaba ejecutándose; si la carga ya terminó pero falla el arranque, lo informa por separado. La operación no inicializa ni recrea bases. Este modo corresponde al servidor completo con PostgreSQL local. Con argumentos explícitos se conserva el modo manual descrito más abajo; sin `--aplicar`, ese modo sigue siendo offline.
 
@@ -65,7 +65,7 @@ Linux:
 bash Preparar-Carga.sh
 ```
 
-Usa `datos/exportacion-uti` como origen y crea `datos/carga-uti-preparada`. Para otra área o una nueva preparación, indicar carpetas distintas:
+Usa `datos/exportacion-uti` como origen y crea `datos/carga-util-preparada`. Para otra área o una nueva preparación, indicar carpetas distintas:
 
 ```powershell
 .\Preparar-Carga.bat --origen datos\exportacion-otra --carpeta datos\carga-otra-preparada
@@ -93,7 +93,7 @@ Antes de validar, completar los campos pendientes: en area.json, nombre_corto (U
 bash Validar-Carga.sh
 ```
 
-Sin argumentos revisa `datos/carga-uti-preparada`; también puedes hacer doble clic en Windows. Para otra área añadir `--carpeta datos/carga-otra-preparada`. Reutiliza las reglas de Cargar-Area, cuenta incluidos y excluidos, revisa encabezados, aprobación, titular incluido, DNI en formato válido, duplicados, cargos, perfiles y menús, tipos documentales y sede. Compara las tablas, columnas y claves de la carga con el modelo incluido y comprueba configuración, credenciales existentes y archivos de Java/cifrado/PostgreSQL. No comprueba identidad ni vínculo laboral: siguen siendo responsabilidad del operador.
+Sin argumentos revisa `datos/carga-util-preparada`; también puedes hacer doble clic en Windows. Para otra área añadir `--carpeta datos/carga-otra-preparada`. Reutiliza las reglas de Cargar-Area, cuenta incluidos y excluidos, revisa encabezados, aprobación, titular incluido, DNI en formato válido, duplicados, cargos, perfiles y menús, tipos documentales y sede. Compara las tablas, columnas y claves de la carga con el modelo incluido y comprueba configuración, credenciales existentes y archivos de Java/cifrado/PostgreSQL. No comprueba identidad ni vínculo laboral: siguen siendo responsabilidad del operador.
 
 Sólo continuar si muestra **VALIDACION CORRECTA** y todas las comprobaciones indican OK. Si aparece ERROR, corregir el campo indicado y repetir este mismo comando. Guarda el último informe en `datos/validacion-carga/resultado.json`, sin DNI, nombres de personas, usuarios, claves ni SQL ejecutable. Incluye huellas de los archivos revisados. No modifica los CSV/JSON ni conecta a SQL Server o PostgreSQL. La conectividad, permisos, padre activo y colisiones con registros actuales se comprueban en la carga real; una validación offline correcta no certifica esos puntos. La aplicación real se explica a continuación.
 
@@ -190,7 +190,7 @@ Esta primera etapa del piloto será sin firma obligatoria. Mantener `firma=false
 
 ## Trasladar una carga revisada a otra instalación
 
-Para cargar UTI en otra instalación donde el área aún no esté cargada, transferir únicamente `area.json` y `usuarios-verificados.csv` ya revisados. Colocarlos juntos en `datos/carga-uti-preparada`, dentro de la raíz del SGD de destino. El primero define área, sede, responsable y perfiles; el segundo define las personas incluidas y verificadas. Conservar las credenciales propias de ese destino.
+Para cargar UTI en otra instalación donde el área aún no esté cargada, transferir únicamente `area.json` y `usuarios-verificados.csv` ya revisados. Colocarlos juntos en `datos/carga-util-preparada`, dentro de la raíz del SGD de destino. El primero define área, sede, responsable y perfiles; el segundo define las personas incluidas y verificadas. Conservar las credenciales propias de ese destino.
 
 `LEEME.txt` y `pendientes.csv` son ayudas de revisión. `cargos-piloto.csv`, si se conserva, también es auxiliar: el cargador no lo lee. Los cinco CSV de exportación sólo se necesitan para preparar nuevamente la carga. Estos archivos privados no se publican en Git. UTI 00217 ya fue cargada en la PC local; no repetir esa carga allí.
 
@@ -201,11 +201,11 @@ Actualizar los utilitarios desde el repositorio y validar en el destino antes de
 Primero validar los archivos sin tocar ninguna base:
 
 ```powershell
-.\Validar-Carga.bat --carpeta datos\carga-uti-preparada
+.\Validar-Carga.bat --carpeta datos\carga-util-preparada
 ```
 
 ```bash
-bash Validar-Carga.sh --carpeta datos/carga-uti-preparada
+bash Validar-Carga.sh --carpeta datos/carga-util-preparada
 ```
 
 El informe queda en `datos/validacion-carga/resultado.json`. Para UTI, el código aprobado actual es `00217`. Los comandos siguientes usan ese código; para otra área sustituirlo por el código de su `area.json`. Si generaste un plan con Cargar-Area, no ejecutarlo manualmente: contiene un marcador de cifrado pendiente.
@@ -229,11 +229,11 @@ En servidores separados coordinar también la parada de la aplicación remota. D
 **Qué hace iniciar:** en el paquete completo arranca PostgreSQL si está detenido, prepara la conexión y arranca Payara, que ejecuta el SGD. Si los servicios ya están funcionando, no los duplica. No recompila, no despliega cambios, no repite la carga de usuarios ni cambia contraseñas. Una vez que la carga indique «Operación terminada», iniciar y entrar con los usuarios y claves del archivo `CLAVES-GENERADAS-PRIVADAS.json` de esa ejecución confirmada. La carga y el arranque son operaciones distintas.
 
 ```powershell
-.\Cargar-Area.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar CARGAR:00217
+.\Cargar-Area.bat --carpeta datos\carga-util-preparada --aplicar --confirmar CARGAR:00217
 ```
 
 ```bash
-bash Cargar-Area.sh --carpeta datos/carga-uti-preparada --aplicar --confirmar CARGAR:00217
+bash Cargar-Area.sh --carpeta datos/carga-util-preparada --aplicar --confirmar CARGAR:00217
 ```
 
 Cuando indique **Operación terminada**, revisar `resultado.json` de esa ejecución e iniciar el SGD con una de estas opciones:
@@ -284,19 +284,31 @@ Se respalda toda la base antes del cambio. El retiro elimina sólo objetos cread
 
 El modo `--area` no emplea TRUNCATE ni borrado CASCADE. Las validaciones y eliminaciones están en una transacción con bloqueos; cualquier error previo a la confirmación revierte el retiro. Ese modo no proporciona limpieza de documentos ni vaciado global. Una restauración requiere otro procedimiento sobre una base nueva o una recuperación administrada.
 
-## Reiniciar toda la base local del piloto y cargar UTI nuevamente
+## Reiniciar toda la base local del piloto y cargar el área nuevamente
 
 Este procedimiento elimina TODOS los usuarios reales, oficinas cargadas y documentos de `idosgd_inia`. Usarlo únicamente para comenzar de nuevo el piloto completo. Conservar los CSV verificados de cada oficina para volver a cargarlos. El modo `--todo` exige base local `127.0.0.1:55432`, nombre `idosgd_inia` y configuración `completo`; se rechaza otro destino.
 
 Desde PowerShell, en la carpeta de instalación:
 
 ```powershell
-.\Limpiar-BD.bat --todo --aplicar --confirmar REINICIAR:idosgd_inia
-if ($LASTEXITCODE -ne 0) { throw 'Falló el reinicio; no continuar.' }
-.\Cargar-Area.bat --carpeta datos\carga-uti-preparada --aplicar --confirmar CARGAR:00217
-if ($LASTEXITCODE -ne 0) { throw 'Falló la carga; no continuar.' }
-.\SGD.bat iniciar
+.\Limpiar-BD.bat
 ```
+
+Solo después de que termine correctamente, revisar los archivos en
+`datos/carga-util-preparada` y ejecutar:
+
+```powershell
+.\Validar-Carga.bat
+```
+
+Si indica `VALIDACION CORRECTA`, cargar el área:
+
+```powershell
+.\Cargar-Area.bat
+```
+
+La carga automática inicia el SGD al terminar. El BAT de limpieza sin argumentos
+ejecuta el reinicio completo; los argumentos explícitos conservan el modo manual.
 
 El utilitario detiene Payara, genera y comprueba un respaldo completo, y aparta los archivos documentales anteriores en `datos/reinicio-piloto-*/documentos-anteriores`. No elimina la carpeta `datos`, las credenciales ni los CSV. Recrea la base desde los SQL incluidos, conservando el rol PostgreSQL `sgd_app`; reinstala catálogos, plantillas y las cuatro cuentas de laboratorio. No restaura `datos/respaldo-portable.dump`. La carga siguiente genera contraseñas nuevas para los usuarios reales; usar el archivo `CLAVES-GENERADAS-PRIVADAS.json` que indique esa ejecución e iniciar una sesión nueva.
 

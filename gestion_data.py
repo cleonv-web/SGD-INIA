@@ -510,7 +510,7 @@ def make_passwords(users):
 def cargar_preparacion():
     """Carga aprobada del preparador, sin pedir rutas ni códigos al operador."""
     from validar_carga import validar
-    folder = DATA / 'carga-uti-preparada'
+    folder = DATA / 'carga-util-preparada'
     report = validar(folder)
     require(not report['errores'], 'La preparación no está lista:\n' + '\n'.join(report['errores']))
     area, users, fingerprint = read_bundle(folder)

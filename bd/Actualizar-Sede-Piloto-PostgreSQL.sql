@@ -3,7 +3,7 @@
 -- Si se utiliza esta alternativa, ejecutar personalmente el archivo COMPLETO en PostgreSQL del SGD.
 -- Windows y Linux: el mismo SQL. No ejecutar en SQL Server.
 -- Mantiene el código 001 y sus relaciones. Sólo actualiza nombre y dirección.
--- Datos aprobados en datos/carga-uti-preparada/area.json para la sede central.
+-- Datos aprobados en datos/carga-util-preparada/area.json para la sede central.
 BEGIN;
 SET LOCAL lock_timeout = '15s';
 

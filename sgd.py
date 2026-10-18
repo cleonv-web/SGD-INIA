@@ -145,7 +145,8 @@ def diagnosticar():
     if not re.fullmatch(r'\d{11}',C['ruc']):raise RuntimeError('RUC debe tener 11 dígitos')
     if not re.fullmatch(r'\d{4}',str(C['anio'])):raise RuntimeError('Año inválido')
     for k in ['puerto_bd','puerto_http','puerto_https','puerto_admin']:
-        if not isinstance(C[k],int) or not 1024<C[k]<60000:raise RuntimeError('Puerto inválido: '+k)
+        if not isinstance(C[k],int) or not (1024<C[k]<60000 or (k=='puerto_https' and C[k]==443)):
+            raise RuntimeError('Puerto inválido: '+k)
     if len({C[k] for k in ['puerto_bd','puerto_http','puerto_https','puerto_admin']})!=4:raise RuntimeError('Los puertos deben ser distintos')
     if C.get('modo')=='solo_payara' and not (DATA/'credenciales.json').exists():
         raise RuntimeError('Modo solo_payara: copiar datos/credenciales.json desde el equipo PostgreSQL antes de instalar.')

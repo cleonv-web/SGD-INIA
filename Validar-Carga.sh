@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Linux x64. Sólo valida archivos; no conecta ni cambia bases de datos.
-# Sin argumentos revisa datos/carga-uti-preparada. Otra área: --carpeta RUTA.
+# Sin argumentos revisa datos/carga-util-preparada. Otra área: --carpeta RUTA.
 set -euo pipefail
 SGD_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 SGD_PYTHON="$SGD_ROOT/herramientas/python-linux/bin/python3"

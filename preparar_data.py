@@ -159,7 +159,7 @@ Conservar los cinco CSV originales. No publicar esta carpeta en Git.
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--origen',type=Path,default=ROOT/'datos/exportacion-uti')
-    p.add_argument('--carpeta',type=Path,default=ROOT/'datos/carga-uti-preparada')
+    p.add_argument('--carpeta',type=Path,default=ROOT/'datos/carga-util-preparada')
     a=p.parse_args();prepare(a.origen,a.carpeta)
 
 
